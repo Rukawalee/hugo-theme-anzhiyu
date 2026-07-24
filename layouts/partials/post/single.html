@@ -1,0 +1,67 @@
+{{- $params := .Site.Params -}}
+{{- $notice := $params.noticeOutdate | default dict -}}
+{{- $meta := $params.post_meta.post | default dict -}}
+<div id="post">
+  {{- if or (eq .Params.top_img false) .Params.bilibili_bg -}}
+    {{- if templates.Exists "partials/post/post-info.html" -}}
+      {{- partial "post/post-info.html" . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- if templates.Exists "partials/anzhiyu/ai-info.html" -}}
+    {{- partial "anzhiyu/ai-info.html" . -}}
+  {{- end -}}
+
+  {{- if and ($notice.enable | default false) .Lastmod -}}
+  {{- $limit := default 365 $notice.limit_day -}}
+  {{- $days := div (sub now.Unix .Lastmod.Unix) 86400 -}}
+  {{- if ge $days $limit -}}
+  {{- $prev := $notice.message_prev | default "本文最后更新于" -}}
+  {{- $next := $notice.message_next | default "天前，部分内容可能已过时。" -}}
+  <div class="post-outdate-notice">{{ $prev }} {{ $days }} {{ $next }}</div>
+  {{- end -}}
+  {{- end -}}
+
+  <article id="article-container" class="post-content" itemscope itemtype="https://schema.org/BlogPosting">
+    <header class="post-content-header" style="display:none" aria-hidden="true">
+      {{- if and (ne $meta.categories false) .Params.categories -}}
+        {{- range (.GetTerms "categories") -}}
+        <a href="{{ .RelPermalink }}" class="post-meta-categories" itemprop="url">{{ .LinkTitle }}</a>
+        {{- end -}}
+      {{- end -}}
+      {{- if and (ne $meta.tags false) .Params.tags -}}
+        {{- range (.GetTerms "tags") -}}
+        <a href="{{ .RelPermalink }}" tabindex="-1" itemprop="url">{{ .LinkTitle }}</a>
+        {{- end -}}
+      {{- end -}}
+      <h1 id="CrawlerTitle" itemprop="name headline">{{ .Title | default (i18n "no_title" | default "无标题") }}</h1>
+      <span itemprop="author" itemscope itemtype="https://schema.org/Person">{{ .Params.copyright_author | default $params.author | default .Site.Title }}</span>
+      <time itemprop="dateCreated datePublished" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "2006-01-02" }}</time>
+      {{- if not .Lastmod.IsZero -}}
+      <time itemprop="dateModified" datetime="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Lastmod.Format "2006-01-02" }}</time>
+      {{- end -}}
+    </header>
+    {{ .Content }}
+  </article>
+
+  {{- /* Hexo: copyright (includes ptool) then ad then pagination then related then comments */ -}}
+  {{- partial "post/post-copyright.html" . -}}
+
+  {{- with $params.ad }}
+    {{- with .post }}
+  <div class="ads-wrap">{{ . | safeHTML }}</div>
+    {{- end }}
+  {{- end }}
+
+  {{- if ne $params.post_pagination false -}}
+    {{- partial "post/post-pagination.html" . -}}
+  {{- end -}}
+
+  {{- if ($params.related_post.enable | default true) -}}
+    {{- partial "post/related.html" . -}}
+  {{- end -}}
+
+  {{- if and (ne .Params.comments false) (templates.Exists "partials/third-party/comments.html") -}}
+    {{- partial "third-party/comments.html" . -}}
+  {{- end -}}
+</div>

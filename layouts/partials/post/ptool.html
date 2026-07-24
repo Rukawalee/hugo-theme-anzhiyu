@@ -1,0 +1,55 @@
+{{- $params := .Site.Params -}}
+{{- $ptool := $params.ptool | default dict -}}
+{{- $reward := $params.reward | default dict -}}
+{{- $url := .Params.copyright_url | default .Permalink -}}
+{{- $cover := .Params.cover | default $params.cover.default_cover | default "" -}}
+{{- $title := .Title | default $params.author | default .Site.Title -}}
+<div id="post-tools" class="post-tools">
+  <div class="post-tools-left">
+    <div class="rewardLeftButton">
+      {{- if and ($reward.enable | default false) $reward.QR_code -}}
+        {{- partial "post/reward.html" . -}}
+      {{- end -}}
+      {{- with $ptool.mode -}}
+      <div class="reward-link mode">
+        <a class="reward-link-button" href="{{ . | relURL }}">
+          <i class="anzhiyufont anzhiyu-icon-plant-fill"></i>
+          运营模式与责任
+        </a>
+      </div>
+      {{- end -}}
+    </div>
+    <div class="shareRight">
+      {{- if $ptool.share_mobile | default true -}}
+      <div class="share-link mobile">
+        <div class="share-qrcode">
+          <div class="share-button" title="使用手机访问这篇文章">
+            <i class="anzhiyufont anzhiyu-icon-qrcode"></i>
+          </div>
+          <div class="share-main">
+            <div class="share-main-all">
+              <div id="qrcode" title="{{ $url }}"></div>
+              <div class="reward-dec">使用手机访问这篇文章</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {{- end -}}
+      {{- if $ptool.share_weibo | default true -}}
+      <div class="share-link weibo">
+        <a class="share-button" target="_blank" rel="external nofollow noreferrer noopener"
+          href="https://service.weibo.com/share/share.php?title={{ $title | urlquery }}&url={{ $url | urlquery }}&pic={{ $cover | absURL | urlquery }}">
+          <i class="anzhiyufont anzhiyu-icon-weibo"></i>
+        </a>
+      </div>
+      {{- end -}}
+      {{- if $ptool.share_copyurl | default true -}}
+      <div class="share-link copyurl">
+        <div id="post-share-url" class="share-button" title="复制链接" onclick="(function(){var u=location.href;if(navigator.clipboard){navigator.clipboard.writeText(u)}else{var i=document.createElement('input');i.value=u;document.body.appendChild(i);i.select();document.execCommand('copy');document.body.removeChild(i)}})()">
+          <i class="anzhiyufont anzhiyu-icon-link"></i>
+        </div>
+      </div>
+      {{- end -}}
+    </div>
+  </div>
+</div>

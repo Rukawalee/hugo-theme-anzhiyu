@@ -1,0 +1,32 @@
+{{- /* Hexo-compatible TOC from page Fragments */ -}}
+{{- $params := .Site.Params -}}
+{{- $tocNumber := default true $params.toc.number -}}
+{{- with .Params.toc_number -}}{{- $tocNumber = . -}}{{- end -}}
+{{- $tocExpand := default false $params.toc.expand -}}
+{{- with .Params.toc_expand -}}{{- $tocExpand = . -}}{{- end -}}
+{{- $tocExpandClass := cond $tocExpand "is-expand" "" -}}
+{{- $raw := .Fragments.Headings -}}
+{{- /* unwrap synthetic root (level 0 / empty id) if present */ -}}
+{{- $headings := slice -}}
+{{- range $raw -}}
+  {{- if or (eq .Level 0) (and (not .ID) (not .Title) (gt (len .Headings) 0)) -}}
+    {{- range .Headings -}}{{- $headings = $headings | append . -}}{{- end -}}
+  {{- else -}}
+    {{- $headings = $headings | append . -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $headings -}}{{- $headings = $raw -}}{{- end -}}
+{{- if $headings -}}
+<div id="card-toc" class="card-widget">
+  <div class="item-headline">
+    <i class="anzhiyufont anzhiyu-icon-bars"></i>
+    <span>{{ i18n "aside.card_toc" | default "文章目录" }}</span>
+    <span class="toc-percentage"></span>
+  </div>
+  <div class="toc-content {{ $tocExpandClass }}">
+    <ol class="toc">
+      {{- partial "widget/toc_list.html" (dict "headings" $headings "number" $tocNumber "prefix" "") -}}
+    </ol>
+  </div>
+</div>
+{{- end -}}

@@ -1,0 +1,34 @@
+{{- $prev := .PrevInSection -}}
+{{- $next := .NextInSection -}}
+{{- if or $prev $next -}}
+<nav id="pagination" class="pagination-post">
+  {{- with $prev -}}
+  {{- $cover := .Params.cover | default site.Params.cover.default_cover -}}
+  <div class="prev-post {{ if $next }}pull-left{{ else }}pull-full{{ end }}">
+    <a href="{{ .RelPermalink }}">
+      {{- with $cover -}}
+      <img class="prev-cover" src="{{ . | relURL }}" alt="cover of previous post" {{ printf `onerror="this.onerror=null;this.src='%s'"` (site.Params.error_img.post_page | relURL) | safeHTMLAttr }}>
+      {{- end -}}
+      <div class="pagination-info">
+        <div class="label">{{ i18n "pagination.prev" }}</div>
+        <div class="prev_info">{{ .Title }}</div>
+      </div>
+    </a>
+  </div>
+  {{- end -}}
+  {{- with $next -}}
+  {{- $cover := .Params.cover | default site.Params.cover.default_cover -}}
+  <div class="next-post {{ if $prev }}pull-right{{ else }}pull-full{{ end }}">
+    <a href="{{ .RelPermalink }}">
+      {{- with $cover -}}
+      <img class="next-cover" src="{{ . | relURL }}" alt="cover of next post" {{ printf `onerror="this.onerror=null;this.src='%s'"` (site.Params.error_img.post_page | relURL) | safeHTMLAttr }}>
+      {{- end -}}
+      <div class="pagination-info">
+        <div class="label">{{ i18n "pagination.next" }}</div>
+        <div class="next_info">{{ .Title }}</div>
+      </div>
+    </a>
+  </div>
+  {{- end -}}
+</nav>
+{{- end -}}

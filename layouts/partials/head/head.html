@@ -1,0 +1,110 @@
+{{- $params := .Site.Params -}}
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>
+  {{- if .IsHome -}}
+    {{ .Site.Title }}{{ with .Site.Params.site_subtitle }} - {{ . }}{{ end }}
+  {{- else if eq .Layout "404" -}}
+    {{ i18n "error404" }} | {{ .Site.Title }}
+  {{- else -}}
+    {{ with .Title }}{{ . }} | {{ end }}{{ .Site.Title }}
+  {{- end -}}
+</title>
+{{- with .Description | default .Summary | default $params.description -}}
+<meta name="description" content="{{ . | plainify | truncate 160 }}">
+{{- end -}}
+{{- $keywords := $params.keywords -}}
+{{- with .Params.tags -}}{{- $keywords = . -}}{{- end -}}
+{{- with $keywords -}}
+<meta name="keywords" content="{{ delimit . "," }}">
+{{- end -}}
+<meta name="author" content="{{ with .Site.Params.author }}{{ . }}{{ else }}{{ .Site.Title }}{{ end }}">
+{{- $tc := $params.theme_color | default dict -}}
+{{- $themeColor := "#f7f9fe" -}}
+{{- if eq $params.display_mode "dark" -}}
+  {{- $themeColor = "#18171d" -}}
+{{- end -}}
+{{- if $tc.enable -}}
+  {{- if eq $params.display_mode "dark" -}}
+    {{- $themeColor = $tc.meta_theme_color_dark | default "#18171d" -}}
+  {{- else -}}
+    {{- $themeColor = $tc.meta_theme_color_light | default "#f7f9fe" -}}
+  {{- end -}}
+{{- end -}}
+<meta name="theme-color" content="{{ $themeColor }}">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="canonical" href="{{ .Permalink }}">
+
+{{- with $params.favicon -}}
+<link rel="icon" href="{{ . | relURL }}">
+{{- else -}}
+<link rel="icon" href="{{ "favicon.ico" | relURL }}">
+{{- end -}}
+
+{{- partial "head/Open_Graph.html" . -}}
+{{- partial "head/inject.html" . -}}
+{{- with $params.inject }}
+  {{- range .head }}{{ . | safeHTML }}{{ end }}
+{{- end }}
+
+{{- $mainCSS := resources.Get "css/main.css" -}}
+{{- if $mainCSS -}}
+  {{- $mainCSS = $mainCSS | resources.Fingerprint "sha256" -}}
+  <link rel="stylesheet" href="{{ $mainCSS.RelPermalink }}" integrity="{{ $mainCSS.Data.Integrity }}" crossorigin="anonymous">
+{{- else -}}
+  <link rel="stylesheet" href="{{ "css/main.css" | relURL }}">
+{{- end -}}
+
+{{- $iconCSS := .Site.Params.asset.ali_iconfont_css | default "https://cdn.cbd.int/anzhiyu-theme-static@1.1.9/icon/ali_iconfont_css.css" -}}
+<link rel="stylesheet" href="{{ $iconCSS }}">
+<link rel="stylesheet" href="{{ "css/ali_iconfont_css.css" | relURL }}">
+
+{{- /* highlight_theme CSS variants (static/css/highlight/*) */ -}}
+{{- $ht := $params.highlight_theme | default "light" -}}
+{{- if and $ht (ne $ht false) (ne $ht "false") -}}
+  {{- $file := "" -}}
+  {{- if eq $ht "mac light" -}}{{- $file = "css/highlight/mac-light.css" -}}
+  {{- else if eq $ht "pale night" -}}{{- $file = "css/highlight/pale-night.css" -}}
+  {{- else if eq $ht "mac" -}}{{- $file = "css/highlight/mac.css" -}}
+  {{- else if eq $ht "darker" -}}{{- $file = "css/highlight/darker.css" -}}
+  {{- else if eq $ht "ocean" -}}{{- $file = "css/highlight/ocean.css" -}}
+  {{- else -}}{{- $file = "css/highlight/light.css" -}}
+  {{- end -}}
+  <link rel="stylesheet" href="{{ $file | relURL }}">
+{{- end -}}
+
+{{- if templates.Exists "partials/head/site_verification.html" -}}
+  {{- partial "head/site_verification.html" . -}}
+{{- end -}}
+{{- if templates.Exists "partials/head/google_adsense.html" -}}
+  {{- partial "head/google_adsense.html" . -}}
+{{- end -}}
+
+{{- /* Swiper CSS: home 即刻条 / home_top.swiper (Hexo head.pug parity) */ -}}
+{{- $needSwiper := false -}}
+{{- with .Site.Data.essay -}}{{- $needSwiper = true -}}{{- end -}}
+{{- with .Site.Params.home_top -}}
+  {{- with .swiper -}}
+    {{- if .enable | default false -}}{{- $needSwiper = true -}}{{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if $needSwiper -}}
+  {{- $swiperCSS := "https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css" -}}
+  {{- with .Site.Params.home_top -}}
+    {{- with .swiper -}}
+      {{- with .swiper_css -}}{{- $swiperCSS = . -}}{{- end -}}
+    {{- end -}}
+  {{- end -}}
+  <link rel="stylesheet" href="{{ $swiperCSS }}" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="{{ $swiperCSS }}"></noscript>
+{{- end -}}
+
+{{- partial "third-party/assets.html" . -}}
+{{- partial "head/config.html" . -}}
+{{- if templates.Exists "partials/third-party/analytics.html" -}}
+  {{- partial "third-party/analytics.html" . -}}
+{{- end -}}
+{{- if templates.Exists "partials/head/pwa.html" -}}
+  {{- partial "head/pwa.html" . -}}
+{{- end -}}

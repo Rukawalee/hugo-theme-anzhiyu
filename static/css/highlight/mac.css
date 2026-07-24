@@ -1,0 +1,14 @@
+/* highlight_theme: mac — traffic-light chrome for code blocks */
+.highlight, pre {
+  border-radius: 8px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.4);
+}
+.highlight::before, figure.highlight::before {
+  content: '';
+  display: block;
+  height: 12px;
+  background: radial-gradient(circle at 12px 50%, #ff5f56 6px, transparent 0),
+    radial-gradient(circle at 32px 50%, #ffbd2e 6px, transparent 0),
+    radial-gradient(circle at 52px 50%, #27c93f 6px, transparent 0);
+  margin-bottom: 0.5rem;
+}

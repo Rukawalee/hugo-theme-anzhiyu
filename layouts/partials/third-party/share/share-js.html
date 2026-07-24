@@ -1,0 +1,11 @@
+{{- $params := .Site.Params -}}
+{{- $sharejs := $params.sharejs | default dict -}}
+{{- $cdn := $params.CDN | default dict -}}
+{{- $opt := $cdn.option | default dict -}}
+{{- $css := $opt.sharejs_css | default "https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" -}}
+{{- $js := $opt.sharejs | default "https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" -}}
+{{- $sites := $sharejs.sites | default "facebook,twitter,wechat,weibo,qq" -}}
+{{- $img := .Params.cover | default $params.avatar.img | default "/img/default_cover.jpg" -}}
+<div class="social-share" data-image="{{ $img | relURL }}" data-sites="{{ $sites }}"></div>
+<link rel="stylesheet" href="{{ $css }}" media="print" onload="this.media='all'">
+<script src="{{ $js }}" defer></script>

@@ -1,0 +1,57 @@
+{{- /*
+  {{% flink %}}
+  - class_name: Group
+    class_desc: Desc
+    flink_style: anzhiyu
+    link_list:
+      - name: Foo
+        link: https://
+        avatar: /
+        descr: ...
+        siteshot: ...
+  {{% /flink %}}
+*/ -}}
+{{- $raw := trim .Inner " \n\r\t" -}}
+{{- $items := $raw | transform.Unmarshal -}}
+{{- $errorImg := "/img/friend_404.gif" -}}
+{{- with site.Params.error_img }}{{ with .flink }}{{ $errorImg = . }}{{ end }}{{ end -}}
+<div class="flink">
+{{- range $items -}}
+  {{- with .class_name }}<div class="flink-name">{{ . }}</div>{{ end -}}
+  {{- with .class_desc }}<div class="flink-desc">{{ . }}</div>{{ end }}
+  <div class="flink-list">
+  {{- if eq .flink_style "anzhiyu" }}
+    <div class="anzhiyu-flink-list">
+    {{- range .link_list }}
+      <div class="flink-list-item">
+        <a href="{{ .link | safeURL }}" title="{{ .name }}" class="cf-friends-link" target="_blank">
+          <div class="flink-item-icon">
+            <img class="no-lightbox cf-friends-avatar" src="{{ .avatar | safeURL }}" onerror="this.onerror=null;this.src='{{ $errorImg }}'" alt="{{ .name }}" />
+          </div>
+          <div class="flink-item-info">
+            <div class="flink-item-name">{{ .name }}</div>
+            <div class="flink-item-desc" title="{{ .descr }}">{{ .descr }}</div>
+          </div>
+        </a>
+      </div>
+    {{- end }}
+    </div>
+  {{- else }}
+    <div class="flexcard-flink-list">
+    {{- range .link_list }}
+      {{- $shot := .siteshot | default .avatar -}}
+      <a href="{{ .link | safeURL }}" title="{{ .name }}" target="_blank" class="flink-list-card cf-friends-link">
+        <div class="wrapper cover">
+          <img class="no-lightbox cover fadeIn" src="{{ $shot | safeURL }}" onerror="this.onerror=null;this.src='{{ $errorImg }}'" alt="{{ .name }}" />
+        </div>
+        <div class="info">
+          <img class="no-lightbox cf-friends-avatar flink-avatar" src="{{ .avatar | safeURL }}" onerror="this.onerror=null;this.src='{{ $errorImg }}'" alt="{{ .name }}"/>
+          <span class="flink-sitename cf-friends-name">{{ .name }}</span>
+        </div>
+      </a>
+    {{- end }}
+    </div>
+  {{- end }}
+  </div>
+{{- end -}}
+</div>

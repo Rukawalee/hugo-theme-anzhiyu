@@ -1,0 +1,13 @@
+{{- $pangu := .Site.Params.pangu | default dict -}}
+{{- if $pangu.enable | default false -}}
+<script src="{{ $pangu.js | default "https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" }}"></script>
+<script>
+function panguInit() {
+  if (typeof pangu !== 'undefined') {
+    try { pangu.spacingPage(); } catch (e) {}
+  }
+}
+document.addEventListener('DOMContentLoaded', panguInit);
+document.addEventListener('pjax:complete', panguInit);
+</script>
+{{- end -}}

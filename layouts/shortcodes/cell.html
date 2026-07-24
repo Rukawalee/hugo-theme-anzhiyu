@@ -1,0 +1,28 @@
+{{- /*
+  {{< cell text="..." url="..." icon="..." >}}
+  {{< cell "Text" "https://..." "anzhiyufont anzhiyu-icon-xxx" >}}
+  {{< cell "Text" "https://..." "https://img.png" >}}
+*/ -}}
+{{- $text := "" -}}
+{{- $url := "" -}}
+{{- $extra := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $text = .Get "text" | default "" -}}
+  {{- $url = .Get "url" | default (.Get "href") | default "" -}}
+  {{- $extra = .Get "icon" | default (.Get "img") | default "" -}}
+{{- else -}}
+  {{- $text = .Get 0 | default "" -}}
+  {{- $url = .Get 1 | default "" -}}
+  {{- $extra = .Get 2 | default "" -}}
+{{- end -}}
+{{- $text = trim $text " " -}}
+{{- $url = trim $url " " -}}
+{{- $extra = trim $extra " " -}}
+{{- $defaultImg := "https://npm.elemecdn.com/hexo-butterfly-tag-plugins-plus/lib/assets/default.svg" -}}
+{{- $isIcon := or (in $extra "anzhiyufont") (in $extra "fa ") (hasPrefix $extra "fa") -}}
+{{- if and $extra $isIcon -}}
+<a class="button no-text-decoration"{{ with $url }} href="{{ . | safeURL }}"{{ end }} title="{{ $text }}"><i class="{{ $extra }}"></i>{{ $text }}</a>
+{{- else -}}
+{{- $img := cond (ne $extra "") $extra $defaultImg -}}
+<a class="button no-text-decoration"{{ with $url }} href="{{ . | safeURL }}"{{ end }} title="{{ $text }}"><img src="{{ $img | safeURL }}" alt="">{{ $text }}</a>
+{{- end -}}

@@ -1,0 +1,8 @@
+{{- $menu := .Site.Menus.main -}}
+{{- if $menu -}}
+<div class="menus_items">
+  {{- range $menu -}}
+    {{- partial "header/menu_item.html" (dict "item" .) -}}
+  {{- end -}}
+</div>
+{{- end -}}

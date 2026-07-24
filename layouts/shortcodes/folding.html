@@ -1,0 +1,30 @@
+{{- /*
+  {{% folding "open" "Title" %}}...{{% /folding %}}
+  {{% folding "Title" %}}...{{% /folding %}}
+  Named: style/open, title
+*/ -}}
+{{- $style := "" -}}
+{{- $title := "" -}}
+{{- $open := false -}}
+{{- if .IsNamedParams -}}
+  {{- $style = .Get "style" | default "" -}}
+  {{- $title = .Get "title" | default "" -}}
+  {{- $o := .Get "open" | default "" -}}
+  {{- if or (eq $o "true") (eq $o true) (eq $o "open") (eq $style "open") -}}
+    {{- $open = true -}}
+    {{- if eq $style "open" }}{{ $style = "" }}{{ end -}}
+  {{- end -}}
+{{- else if ge (len .Params) 2 -}}
+  {{- $style = .Get 0 -}}
+  {{- $title = .Get 1 -}}
+  {{- if eq $style "open" -}}
+    {{- $open = true -}}
+    {{- $style = "open" -}}
+  {{- end -}}
+{{- else if ge (len .Params) 1 -}}
+  {{- $title = .Get 0 -}}
+{{- end -}}
+<details class="folding-tag"{{ if $open }} open{{ else }}{{ with $style }} {{ . | safeHTMLAttr }}{{ end }}{{ end }}>
+  <summary> {{ $title }} </summary>
+  <div class="content">{{ .Inner | markdownify }}</div>
+</details>

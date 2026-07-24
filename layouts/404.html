@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+{{- $params := .Site.Params -}}
+{{- $bg := $params.error_404.background | default "/img/404.jpg" -}}
+<html lang="{{ .Site.Language.Lang }}" data-theme="{{ default "light" $params.display_mode }}">
+<head>
+  {{- partial "head/head.html" . -}}
+</head>
+<body data-type="anzhiyu">
+  <div id="web_bg"></div>
+  <div id="body-wrap" class="error">
+    {{- partial "header/header.html" . -}}
+    <div class="error-box">
+      <div id="error-wrap">
+        <div class="error-content">
+          <div class="error-img" style="background-image: url('{{ $bg | relURL }}')"></div>
+          <div class="error-info">
+            <h1 class="error_title">404</h1>
+            <div class="error_subtitle">{{ $params.error_404.subtitle | default (i18n "error404") }}</div>
+            <a class="button--animated" href="{{ "/" | relLangURL }}">
+              <i class="anzhiyufont anzhiyu-icon-rocket"></i>
+              {{ i18n "footer.home" }}
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="aside-list">
+        <div class="aside-list-group">
+          {{- $limit := default 6 $params.related_post.limit -}}
+          {{- range first $limit (where .Site.RegularPages "Type" "in" (slice "posts" "post")) -}}
+          {{- $cover := .Params.cover | default $params.cover.default_cover -}}
+          <div class="aside-list-item">
+            {{- if and $cover $params.cover.aside_enable -}}
+            <a class="thumbnail" href="{{ .RelPermalink }}" title="{{ .Title }}">
+              <img src="{{ $cover | relURL }}" {{ printf `onerror="this.onerror=null;this.src='%s'"` ($params.error_img.post_page | relURL) | safeHTMLAttr }} alt="{{ .Title }}">
+            </a>
+            {{- end -}}
+            <div class="content">
+              <a class="title" href="{{ .RelPermalink }}" title="{{ .Title }}">{{ .Title }}</a>
+              <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "2006-01-02" }}</time>
+            </div>
+          </div>
+          {{- end -}}
+        </div>
+      </div>
+    </div>
+  </div>
+  {{- /* Minimal scripts on 404: avoid full chrome runtime on sparse DOM */ -}}
+  {{- with resources.Get "js/utils.js" -}}
+  <script src="{{ (. | resources.Minify | resources.Fingerprint "sha256").RelPermalink }}"></script>
+  {{- end -}}
+</body>
+</html>

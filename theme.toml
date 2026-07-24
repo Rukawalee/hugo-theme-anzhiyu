@@ -1,0 +1,18 @@
+name = "anzhiyu"
+license = "GPL-3.0"
+licenselink = "https://github.com/Rukawalee/hugo-theme-anzhiyu/blob/main/LICENSE"
+description = "Hugo port of the Hexo theme AnZhiYu (安知鱼) — modern, feature-rich blog theme."
+homepage = "https://github.com/Rukawalee/hugo-theme-anzhiyu"
+demosite = "https://github.com/Rukawalee/hugo-theme-anzhiyu"
+tags = ["blog", "responsive", "dark", "personal", "chinese"]
+features = ["posts", "dark mode", "local search", "toc", "sidebar", "i18n"]
+min_version = "0.120.0"
+
+[author]
+  name = "Rukawalee"
+  homepage = "https://github.com/Rukawalee"
+
+[original]
+  author = "安知鱼 (anzhiyu-c)"
+  homepage = "https://github.com/anzhiyu-c/hexo-theme-anzhiyu"
+  repo = "https://github.com/anzhiyu-c/hexo-theme-anzhiyu"

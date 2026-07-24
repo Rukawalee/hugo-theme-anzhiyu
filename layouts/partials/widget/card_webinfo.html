@@ -1,0 +1,68 @@
+{{- $params := .Site.Params -}}
+{{- if $params.aside.card_webinfo.enable -}}
+{{- $posts := where .Site.RegularPages "Type" "in" (slice "posts" "post") -}}
+{{- $byLastmod := sort $posts "Lastmod" "desc" -}}
+<div class="card-webinfo">
+  <div class="item-headline">
+    <i class="anzhiyufont anzhiyu-icon-chart-line"></i>
+    <span>{{ i18n "aside.card_webinfo.headline" }}</span>
+  </div>
+  <div class="webinfo">
+    {{- if $params.aside.card_webinfo.post_count -}}
+    <div class="webinfo-item">
+      <div class="webinfo-item-title">
+        <i class="anzhiyufont anzhiyu-icon-file-lines"></i>
+        <div class="item-name">{{ i18n "aside.card_webinfo.article_name" }} :</div>
+      </div>
+      <div class="item-count">{{ len $posts }}</div>
+    </div>
+    {{- end -}}
+    {{- $rt := $params.runtimeshow | default dict -}}
+    {{- if not ($rt.enable | default false) -}}
+      {{- $rt = ($params.footer.runtime | default dict) -}}
+    {{- end -}}
+    {{- if $rt.enable | default false -}}
+    <div class="webinfo-item">
+      <div class="webinfo-item-title">
+        <i class="anzhiyufont anzhiyu-icon-stopwatch"></i>
+        <div class="item-name">{{ i18n "aside.card_webinfo.runtime.name" }} :</div>
+      </div>
+      {{- $pub := $rt.publish_date | default $rt.launch_time | default "2021-03-31" -}}
+      <div class="item-count" id="runtimeshow" data-publishDate="{{ $pub }}">
+        <i class="anzhiyufont anzhiyu-icon-spinner anzhiyu-spin"></i>
+      </div>
+    </div>
+    {{- end -}}
+    {{- if $params.aside.card_webinfo.last_push_date -}}
+    <div class="webinfo-item">
+      <div class="webinfo-item-title">
+        <i class="anzhiyufont anzhiyu-icon-hourglass-start"></i>
+        <div class="item-name">{{ i18n "aside.card_webinfo.last_push_date.name" }} :</div>
+      </div>
+      <div class="item-count" id="last-push-date"{{ with (index $byLastmod 0) }} data-lastPushDate="{{ .Lastmod.Format "2006-01-02 15:04:05" }}"{{ end }}>
+        {{- with (index $byLastmod 0) -}}{{ .Lastmod.Format "2006-01-02" }}{{- else -}}{{ now.Format "2006-01-02" }}{{- end -}}
+      </div>
+    </div>
+    {{- end -}}
+    {{- $bz := $params.busuanzi | default dict -}}
+    {{- if $bz.site_uv -}}
+    <div class="webinfo-item">
+      <div class="webinfo-item-title">
+        <i class="anzhiyufont anzhiyu-icon-user"></i>
+        <div class="item-name">{{ i18n "aside.card_webinfo.site_uv_name" }} :</div>
+      </div>
+      <div class="item-count" id="busuanzi_value_site_uv"><i class="anzhiyufont anzhiyu-icon-spinner anzhiyu-spin"></i></div>
+    </div>
+    {{- end -}}
+    {{- if $bz.site_pv -}}
+    <div class="webinfo-item">
+      <div class="webinfo-item-title">
+        <i class="anzhiyufont anzhiyu-icon-eye"></i>
+        <div class="item-name">{{ i18n "aside.card_webinfo.site_pv_name" }} :</div>
+      </div>
+      <div class="item-count" id="busuanzi_value_site_pv"><i class="anzhiyufont anzhiyu-icon-spinner anzhiyu-spin"></i></div>
+    </div>
+    {{- end -}}
+  </div>
+</div>
+{{- end -}}

@@ -1,0 +1,48 @@
+{{- $params := .Site.Params -}}
+{{- $algolia := $params.algolia_search | default dict -}}
+{{- $cdn := $params.CDN | default dict -}}
+{{- $opt := $cdn.option | default dict -}}
+{{- $algoliaJs := $opt.algolia_js | default "https://cdn.jsdelivr.net/npm/algoliasearch@4.18.0/dist/algoliasearch-lite.umd.js" -}}
+{{- $instant := $opt.instantsearch | default "https://cdn.jsdelivr.net/npm/instantsearch.js@4.84.0/dist/instantsearch.production.min.js" -}}
+{{- $themeJs := $opt.algolia_search | default "" -}}
+<div id="algolia-search">
+  <div class="search-dialog">
+    <nav class="search-nav">
+      <span class="search-dialog-title">{{ i18n "search.title" }}</span>
+      <button class="search-close-button" type="button">
+        <i class="anzhiyufont anzhiyu-icon-xmark"></i>
+      </button>
+    </nav>
+    <div class="search-wrap">
+      <div id="algolia-search-input"></div>
+      <hr>
+      <div id="algolia-search-results">
+        <div id="algolia-hits">
+          {{- if $algolia.tags -}}
+            {{- range $algolia.tags -}}
+            <a class="tag-list" href="{{ printf "/tags/%s" . | relLangURL }}" title="{{ . }}">{{ . }}</a>
+            {{- end -}}
+          {{- end -}}
+        </div>
+        <div id="algolia-pagination"></div>
+        <div id="algolia-info">
+          <div class="algolia-stats"></div>
+          <div class="algolia-poweredBy"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="search-mask"></div>
+</div>
+<script src="{{ $algoliaJs }}" defer></script>
+<script src="{{ $instant }}" defer></script>
+{{- if $themeJs -}}
+<script src="{{ $themeJs }}" defer></script>
+{{- else -}}
+  {{- $localAlg := resources.Get "js/search/algolia.js" -}}
+  {{- if $localAlg -}}
+<script src="{{ ($localAlg | resources.Minify | resources.Fingerprint "sha256").RelPermalink }}" defer></script>
+  {{- else -}}
+<script src="{{ "js/search/algolia.js" | relURL }}" defer></script>
+  {{- end -}}
+{{- end -}}

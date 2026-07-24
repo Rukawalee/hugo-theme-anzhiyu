@@ -1,0 +1,27 @@
+{{- $params := .Site.Params -}}
+{{- $inj := $params.aplayerInject | default dict -}}
+{{- $need := false -}}
+{{- if $inj.enable -}}
+  {{- if or $inj.per_page .Params.aplayer (eq .Layout "music") -}}
+    {{- $need = true -}}
+  {{- end -}}
+{{- else if or .Params.aplayer (eq .Layout "music") -}}
+  {{- $need = true -}}
+{{- end -}}
+{{- $nav := $params.nav_music | default dict -}}
+{{- if and $nav.enable (not $need) (ne ($nav.id | default "") "") -}}
+  {{- $need = true -}}
+{{- end -}}
+{{- if $need -}}
+{{- $cdn := $params.CDN | default dict -}}
+{{- $opt := $cdn.option | default dict -}}
+{{- $css := $opt.aplayer_css | default "https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/aplayer/APlayer.min.css" -}}
+{{- $js := $opt.aplayer_js | default "https://cdn.cbd.int/anzhiyu-blog-static@1.0.1/js/APlayer.min.js" -}}
+{{- $meting := $opt.meting_js | default "https://cdn.cbd.int/hexo-anzhiyu-music@1.0.1/assets/js/Meting2.min.js" -}}
+<link rel="stylesheet" href="{{ $css }}" media="print" onload="this.media='all'">
+<script src="{{ $js }}"></script>
+<script src="{{ $meting }}"></script>
+{{- with $opt.meting_api -}}
+<script>var meting_api = {{ . | jsonify | safeJS }};</script>
+{{- end -}}
+{{- end -}}

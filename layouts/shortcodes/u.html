@@ -1,0 +1,10 @@
+{{- /*
+  {{< u "text" >}}
+*/ -}}
+{{- $text := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $text = .Get "text" | default "" -}}
+{{- else -}}
+  {{- $text = delimit .Params " " -}}
+{{- end -}}
+<u>{{ $text }}</u>

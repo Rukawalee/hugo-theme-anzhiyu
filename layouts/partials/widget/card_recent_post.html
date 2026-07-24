@@ -1,0 +1,28 @@
+{{- $params := .Site.Params -}}
+{{- if $params.aside.card_recent_post.enable -}}
+{{- $limit := default 5 $params.aside.card_recent_post.limit -}}
+{{- $posts := first $limit (where .Site.RegularPages "Type" "in" (slice "posts" "post")) -}}
+<div class="card-widget card-recent-post">
+  <div class="item-headline">
+    <i class="anzhiyufont anzhiyu-icon-history"></i>
+    <span>{{ i18n "aside.card_recent_post" }}</span>
+  </div>
+  <div class="aside-list">
+    {{- range $posts -}}
+    {{- $cover := .Params.cover | default $params.cover.default_cover -}}
+    {{- $noCover := or (eq .Params.cover false) (not $params.cover.aside_enable) -}}
+    <div class="aside-list-item{{ if $noCover }} no-cover{{ end }}">
+      {{- if and $cover (not $noCover) -}}
+      <a class="thumbnail" href="{{ .RelPermalink }}" title="{{ .Title }}">
+        {{- partial "helpers/lazy_img.html" (dict "src" $cover "alt" .Title "error" ($params.error_img.post_page | default "/img/404.jpg") "ctx" .) -}}
+      </a>
+      {{- end -}}
+      <div class="content">
+        <a class="title" href="{{ .RelPermalink }}" title="{{ .Title }}">{{ .Title | default (i18n "no_title") }}</a>
+        <time datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}" title="{{ i18n "post.created" }} {{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006-01-02" }}</time>
+      </div>
+    </div>
+    {{- end -}}
+  </div>
+</div>
+{{- end -}}

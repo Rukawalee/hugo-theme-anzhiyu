@@ -1,0 +1,30 @@
+{{- /*
+  Child of tabs:
+  {{% tab "Caption" %}}...{{% /tab %}}
+  {{% tab title="Caption" icon="..." %}}...{{% /tab %}}
+*/ -}}
+{{- $caption := "" -}}
+{{- $icon := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $caption = .Get "title" | default (.Get "caption") | default "" -}}
+  {{- $icon = .Get "icon" | default "" -}}
+{{- else -}}
+  {{- $raw := .Get 0 | default "" -}}
+  {{- if in $raw "@" -}}
+    {{- $parts := split $raw "@" -}}
+    {{- $caption = trim (index $parts 0) " " -}}
+    {{- if ge (len $parts) 2 }}{{ $icon = trim (index $parts 1) " " }}{{ end -}}
+  {{- else -}}
+    {{- $caption = $raw -}}
+    {{- $icon = .Get 1 | default "" -}}
+  {{- end -}}
+{{- end -}}
+{{- $parent := .Parent -}}
+{{- if $parent -}}
+  {{- $items := $parent.Scratch.Get "tabItems" | default (slice) -}}
+  {{- $items = $items | append (dict "caption" $caption "icon" $icon "content" (.Inner | markdownify)) -}}
+  {{- $parent.Scratch.Set "tabItems" $items -}}
+{{- else -}}
+  {{- /* standalone fallback */ -}}
+  <div class="tab-item-content">{{ .Inner | markdownify }}</div>
+{{- end -}}

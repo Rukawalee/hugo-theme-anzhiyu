@@ -1,0 +1,36 @@
+- class_name: 我的装备
+  description: 好物分享
+  tip: 提升生活品质的小物件
+  top_background: /img/default_cover.jpg
+  good_things:
+    - title: 生产力
+      description: 日常设备
+      equipment_list:
+        - name: 示例键盘
+          specification: 机械 87 键
+          description: 打字舒适，段落回弹清晰
+          image: /img/default.png
+          link: https://example.com/keyboard
+        - name: 示例显示器
+          specification: 27 寸 2K
+          description: 色彩不错，适合写代码
+          image: /img/default_cover.jpg
+          link: /posts/
+        - name: 示例笔记本
+          specification: 14 寸轻薄本
+          description: 续航够用，外出携带轻松
+          image: /img/default.png
+          link: /equipment/
+    - title: 生活
+      description: 桌面与随身
+      equipment_list:
+        - name: 示例耳机
+          specification: 降噪无线
+          description: 通勤路上的好伙伴
+          image: /img/default_cover.jpg
+          link: /music/
+        - name: 示例相机
+          specification: 微单套机
+          description: 记录旅行与日常
+          image: /img/default.png
+          link: /album/

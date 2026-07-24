@@ -1,0 +1,90 @@
+{{- /* Essay / 即刻短文 — site.Data.essay */ -}}
+{{- with hugo.Data.essay }}
+  {{- range $i := . }}
+  <div id="essay_page">
+    <div class="author-content author-content-item essayPage single"{{ with $i.top_background }} style="background: url({{ . }}) left 28% / cover no-repeat;"{{ end }}>
+      <div class="card-content">
+        <div class="author-content-item-tips">{{ $i.title }}</div>
+        <span class="author-content-item-title">{{ $i.subTitle }}</span>
+        <div class="content-bottom"><div class="tips">{{ $i.tips }}</div></div>
+        {{- if $i.buttonLink }}
+        <div class="banner-button-group">
+          <a class="banner-button" href="{{ $i.buttonLink }}">
+            <i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i>
+            <span class="banner-button-text">{{ $i.buttonText }}</span>
+          </a>
+        </div>
+        {{- end }}
+      </div>
+    </div>
+    <div id="bber">
+      <section class="timeline page-1">
+        <ul id="waterfall" class="list">
+          {{- $limit := $i.limit | default 30 }}
+          {{- range $index, $item := $i.essay_list }}
+            {{- if lt $index $limit }}
+            <li class="bber-item">
+              <div class="bber-content">
+                <p class="datacont">{{ $item.content }}
+                  {{- with $item.image }}
+                  <div class="bber-container-img">
+                    {{- range . }}
+                    <a class="bber-content-img" href="{{ . }}" target="_blank" data-fancybox="gallery" data-caption=""><img src="{{ . }}" alt=""></a>
+                    {{- end }}
+                    <div class="bber-content-noimg"></div><div class="bber-content-noimg"></div><div class="bber-content-noimg"></div>
+                  </div>
+                  {{- end }}
+                  {{- with $item.video }}
+                  <div class="bber-container-img">
+                    {{- range . }}
+                      {{- if in . "player.bilibili.com" }}
+                      <div style="position:relative;padding:30% 45%;margin-top:10px;margin-bottom:10px;">
+                        <iframe style="position:absolute;width:100%;height:100%;left:0;top:0;margin:0;border-radius:12px;border:var(--style-border);" src="{{ . }}" scrolling="no" frameborder="no" allowfullscreen="true"></iframe>
+                      </div>
+                      {{- else }}
+                      <a class="bber-content-video" href="{{ . }}" data-fancybox="gallery"><video src="{{ . }}"></video></a>
+                      {{- end }}
+                    {{- end }}
+                    <div class="bber-content-noimg"></div><div class="bber-content-noimg"></div><div class="bber-content-noimg"></div>
+                  </div>
+                  {{- end }}
+                  {{- with $item.aplayer }}
+                  <div class="bber-music">
+                    <meting-js id="{{ .id }}" server="{{ .server }}" type="song" mutex="true" preload="none" theme="var(--anzhiyu-main)" order="list"></meting-js>
+                  </div>
+                  {{- end }}
+                </p>
+              </div>
+              <hr>
+              <div class="bber-bottom">
+                <div class="bber-info">
+                  <div class="bber-info-time">
+                    <i class="anzhiyufont anzhiyu-icon-clock"></i>
+                    <time class="datatime" datetime="{{ $item.date }}">{{ $item.date }}</time>
+                  </div>
+                  {{- with $item.link }}
+                  <a class="bber-content-link" title="链接" href="{{ . }}" rel="external nofollow"><i class="anzhiyufont anzhiyu-icon-link"></i>链接</a>
+                  {{- end }}
+                  {{- with $item.from }}
+                  <div class="bber-info-from"><i class="anzhiyufont anzhiyu-icon-fw-fire"></i><span>{{ . }}</span></div>
+                  {{- end }}
+                  {{- with $item.address }}
+                  <div class="bber-info-from"><i class="anzhiyufont anzhiyu-icon-location-dot"></i><span>{{ . }}</span></div>
+                  {{- end }}
+                </div>
+                <div class="bber-reply" onclick="if(window.rm)rm.rightMenuCommentText('{{ $item.content | htmlEscape }}')">
+                  <i class="anzhiyufont anzhiyu-icon-message"></i>
+                </div>
+              </div>
+            </li>
+            {{- end }}
+          {{- end }}
+        </ul>
+      </section>
+    </div>
+    <div id="bber-tips" style="color: var(--anzhiyu-secondtext);">- 只展示最近{{ $i.limit | default 30 }}条短文 -</div>
+  </div>
+  {{- end }}
+{{- else }}
+<div id="essay_page"><div id="article-container">{{ .Content }}</div></div>
+{{- end }}

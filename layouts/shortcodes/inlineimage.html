@@ -1,0 +1,18 @@
+{{- /*
+  {{< inlineimage "url" height="22px" >}}
+*/ -}}
+{{- $url := "" -}}
+{{- $style := "height:1.5em" -}}
+{{- if .IsNamedParams -}}
+  {{- $url = .Get "url" | default (.Get "src") | default "" -}}
+  {{- with .Get "height" }}{{ $style = printf "height:%s" . }}{{ end -}}
+{{- else -}}
+  {{- $url = trim (.Get 0 | default "") " " -}}
+  {{- range $i, $a := .Params -}}
+    {{- if gt $i 0 -}}
+      {{- $tmp := trim (printf "%v" $a) " " -}}
+      {{- if hasPrefix $tmp "height=" }}{{ $style = printf "height:%s" (strings.TrimPrefix "height=" $tmp) }}{{ end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+<img no-lazy class="inline" src="{{ $url | safeURL }}" style="{{ $style | safeCSS }}"/>

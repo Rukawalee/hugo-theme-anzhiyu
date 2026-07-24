@@ -1,0 +1,19 @@
+{{- $headings := .headings -}}
+{{- $number := .number -}}
+{{- $prefix := .prefix | default "" -}}
+{{- range $i, $h := $headings -}}
+  {{- $idx := add $i 1 -}}
+  {{- $num := printf "%s%d." $prefix $idx -}}
+  {{- $level := $h.Level -}}
+  <li class="toc-item toc-level-{{ $level }}">
+    <a class="toc-link" href="#{{ $h.ID }}">
+      {{- if $number -}}<span class="toc-number">{{ $num }}</span> {{ end -}}
+      <span class="toc-text">{{ $h.Title | safeHTML }}</span>
+    </a>
+    {{- with $h.Headings -}}
+    <ol class="toc-child">
+      {{- partial "widget/toc_list.html" (dict "headings" . "number" $number "prefix" $num) -}}
+    </ol>
+    {{- end -}}
+  </li>
+{{- end -}}

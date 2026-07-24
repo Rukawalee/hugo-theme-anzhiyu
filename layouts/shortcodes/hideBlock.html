@@ -1,0 +1,20 @@
+{{- /*
+  {{% hideBlock "Click" "#bg" "#color" %}}...{{% /hideBlock %}}
+*/ -}}
+{{- $display := "Click" -}}
+{{- $bg := "" -}}
+{{- $color := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $display = .Get "display" | default "Click" -}}
+  {{- $bg = .Get "bg" | default "" -}}
+  {{- $color = .Get "color" | default "" -}}
+{{- else -}}
+  {{- $display = .Get 0 | default "Click" -}}
+  {{- $bg = .Get 1 | default "" -}}
+  {{- $color = .Get 2 | default "" -}}
+{{- end -}}
+{{- $style := "" -}}
+{{- if $bg }}{{ $style = printf "%sbackground-color: %s;" $style $bg }}{{ end -}}
+{{- if $color }}{{ $style = printf "%scolor: %s" $style $color }}{{ end -}}
+<div class="hide-block"><button type="button" class="hide-button"{{ with $style }} style="{{ . | safeCSS }}"{{ end }}>{{ $display }}
+</button><div class="hide-content">{{ .Inner | markdownify }}</div></div>

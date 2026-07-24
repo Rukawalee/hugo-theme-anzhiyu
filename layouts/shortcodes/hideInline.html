@@ -1,0 +1,24 @@
+{{- /*
+  {{< hideInline content="..." display="Click" bg="#xxx" color="#yyy" >}}
+  {{< hideInline "content" "Click" "#bg" "#color" >}}
+*/ -}}
+{{- $content := "" -}}
+{{- $display := "Click" -}}
+{{- $bg := "" -}}
+{{- $color := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $content = .Get "content" | default "" -}}
+  {{- $display = .Get "display" | default "Click" -}}
+  {{- $bg = .Get "bg" | default "" -}}
+  {{- $color = .Get "color" | default "" -}}
+{{- else -}}
+  {{- $content = .Get 0 | default "" -}}
+  {{- $display = .Get 1 | default "Click" -}}
+  {{- $bg = .Get 2 | default "" -}}
+  {{- $color = .Get 3 | default "" -}}
+{{- end -}}
+{{- $style := "" -}}
+{{- if $bg }}{{ $style = printf "%sbackground-color: %s;" $style $bg }}{{ end -}}
+{{- if $color }}{{ $style = printf "%scolor: %s" $style $color }}{{ end -}}
+<span class="hide-inline"><button type="button" class="hide-button"{{ with $style }} style="{{ . | safeCSS }}"{{ end }}>{{ $display }}
+</button><span class="hide-content">{{ $content }}</span></span>

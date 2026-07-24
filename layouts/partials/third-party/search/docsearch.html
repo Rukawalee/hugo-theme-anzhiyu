@@ -1,0 +1,44 @@
+{{- $params := .Site.Params -}}
+{{- $doc := $params.docsearch | default dict -}}
+{{- $cdn := $params.CDN | default dict -}}
+{{- $opt := $cdn.option | default dict -}}
+{{- $css := $opt.docsearch_css | default "https://cdn.jsdelivr.net/npm/@docsearch/css@3/dist/style.css" -}}
+{{- $js := $opt.docsearch_js | default "https://cdn.jsdelivr.net/npm/@docsearch/js@3/dist/umd/index.js" -}}
+{{- $appId := $doc.appId | default "" -}}
+{{- $apiKey := $doc.apiKey | default "" -}}
+{{- $indexName := $doc.indexName | default "" -}}
+{{- $option := $doc.option | default dict -}}
+<div class="docsearch-wrap">
+  <div id="docsearch" style="display:none"></div>
+  <link rel="stylesheet" href="{{ $css }}">
+  <script src="{{ $js }}"></script>
+  <script>
+    (() => {
+      if (typeof docsearch !== 'function') return;
+      docsearch(Object.assign({
+        appId: {{ $appId | jsonify | safeJS }},
+        apiKey: {{ $apiKey | jsonify | safeJS }},
+        indexName: {{ $indexName | jsonify | safeJS }},
+        container: '#docsearch',
+      }, {{ $option | jsonify | safeJS }}));
+
+      const handleClick = () => {
+        const btn = document.querySelector('.DocSearch-Button');
+        if (btn) btn.click();
+      };
+
+      const searchClickFn = () => {
+        const el = document.querySelector('#search-button > .search');
+        if (!el) return;
+        if (window.anzhiyu && typeof anzhiyu.addEventListenerPjax === 'function') {
+          anzhiyu.addEventListenerPjax(el, 'click', handleClick);
+        } else {
+          el.addEventListener('click', handleClick);
+        }
+      };
+
+      searchClickFn();
+      window.addEventListener('pjax:complete', searchClickFn);
+    })();
+  </script>
+</div>

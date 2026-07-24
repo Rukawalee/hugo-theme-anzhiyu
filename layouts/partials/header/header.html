@@ -1,0 +1,79 @@
+{{- $params := .Site.Params -}}
+{{- $isHomeClass := "not-top-img" -}}
+{{- $topStyle := "" -}}
+{{- $disableTop := $params.disable_top_img | default false -}}
+{{- $pageTop := .Params.top_img -}}
+{{- if eq $pageTop false -}}{{- $disableTop = true -}}{{- end -}}
+{{- $topImg := false -}}
+{{- $isPost := and .IsPage (or (eq .Type "posts") (eq .Section "posts") (eq .Type "post")) -}}
+{{- if not $disableTop -}}
+  {{- if $isPost -}}
+    {{- $topImg = .Params.top_img | default .Params.cover | default $params.cover.default_cover -}}
+    {{- $isHomeClass = "post-bg" -}}
+  {{- else if .IsHome -}}
+    {{- if ne $params.index_img false -}}
+      {{- $topImg = $params.index_img | default $params.default_top_img | default false -}}
+    {{- end -}}
+    {{- if $topImg -}}
+      {{- $isHomeClass = "full_page" -}}
+      {{- $topStyle = printf "background: url(%s) top / cover no-repeat" ($topImg | relURL) -}}
+    {{- else -}}
+      {{- $isHomeClass = "not-top-img" -}}
+    {{- end -}}
+  {{- else -}}
+    {{- /* page / taxonomy: page.top_img || default_top_img; false → not-top-img */ -}}
+    {{- if ne $pageTop false -}}
+      {{- $topImg = $pageTop | default $params.default_top_img | default false -}}
+    {{- end -}}
+    {{- if $topImg -}}
+      {{- $isHomeClass = "not-home-page" -}}
+      {{- $topStyle = printf "background: url(%s) top / cover no-repeat" ($topImg | relURL) -}}
+    {{- else -}}
+      {{- $isHomeClass = "not-top-img" -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+<header id="page-header" class="{{ $isHomeClass }}"{{ with $topStyle }} style="{{ . | safeCSS }}"{{ end }}>
+  {{- partial "header/nav.html" . -}}
+  {{- if and $isPost .Params.bilibili_bg -}}
+    {{- partial "bili-banner/index.html" . -}}
+  {{- else if and $isPost (ne $isHomeClass "not-top-img") -}}
+    {{- partial "post/post-info.html" . -}}
+    {{- $dyn := $params.dynamicEffect | default dict -}}
+    {{- if ne $dyn.postTopWave false -}}
+    <section class="main-hero-waves-area waves-area">
+      <svg class="waves-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+        <defs>
+          <path id="gentle-wave" d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"></path>
+        </defs>
+        <g class="parallax">
+          <use href="#gentle-wave" x="48" y="0"></use>
+          <use href="#gentle-wave" x="48" y="3"></use>
+          <use href="#gentle-wave" x="48" y="5"></use>
+          <use href="#gentle-wave" x="48" y="7"></use>
+        </g>
+      </svg>
+    </section>
+    {{- end -}}
+    {{- $cover := .Params.cover | default .Params.top_img | default $params.cover.default_cover -}}
+    {{- if $cover -}}
+    <div id="post-top-cover">
+      <img id="post-top-bg" class="nolazyload" src="{{ $cover | relURL }}" alt="{{ .Title }}">
+    </div>
+    {{- end -}}
+  {{- else if and .IsHome (eq $isHomeClass "full_page") -}}
+    <div id="site-info">
+      <h1 id="site-title">{{ .Site.Title }}</h1>
+      {{- if ($params.subtitle.enable | default false) -}}
+      <div id="site-subtitle"><span id="subtitle">{{ with .Site.Params.site_subtitle }}{{ . }}{{ end }}</span></div>
+      {{- end -}}
+    </div>
+    <div id="scroll-down">
+      <i class="anzhiyufont anzhiyu-icon-angle-down scroll-down-effects"></i>
+    </div>
+  {{- else if and (not .IsHome) (not $isPost) (eq $isHomeClass "not-home-page") -}}
+    <div id="page-site-info">
+      <h1 id="site-title">{{ .Title | default .Site.Title }}</h1>
+    </div>
+  {{- end -}}
+</header>

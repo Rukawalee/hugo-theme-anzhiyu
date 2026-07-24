@@ -1,0 +1,60 @@
+- class_name: 时光轴相册
+  description: type=1 时间线样式
+  cover: /img/default_cover.jpg
+  path_name: /album/demo/
+  type: 1
+  top_background: /img/default_cover.jpg
+  top_link: /about/
+  top_btn_text: 关于我
+  album_list:
+    - content: 第一张记忆：主题移植启动
+      date: "2026-01-01"
+      image:
+        - /img/default.png
+      address: 示例地点
+      from: 开工
+    - content: 第二张记忆：阅读环完成
+      date: "2026-03-15"
+      image:
+        - /img/default_cover.jpg
+        - /img/default.png
+      address: 书桌
+      link: /posts/
+    - content: 第三张记忆：特殊页验收
+      date: "2026-07-01"
+      image:
+        - /img/default.png
+      address: 浏览器
+- class_name: 瀑布流相册
+  description: type=2 画廊样式
+  cover: /img/default.png
+  path_name: /album/gallery/
+  type: 2
+  rowHeight: 180
+  limit: 6
+  lazyload: true
+  btnLazyload: true
+  top_background: /img/default.png
+  top_link: /album/
+  top_btn_text: 全部相册
+  album_list:
+    - content: 画廊图 1
+      date: "2026-02-01"
+      image:
+        - /img/default_cover.jpg
+      address: A
+    - content: 画廊图 2
+      date: "2026-02-02"
+      image:
+        - /img/default.png
+      address: B
+    - content: 画廊图 3
+      date: "2026-02-03"
+      image:
+        - /img/default_cover.jpg
+      address: C
+    - content: 画廊图 4
+      date: "2026-02-04"
+      image:
+        - /img/default.png
+      address: D

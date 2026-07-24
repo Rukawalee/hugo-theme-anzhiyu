@@ -1,0 +1,34 @@
+{{- /* Upstream: includes/anzhiyu/tags-group-all.pug — marquee icon pairs for #random-banner */ -}}
+{{- with hugo.Data.creativity -}}
+<div id="skills-tags-group-all">
+  <div class="tags-group-wrapper">
+    {{- range . -}}
+      {{- $list := .creativity_list | default slice -}}
+      {{- $even := slice -}}{{- $odd := slice -}}
+      {{- range $idx, $item := $list -}}
+        {{- if eq (mod $idx 2) 0 -}}{{ $even = $even | append $item -}}
+        {{- else -}}{{ $odd = $odd | append $item -}}
+        {{- end -}}
+      {{- end -}}
+      {{- $n := math.Min (len $even) (len $odd) -}}
+      {{- /* render twice for seamless rowup animation */ -}}
+      {{- range seq 2 -}}
+        {{- range $i := seq 0 (sub $n 1) -}}
+          {{- $e := index $even $i -}}
+          {{- $o := index $odd $i -}}
+          {{- if and $e $o -}}
+          <div class="tags-group-icon-pair">
+            <div class="tags-group-icon" style="background: {{ $e.color }}">
+              <img class="no-lightbox" title="{{ $e.name }}" src="{{ $e.icon }}" alt="{{ $e.name }}">
+            </div>
+            <div class="tags-group-icon" style="background: {{ $o.color }}">
+              <img class="no-lightbox" title="{{ $o.name }}" src="{{ $o.icon }}" alt="{{ $o.name }}">
+            </div>
+          </div>
+          {{- end -}}
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  </div>
+</div>
+{{- end -}}

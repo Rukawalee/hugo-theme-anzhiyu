@@ -1,0 +1,37 @@
+{{- /*
+  {{< site title="Title" url="..." screenshot="..." avatar="..." description="..." >}}
+  {{< site "Title" "url=..." "screenshot=..." "avatar=..." "description=..." >}}
+*/ -}}
+{{- $title := "" -}}
+{{- $url := "" -}}
+{{- $screenshot := "" -}}
+{{- $avatar := "" -}}
+{{- $description := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $title = .Get "title" | default "" -}}
+  {{- $url = .Get "url" | default "" -}}
+  {{- $screenshot = .Get "screenshot" | default "" -}}
+  {{- $avatar = .Get "avatar" | default "" -}}
+  {{- $description = .Get "description" | default (.Get "desc") | default "" -}}
+{{- else -}}
+  {{- $title = .Get 0 | default "" -}}
+  {{- range $i, $a := .Params -}}
+    {{- if gt $i 0 -}}
+      {{- $tmp := trim (printf "%v" $a) " " -}}
+      {{- if hasPrefix $tmp "url=" }}{{ $url = strings.TrimPrefix "url=" $tmp }}
+      {{- else if hasPrefix $tmp "screenshot=" }}{{ $screenshot = strings.TrimPrefix "screenshot=" $tmp }}
+      {{- else if hasPrefix $tmp "avatar=" }}{{ $avatar = strings.TrimPrefix "avatar=" $tmp }}
+      {{- else if hasPrefix $tmp "description=" }}{{ $description = strings.TrimPrefix "description=" $tmp }}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+<a class="site-card" href="{{ $url | safeURL }}" data-title="{{ $description }}">
+  <div class="wrapper cover"><img class="cover fadeIn" src="{{ $screenshot | safeURL }}" alt="{{ $title }}"/></div>
+  <div class="info">
+    {{- with $avatar -}}
+    <img class="flink-avatar" src="{{ . | safeURL }}" alt=""/>
+    {{- end -}}
+    <span class="site-title">{{ $title }}</span>
+  </div>
+</a>

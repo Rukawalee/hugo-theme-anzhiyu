@@ -1,0 +1,39 @@
+- home_essay: true
+  title: 即刻短文
+  subTitle: 分享生活的点滴
+  tips: 记录平凡日子里的小确幸
+  top_background: /img/default_cover.jpg
+  buttonLink: /about/
+  buttonText: 关于我
+  limit: 12
+  essay_list:
+    - content: 欢迎使用 hugo-theme-anzhiyu 的即刻短文页。首页 bbTimeList 也会展示这些条目。
+      date: "2026-07-18 12:00:00"
+      from: 示例
+      address: 书房
+    - content: 第二则短文，附上链接跳转到 Hugo 文档。
+      date: "2026-07-17 18:30:00"
+      link: https://gohugo.io/
+      from: 外链
+    - content: 带图片的短文，验证图集渲染。
+      date: "2026-07-16 09:15:00"
+      image:
+        - /img/default.png
+        - /img/default_cover.jpg
+      address: 公园
+    - content: 主题移植第六阶段验收：pjax、侧栏、短代码与特殊页。
+      date: "2026-07-15 21:00:00"
+      from: 进度
+    - content: 今天把示例数据补齐，方便离线完整验证。
+      date: "2026-07-14 16:40:00"
+      from: 工程
+    - content: 深色模式与本地搜索已默认开启。
+      date: "2026-07-13 11:20:00"
+      from: 功能
+    - content: 友链、相册、好物、音乐馆页面都有演示数据。
+      date: "2026-07-12 08:05:00"
+      from: 页面
+    - content: Content Converter 位于 tools/hexo-to-hugo.js。
+      date: "2026-07-11 19:45:00"
+      link: https://github.com/Rukawalee/hugo-theme-anzhiyu
+      from: 工具

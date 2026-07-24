@@ -1,0 +1,9 @@
+{{ define "main" }}
+{{- $pages := where .Site.RegularPages "Type" "in" (slice "posts" "post") -}}
+{{- $paginator := .Paginate $pages -}}
+<div id="archive">
+  <div class="article-sort-title">{{ i18n "page.articles" }} - {{ len $pages }}</div>
+  {{- partial "post/article_sort.html" . -}}
+  {{- partial "pagination.html" . -}}
+</div>
+{{ end }}

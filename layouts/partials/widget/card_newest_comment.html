@@ -1,0 +1,13 @@
+{{- $params := .Site.Params -}}
+{{- $nc := $params.newest_comments | default dict -}}
+{{- if $nc.enable -}}
+<div class="console-card" id="card-newest-comments">
+  <div class="card-content">
+    <div class="author-content-item-tips">{{ i18n "console.interaction" | default "互动" }}</div>
+    <span class="author-content-item-title">{{ i18n "aside.card_newest_comments.headline" }}</span>
+  </div>
+  <div class="aside-list">
+    <span>{{ i18n "aside.card_newest_comments.loading_text" }}</span>
+  </div>
+</div>
+{{- end -}}

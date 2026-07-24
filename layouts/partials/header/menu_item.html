@@ -1,0 +1,32 @@
+{{- /* Upstream menu_item.pug — supports nested children via .Children */ -}}
+{{- $item := .item -}}
+{{- $hasChildren := false -}}
+{{- with $item.Children }}{{ if gt (len .) 0 }}{{ $hasChildren = true }}{{ end }}{{ end -}}
+{{- $icon := "" -}}
+{{- with $item.Params }}{{ with .icon }}{{ $icon = . }}{{ end }}{{ end -}}
+{{- if $hasChildren -}}
+<div class="menus_item">
+  <a class="site-page faa-parent animated-hover" href="javascript:void(0);">
+    {{- with $icon -}}<i class="anzhiyufont {{ . }}"></i>{{- end -}}
+    <span> {{ $item.Name }}</span>
+    <i class="anzhiyufont anzhiyu-icon-chevron-down"></i>
+  </a>
+  <ul class="menus_item_child">
+    {{- range $item.Children -}}
+    <li>
+      <a class="site-page child faa-parent animated-hover" href="{{ .URL | relLangURL }}">
+        {{- with .Params.icon -}}<i class="anzhiyufont {{ . }}"></i>{{- end -}}
+        <span>{{ .Name }}</span>
+      </a>
+    </li>
+    {{- end -}}
+  </ul>
+</div>
+{{- else -}}
+<div class="menus_item">
+  <a class="site-page faa-parent animated-hover" href="{{ $item.URL | relLangURL }}">
+    {{- with $icon -}}<i class="anzhiyufont {{ . }}"></i>{{- end -}}
+    <span> {{ $item.Name }}</span>
+  </a>
+</div>
+{{- end -}}

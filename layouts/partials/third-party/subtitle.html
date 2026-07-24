@@ -1,0 +1,74 @@
+{{- /* Upstream subtitle.pug — Typed.js / hitokoto sources */ -}}
+{{- $sub := .Site.Params.subtitle | default dict -}}
+{{- if $sub.enable | default false -}}
+{{- $effect := $sub.effect | default true -}}
+{{- $loop := $sub.loop | default true -}}
+{{- $source := int ($sub.source | default 1) -}}
+{{- $startDelay := $sub.startDelay | default 300 -}}
+{{- $typeSpeed := $sub.typeSpeed | default 150 -}}
+{{- $backSpeed := $sub.backSpeed | default 50 -}}
+{{- $strings := $sub.sub | default slice -}}
+{{- $typedJS := $sub.typed_js | default "https://cdn.jsdelivr.net/npm/typed.js@2.0.12" -}}
+<script>
+(function () {
+  var effect = {{ $effect }};
+  var loop = {{ $loop }};
+  var startDelay = {{ $startDelay }};
+  var typeSpeed = {{ $typeSpeed }};
+  var backSpeed = {{ $backSpeed }};
+  var subContent = {{ $strings | jsonify | safeJS }};
+  var source = {{ $source }};
+  var typedURL = {{ $typedJS | jsonify | safeJS }};
+
+  function runTyped(strings) {
+    var el = document.getElementById('subtitle');
+    if (!el) return;
+    if (!effect) {
+      el.innerHTML = strings[0] || '';
+      return;
+    }
+    function start() {
+      if (window.typed && window.typed.destroy) window.typed.destroy();
+      window.typed = new Typed('#subtitle', {
+        strings: strings,
+        startDelay: startDelay,
+        typeSpeed: typeSpeed,
+        loop: loop,
+        backSpeed: backSpeed
+      });
+    }
+    if (typeof Typed === 'function') start();
+    else if (typeof getScript === 'function') getScript(typedURL).then(start);
+    else {
+      var s = document.createElement('script');
+      s.src = typedURL;
+      s.onload = start;
+      document.head.appendChild(s);
+    }
+  }
+
+  function subtitleType() {
+    if (source === 1) {
+      fetch('https://v1.hitokoto.cn').then(function (r) { return r.json(); }).then(function (data) {
+        var sub = (subContent || []).slice();
+        if (!effect) {
+          document.getElementById('subtitle').innerHTML = data.hitokoto;
+        } else {
+          sub.unshift(data.hitokoto, '出自 ' + data.from);
+          runTyped(sub);
+        }
+      }).catch(function () { runTyped(subContent.length ? subContent : ['生活明朗，万物可爱']); });
+    } else if (source === 4 || source === 0) {
+      runTyped(subContent.length ? subContent : ['生活明朗，万物可爱']);
+    } else {
+      // sources 2/3 need third-party scripts; fall back to configured strings
+      runTyped(subContent.length ? subContent : ['生活明朗，万物可爱']);
+    }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', subtitleType);
+  else subtitleType();
+  document.addEventListener('pjax:complete', subtitleType);
+})();
+</script>
+{{- end -}}

@@ -1,0 +1,93 @@
+{{- /* Sidebar console panel */ -}}
+{{- $console := .Site.Params.console | default dict -}}
+{{- if ne $console.enable false }}
+{{- $reward := .Site.Params.reward | default dict -}}
+{{- $darkmode := .Site.Params.darkmode | default dict -}}
+{{- $navMusic := .Site.Params.nav_music | default dict -}}
+{{- $barrage := .Site.Params.comment_barrage_config | default dict -}}
+{{- $shortcut := .Site.Params.shortcutKey | default dict -}}
+<div id="console">
+  {{- with $reward.QR_code }}
+  <div class="console-card-group-reward">
+    <ul class="reward-all console-card">
+      {{- range . }}
+      <li class="reward-item">
+        <a href="{{ .link | default .img | relURL }}" target="_blank" rel="noopener">
+          <img class="post-qr-code-img" alt="{{ .text }}" src="{{ .img | relURL }}">
+        </a>
+        <div class="post-qr-code-desc">{{ .text }}</div>
+      </li>
+      {{- end }}
+    </ul>
+  </div>
+  {{- end }}
+  <div class="console-card-group">
+    <div class="console-card-group-left">
+      {{- if templates.Exists "partials/widget/card_newest_comment.html" -}}
+        {{- partial "widget/card_newest_comment.html" . -}}
+      {{- else -}}
+      <div class="card-widget card-recent-comment" id="card-newest-comments" style="display:none"></div>
+      {{- end -}}
+    </div>
+    <div class="console-card-group-right">
+      <div class="console-card tags">
+        <div class="card-content">
+          {{- if and $navMusic.enable $navMusic.console_widescreen_music }}
+          <div class="author-content-item-tips">{{ i18n "console.music" | default "音乐" }}</div>
+          <span class="author-content-item-title">{{ i18n "console.music_desc" | default "音乐" }}</span>
+          {{- else }}
+          <div class="author-content-item-tips">{{ i18n "console.interests" | default "兴趣标签" }}</div>
+          <span class="author-content-item-title">{{ i18n "console.interests_desc" | default "寻找你感兴趣的领域" }}</span>
+          <div class="card-tag-cloud">
+            {{- range first 20 .Site.Taxonomies.tags.ByCount }}
+            <a href="{{ .Page.RelPermalink }}" style="font-size: {{ add 12 (mul .Count 0.5) }}px">{{ .Page.Title }}<sup>{{ .Count }}</sup></a>
+            {{- end }}
+          </div>
+          {{- end }}
+        </div>
+      </div>
+      <div class="console-card history card-archives">
+        <div class="item-headline">
+          <i class="anzhiyufont anzhiyu-icon-box-archiv"></i>
+          <span>{{ i18n "console.articles" | default "文章" }}</span>
+        </div>
+        <div class="card-archives"><ul class="card-archive-list">
+          {{- range first 8 (where .Site.RegularPages "Type" "in" .Site.Params.mainSections) }}
+          <li class="card-archive-list-item">
+            <a class="card-archive-list-link" href="{{ .RelPermalink }}"><span class="card-archive-list-date">{{ .Date.Format "2006-01" }}</span><div class="card-archive-list-count-group"><span class="card-archive-list-count">{{ .Title }}</span></div></a>
+          </li>
+          {{- end }}
+        </ul></div>
+      </div>
+    </div>
+  </div>
+  <div class="button-group">
+    {{- if $darkmode.enable | default true }}
+    <div class="console-btn-item">
+      <a class="darkmode_switchbutton" title="{{ i18n "console.toggle_mode" | default "显示模式切换" }}" href="javascript:void(0);">
+        <i class="anzhiyufont anzhiyu-icon-moon"></i>
+      </a>
+    </div>
+    {{- end }}
+    <div class="console-btn-item" id="consoleHideAside" onclick="if(window.anzhiyu)anzhiyu.hideAsideBtn()" title="{{ i18n "console.toggle_aside" | default "侧边栏显示控制" }}">
+      <a class="asideSwitch"><i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i></a>
+    </div>
+    {{- if $barrage.enable }}
+    <div class="console-btn-item on" id="consoleCommentBarrage" onclick="if(window.anzhiyu)anzhiyu.switchCommentBarrage()" title="{{ i18n "console.toggle_barrage" | default "热评开关" }}">
+      <a class="commentBarrage"><i class="anzhiyufont anzhiyu-icon-message"></i></a>
+    </div>
+    {{- end }}
+    {{- if $navMusic.enable }}
+    <div class="console-btn-item" id="consoleMusic" onclick="if(window.anzhiyu)anzhiyu.musicToggle()" title="{{ i18n "console.toggle_music" | default "音乐开关" }}">
+      <a class="music-switch"><i class="anzhiyufont anzhiyu-icon-music"></i></a>
+    </div>
+    {{- end }}
+    {{- if $shortcut.enable }}
+    <div class="console-btn-item" id="consoleKeyboard" onclick="if(window.anzhiyu)anzhiyu.keyboardToggle()" title="{{ i18n "console.toggle_keyboard" | default "快捷键开关" }}">
+      <a class="keyboard-switch"><i class="anzhiyufont anzhiyu-icon-keyboard"></i></a>
+    </div>
+    {{- end }}
+  </div>
+  <div class="console-mask" onclick="if(window.anzhiyu)anzhiyu.hideConsole()" href="javascript:void(0);"></div>
+</div>
+{{- end }}

@@ -1,0 +1,32 @@
+{{- /* Album list — site.Data.album */ -}}
+{{- $bg := .Params.top_background | default "" -}}
+<div id="album">
+  <div class="author-content author-content-item album single"{{ if $bg }} style="background: url({{ $bg }}) top / cover no-repeat;"{{ end }}>
+    <div class="card-content">
+      <div class="author-content-item-tips">相册集</div>
+      <span class="author-content-item-title">这里是我的相册集哦</span>
+      <div class="content-bottom"><div class="tips">每一张照片都是一次美好的记忆。</div></div>
+      <div class="banner-button-group">
+        <a class="banner-button" href="{{ "about/" | relURL }}">
+          <i class="anzhiyufont anzhiyu-icon-arrow-circle-right" style="font-size: 1.5rem"></i>
+          <span class="banner-button-text">关于本人</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="card-album">
+    {{- range hugo.Data.album }}
+    <div class="card" onclick="location.href='{{ .path_name | relURL }}'">
+      <img class="card_cover" src="{{ .cover }}" alt="{{ .class_name }}">
+      <div class="card__content">
+        <p class="card__category">{{ .class_name }}</p>
+        <h3 class="card__heading">{{ .description }}</h3>
+      </div>
+    </div>
+    {{- end }}
+    <div class="album-content-nocover"></div>
+    <div class="album-content-nocover"></div>
+    <div class="album-content-nocover"></div>
+  </div>
+  {{ .Content }}
+</div>

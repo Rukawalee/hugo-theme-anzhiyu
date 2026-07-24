@@ -1,0 +1,95 @@
+{{- /* Album detail — match path against site.Data.album */ -}}
+<div id="album_detail">
+  {{- $current := .RelPermalink -}}
+  {{- range $i := hugo.Data.album }}
+    {{- if in $current $i.path_name }}
+      {{- if $i.album_list }}
+      {{- $type := $i.type | default 1 }}
+      <div class="author-content author-content-item album single"{{ with $i.top_background }} style="background: url({{ . }}) top / cover no-repeat;"{{ end }}>
+        <div class="card-content">
+          <div class="author-content-item-tips">相册集</div>
+          <span class="author-content-item-title">{{ $i.class_name }}</span>
+          <div class="content-bottom"><div class="tips">{{ $i.description }}</div></div>
+          <div class="banner-button-group">
+            <a class="banner-button" href="{{ ($i.top_link | default "about/") | relURL }}">
+              <i class="anzhiyufont anzhiyu-icon-arrow-circle-right" style="font-size: 1.5rem"></i>
+              <span class="banner-button-text">{{ $i.top_btn_text | default "关于我" }}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <section class="timeline page-1">
+        {{- if eq (int $type) 1 }}
+        <ul id="waterfall" class="list">
+          {{- range $item := $i.album_list }}
+          <li class="album-item">
+            <div class="album-content">
+              <p class="datacont">{{ $item.content }}
+                {{- with $item.image }}
+                <div class="album-container-img">
+                  {{- range . }}
+                  <a class="album-content-img" href="{{ . }}" target="_blank" data-fancybox="gallery" data-caption=""><img src="{{ . }}" alt=""></a>
+                  {{- end }}
+                  <div class="album-content-noimg"></div><div class="album-content-noimg"></div><div class="album-content-noimg"></div>
+                </div>
+                {{- end }}
+              </p>
+            </div>
+            <hr>
+            <div class="album-bottom">
+              <div class="album-info">
+                <div class="album-info-time">
+                  <i class="anzhiyufont anzhiyu-icon-instagram"></i>
+                  <time class="datatime" datetime="{{ $item.date }}">{{ $item.date }}</time>
+                </div>
+                {{- with $item.link }}
+                <a class="album-content-link" target="_blank" href="{{ . }}" rel="external nofollow"><i class="anzhiyufont anzhiyu-icon-link"></i>链接</a>
+                {{- end }}
+                {{- with $item.address }}
+                <div class="album-info-address"><i class="anzhiyufont anzhiyu-icon-location-dot"></i><span>{{ . }}</span></div>
+                {{- end }}
+                {{- with $item.from }}
+                <div class="album-info-from"><i class="anzhiyufont anzhiyu-icon-fw-fire"></i><span>{{ . }}</span></div>
+                {{- end }}
+              </div>
+              <div class="album-reply" onclick="if(window.rm)rm.rightMenuCommentText('{{ $item.content | htmlEscape }}')">
+                <i class="anzhiyufont anzhiyu-icon-message"></i>
+              </div>
+            </div>
+          </li>
+          {{- end }}
+        </ul>
+        {{- else if eq (int $type) 2 }}
+        {{- $rowHeight := $i.rowHeight | default 220 }}
+        {{- $limit := $i.limit | default 10 }}
+        {{- $lazyload := $i.lazyload | default true }}
+        {{- $btn := $i.btnLazyload | default false }}
+        {{- $dataStr := slice }}
+        {{- range $item := $i.album_list }}
+          {{- range $iten := $item.image }}
+            {{- $dataStr = $dataStr | append (dict "url" $iten "alt" $item.content "title" $item.content "address" $item.address) }}
+          {{- end }}
+        {{- end }}
+        <div class="type-gallery">
+          <div class="gallery">
+            <div class="fj-gallery{{ if $lazyload }} lazyload{{ end }}{{ if $btn }} btn_album_detail_lazyload{{ end }}{{ if $i.url }} url{{ else }} data{{ end }}" data-rowHeight="{{ $rowHeight }}" data-limit="{{ $limit }}">
+              {{- if $i.url }}
+              <span class="gallery-data">{{ $i.url }}</span>
+              {{- else }}
+              <span class="gallery-data">{{ $dataStr | jsonify | safeJS }}</span>
+              {{- end }}
+            </div>
+            {{- if $btn }}
+            <button class="gallery-load-more"><span>{{ i18n "load_more" | default "加载更多" }}</span><i class="anzhiyufont anzhiyu-icon-arrow-down"></i></button>
+            {{- else }}
+            <div id="album_detail_gallery_load_more"></div>
+            {{- end }}
+          </div>
+        </div>
+        {{- end }}
+      </section>
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  {{ .Content }}
+</div>

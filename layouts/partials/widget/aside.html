@@ -1,0 +1,42 @@
+{{- $params := .Site.Params -}}
+{{- $isPost := and .IsPage (or (eq .Type "posts") (eq .Section "posts") (eq .Type "post")) -}}
+{{- $showToc := and $isPost (ne .Params.toc false) (default true $params.toc.post) -}}
+<div id="aside-content" class="aside-content">
+  {{- if $isPost -}}
+    {{- if and $showToc $params.toc.style_simple -}}
+    <div class="sticky_layout">
+      {{- partial "widget/card_post_toc.html" . -}}
+    </div>
+    {{- else -}}
+      {{- partial "widget/card_author.html" . -}}
+      {{- partial "widget/card_announcement.html" . -}}
+      {{- partial "widget/card_weixin.html" . -}}
+      {{- partial "widget/card_top_self.html" . -}}
+      <div class="sticky_layout">
+        {{- if $showToc -}}
+          {{- partial "widget/card_post_toc.html" . -}}
+        {{- end -}}
+        {{- partial "widget/card_recent_post.html" . -}}
+        {{- partial "widget/card_ad.html" . -}}
+      </div>
+    {{- end -}}
+  {{- else -}}
+    {{- partial "widget/card_author.html" . -}}
+    {{- partial "widget/card_announcement.html" . -}}
+    {{- partial "widget/card_weixin.html" . -}}
+    {{- partial "widget/card_top_self.html" . -}}
+    {{- partial "widget/card_categories.html" . -}}
+    <div class="sticky_layout">
+      {{- if $showToc -}}
+        {{- partial "widget/card_post_toc.html" . -}}
+      {{- end -}}
+      <div class="card-widget">
+        {{- partial "widget/card_ad.html" . -}}
+        {{- partial "widget/card_tags.html" . -}}
+        {{- partial "widget/card_archives.html" . -}}
+        {{- partial "widget/card_webinfo.html" . -}}
+      </div>
+      {{- partial "widget/card_bottom_self.html" . -}}
+    </div>
+  {{- end -}}
+</div>

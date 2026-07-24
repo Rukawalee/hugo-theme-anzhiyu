@@ -1,0 +1,43 @@
+{{- /* Upstream effect.pug — optional mouse/canvas effects */ -}}
+{{- $p := .Site.Params -}}
+{{- with $p.fireworks }}{{ if .enable }}
+<canvas class="fireworks"{{ with .mobile }} mobile="{{ . }}"{{ end }}></canvas>
+<script src="{{ .js | default "https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/fireworks.min.js" }}" async></script>
+{{ end }}{{ end -}}
+{{- with $p.canvas_ribbon }}{{ if .enable }}
+<script defer id="ribbon" src="{{ .js | default "https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-ribbon.min.js" }}" size="{{ .size | default 150 }}" alpha="{{ .alpha | default 0.6 }}" zIndex="{{ .zIndex | default -1 }}" mobile="{{ .mobile | default false }}" data-click="{{ .click_to_change | default false }}"></script>
+{{ end }}{{ end -}}
+{{- with $p.canvas_fluttering_ribbon }}{{ if .enable }}
+<script defer id="fluttering_ribbon" mobile="{{ .mobile | default false }}" src="{{ .js | default "https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/canvas-fluttering-ribbon.min.js" }}"></script>
+{{ end }}{{ end -}}
+{{- with $p.canvas_nest }}{{ if .enable }}
+<script id="canvas_nest" defer color="{{ .color | default "0,0,255" }}" opacity="{{ .opacity | default 0.7 }}" zIndex="{{ .zIndex | default -1 }}" count="{{ .count | default 99 }}" mobile="{{ .mobile | default false }}" src="{{ .js | default "https://cdn.jsdelivr.net/npm/canvas-nest.js@2.0.4/dist/canvas-nest.js" }}"></script>
+{{ end }}{{ end -}}
+{{- with $p.activate_power_mode }}{{ if .enable }}
+<script src="{{ .js | default "https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/activate-power-mode.min.js" }}"></script>
+<script>
+  if (window.POWERMODE) {
+    POWERMODE.colorful = {{ default true .colorful }};
+    POWERMODE.shake = {{ default false .shake }};
+    POWERMODE.mobile = {{ default false .mobile }};
+    document.body.addEventListener('input', POWERMODE);
+  }
+</script>
+{{ end }}{{ end -}}
+{{- with $p.click_heart }}{{ if .enable }}
+<script id="click-heart" src="{{ .js | default "https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/click-heart.min.js" }}" async mobile="{{ .mobile | default false }}"></script>
+{{ end }}{{ end -}}
+{{- with $p.ClickShowText }}{{ if .enable }}
+<script id="click-show-text" src="{{ .js | default "https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/click-show-text.min.js" }}" async
+  data-mobile="{{ .mobile | default false }}"
+  data-text="{{ delimit (.text | default (slice "富强" "民主" "文明")) "," }}"
+  data-fontsize="{{ .fontSize | default "15px" }}"
+  data-random="{{ .random | default false }}"></script>
+{{ end }}{{ end -}}
+{{- with $p.universe }}{{ if .enable }}
+<canvas id="universe"></canvas>
+<script async src="{{ .js | default "https://cdn.cbd.int/anzhiyu-theme-static@1.0.0/dark/dark.js" }}"></script>
+{{ end }}{{ end -}}
+{{- with $p.bubble }}{{ if .enable }}
+<script async data-pjax src="{{ .js | default "https://cdn.cbd.int/anzhiyu-theme-static@1.0.1/bubble/bubble.js" }}"></script>
+{{ end }}{{ end -}}

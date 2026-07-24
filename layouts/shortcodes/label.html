@@ -1,0 +1,14 @@
+{{- /*
+  {{< label "text" "default" >}}
+  {{< label text="text" color="blue" >}}
+*/ -}}
+{{- $text := "" -}}
+{{- $className := "default" -}}
+{{- if .IsNamedParams -}}
+  {{- $text = .Get "text" | default "" -}}
+  {{- $className = .Get "color" | default (.Get "class") | default "default" -}}
+{{- else -}}
+  {{- $text = .Get 0 | default "" -}}
+  {{- $className = .Get 1 | default "default" -}}
+{{- end -}}
+<mark class="hl-label {{ $className }}">{{ $text }}</mark>

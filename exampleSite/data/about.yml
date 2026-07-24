@@ -1,0 +1,96 @@
+- subtitle: 生活明朗，万物可爱
+  avatarImg: /img/default_cover.jpg
+  name: AnZhiYu
+  description: Hugo Theme AnZhiYu 示例关于页
+  helloAbout: Hello, World!
+  avatarSkills:
+    left: ["设计", "写作", "摄影"]
+    right: ["开发", "开源", "阅读"]
+  aboutsiteTips:
+    tips: 关于本站
+    title1: 记录
+    title2: 生活与技术
+    word: ["分享", "成长", "热爱", "坚持"]
+  skillsTips:
+    tips: 技能
+    title: 开启创造力
+  careers:
+    tips: 生涯
+    title: 无限进步
+    img: /img/default_cover.jpg
+    list:
+      - color: "#357ef5"
+        desc: 学生 → 工程师
+      - color: "#f2b94b"
+        desc: 工程师 → 独立开发
+  statistic:
+    demo: true
+    cover: /img/default_cover.jpg
+    link: /archives/
+    text: 查看文章
+  map:
+    title: 现在住在
+    StrengthenTitle: 地球
+    background: /img/default_cover.jpg
+    backgroundDark: /img/default.png
+  selfInfo:
+    selfInfoTips1: 生于
+    selfInfoContentYear: "2000"
+    selfInfoTips2: 喜欢
+    selfInfoContent2: 创造
+    selfInfoTips3: 目前身份
+    selfInfoContent3: 博主
+  personalities:
+    author_name: ENFP
+    personality_type: 竞选者
+    personality_type_color: "#ac899c"
+    personality_img: /img/default.png
+    photo_url: /img/default_cover.jpg
+    name_url: https://www.16personalities.com/
+  maxim:
+    maxim_tips: 座右铭
+    maxim_top: 生活明朗
+    maxim_bottom: 万物可爱
+  buff:
+    buff_tips: 特长
+    buff_top: 持续学习
+    buff_bottom: 保持好奇
+  game:
+    game_tips: 爱好游戏
+    game_title: 原神
+    game_uid: UID:10086001
+    game_bg: /img/default_cover.jpg
+  comic:
+    comic_tips: 爱好番剧
+    comic_title: 追番
+    comic_list:
+      - name: 示例番剧 A
+        cover: /img/default.png
+        href: /bangumi/
+      - name: 示例番剧 B
+        cover: /img/default_cover.jpg
+        href: /bangumi/
+      - name: 示例番剧 C
+        cover: /img/default.png
+        href: /album/
+  like:
+    like_tips: 关注偏好
+    like_title: 数码科技
+    like_bottom: 保持热情
+    like_bg: /img/default_cover.jpg
+  music:
+    music_tips: 音乐偏好
+    music_title: 音乐
+    music_link: /music/
+    music_bg: /img/default.png
+  reward_list:
+    - name: 小明
+      amount: 50
+      datatime: "2026-06-01"
+    - name: 小红
+      amount: 20
+      datatime: "2026-05-12"
+    - name: 路过的朋友
+      amount: 6.66
+      suffix: ""
+      datatime: "2026-04-20"

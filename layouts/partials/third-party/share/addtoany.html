@@ -1,0 +1,12 @@
+{{- $params := .Site.Params -}}
+{{- $addtoany := $params.addtoany | default dict -}}
+{{- $items := split (default "facebook,twitter,wechat,sina_weibo,email,copy_link" $addtoany.item) "," -}}
+<div class="addtoany">
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+    {{- range $items -}}
+    <a class="a2a_button_{{ . | strings.TrimSpace }}"></a>
+    {{- end -}}
+    <a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+  </div>
+</div>
+<script async src="https://static.addtoany.com/menu/page.js"></script>

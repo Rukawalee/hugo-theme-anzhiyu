@@ -1,0 +1,23 @@
+{{- /* Left-bottom music ball (MetingJS shell); prefer third-party/nav_music if present */ -}}
+{{- $navMusic := .Site.Params.nav_music | default dict -}}
+{{- $id := $navMusic.id | default "" -}}
+{{- if and (or $navMusic.enable $navMusic.console_widescreen_music) (ne $id "") }}
+{{- $server := $navMusic.server | default "netease" -}}
+{{- $volume := $navMusic.volume | default 0.7 -}}
+<div id="nav-music">
+  <a id="nav-music-hoverTips" onclick="if(window.anzhiyu)anzhiyu.musicToggle()" accesskey="m">{{ i18n "console.toggle_music" | default "播放音乐" }}</a>
+  <div id="console-music-bg"></div>
+  {{- if $id }}
+  <meting-js
+    id="{{ $id }}"
+    server="{{ $server }}"
+    type="playlist"
+    mutex="true"
+    preload="none"
+    theme="var(--anzhiyu-main)"
+    data-lrctype="0"
+    order="random"
+    volume="{{ $volume }}"></meting-js>
+  {{- end }}
+</div>
+{{- end }}

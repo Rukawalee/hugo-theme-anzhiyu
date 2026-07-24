@@ -1,0 +1,192 @@
+footer:
+  framework: 框架
+  theme: 主題
+  back_to_top: 返回頂部
+  friend_links: 友鏈
+  refresh_friends: 換一批友情連結
+  cc_license: CC協議
+copy:
+  success: 複製成功
+  error: 複製錯誤
+  noSupport: 瀏覽器不支援
+page:
+  articles: 文章總覽
+  tag: 標籤
+  category: 分類
+  archives: 歸檔
+card_post_count: 條評論
+sticky: 置頂
+no_title: 無題
+post:
+  created: 發表於
+  updated: 更新於
+  wordcount: 字數總計
+  min2read: 閱讀時長
+  min2read_unit: 分鐘
+  new: 最新
+  unread: 未讀
+  page_pv: 閱讀量
+  comments: 評論數
+  copyright:
+    author: 文章作者
+    link: 文章連結
+    copyright_notice: 版權聲明
+    copyright_content: 本部落格所有文章除特別聲明外，均採用 <a href="%s" target="_blank">%s</a> 許可協議。轉載請註明來自
+      <a href="%s" target="_blank">%s</a>！
+  recommend: 相關推薦
+  edit:
+    github: 在 GitHub 上編輯
+    yuque: 在 語雀 上編輯
+search:
+  title: 搜尋
+  load_data: 資料庫載入中
+  algolia_search:
+    input_placeholder: 輸入關鍵字後按下回車查找
+    hits_empty: 找不到您查詢的內容：${query}
+    hits_stats: 找到 ${hits} 條結果，用時 ${time} 毫秒
+  local_search:
+    input_placeholder: 搜尋文章
+    hits_empty: 找不到您查詢的內容：${query}
+pagination:
+  prev: 上一篇
+  next: 下一篇
+comment: 評論
+aside:
+  articles: 文章
+  tags: 標籤
+  categories: 分類
+  card_announcement: 公告
+  card_categories: 分類
+  card_tags: 標籤
+  card_archives: 歸檔
+  card_recent_post: 最近发布
+  card_webinfo:
+    headline: 網站資訊
+    article_name: 文章數目
+    runtime:
+      name: 已執行時間
+      unit: 天
+    last_push_date:
+      name: 最後更新時間
+    site_wordcount: 本站總字數
+    site_uv_name: 本站訪客數
+    site_pv_name: 本站總訪問量
+  more_button: 檢視更多
+  card_newest_comments:
+    headline: 最新評論
+    loading_text: 正在載入中...
+    error: 無法獲取評論，請確認相關配置是否正確
+    empty: 沒有評論
+    image: 圖片
+    link: 連結
+    code: 程式碼
+  card_toc: 文章目錄
+  display_mode: 顯示模式
+  function: 功能
+date_suffix:
+  just: 剛剛
+  min: 分鐘前
+  hour: 小時前
+  day: 天前
+  month: 個月前
+donate: 打賞
+share: 分享
+rightside:
+  readmode_title: 閱讀模式
+  translate_title: 簡繁轉換
+  night_mode_title: 淺色和深色模式轉換
+  back_to_top: 回到頂部
+  toc: 目錄
+  scroll_to_comment: 直達評論
+  setting: 設定
+  aside: 單欄和雙欄切換
+  chat: 聊天
+copy_copyright:
+  author: 作者
+  link: 連結
+  source: 來源
+  info: 著作權歸作者所有。商業轉載請聯絡作者獲得授權，非商業轉載請註明出處。
+  copySuccess: 複製成功，複製和轉載請標注本文地址
+Snackbar:
+  chs_to_cht: 你已切換為繁體
+  cht_to_chs: 你已切換為簡體
+  day_to_night: 你已切換為深色模式
+  night_to_day: 你已切換為淺色模式
+  copy_equipment_name: 已複製裝備名稱
+loading: 載入中...
+load_more: 載入更多
+error404: 頁面沒有找到
+shortcut:
+  title: 部落格快捷鍵
+  close_shortcut: 關閉快捷鍵功能
+  toggle_console: 打開/關閉中控台
+  play_music: 播放/暫停音樂
+  toggle_mode: 深色/淺色顯示模式
+  search: 站內搜尋
+  random: 隨機訪問
+  home: 返回首頁
+  fish_pond: 友鏈魚塘
+  links: 友鏈頁面
+  about: 關於本站
+  context_menu: 原版/本站右鍵選單
+flink:
+  title: 友情連結
+  friend_links: 友鏈
+  latest_articles: 最新文章訂閱
+  about_me: 關於本人
+  fishing: 🎣 釣魚
+  all_links: 全部友鏈
+  random_visit: 隨機訪問
+  apply_link: 申請友鏈
+  recommend: 薦
+console:
+  title: 中控台
+  interaction: 互動
+  music: 音樂
+  music_desc: 靈魂的碰撞💥
+  interests: 興趣點
+  interests_desc: 尋找你感興趣的領域
+  articles: 文章
+  toggle_mode: 顯示模式切換
+  toggle_aside: 邊欄顯示控制
+  toggle_barrage: 熱評開關
+  toggle_music: 音樂開關
+  toggle_keyboard: 快捷鍵開關
+reward:
+  title: 讚賞作者
+  button: 打賞作者
+  thanks: 感謝你賜予我前進的力量
+  list: 讚賞者名單
+  list_desc: 因為你們的支持讓我意識到寫文章的價值🙏
+nav:
+  travelling: 隨機前往一個開往項目網站
+  random_post: 隨機前往一個文章
+  search: 搜尋🔍
+  toggle_menu: 切換
+about:
+  title: 關於我
+  hello: 你好，很高興認識你👋
+  im: 我叫
+  data: 數據
+  visit_stats: 訪問統計
+  stats_from: 統計資訊來自
+  enjoy_music_with: 跟 %s 一起欣賞更多音樂
+  more_recommend: 更多推薦
+  thanks: 致謝
+  reward_list: 讚賞名單
+  reward_thanks: 感謝因為有你們，讓我更加有創作的動力。
+  last_update: 最新更新時間：
+  charge_for_ta: 為TA充電
+  total_people: 共 %s 人
+  personality: 性格
+  personality_img_alt: 人格
+  selfie_alt: 自拍
+  learn_more_at: 在 %s 了解更多關於 %s
+  stats:
+    today_visitors: 今日人數
+    today_views: 今日訪問
+    yesterday_visitors: 昨日人數
+    yesterday_views: 昨日訪問
+    month_views: 本月訪問
+    total_views: 總訪問量
+    fetch_failed: 統計數據獲取失敗

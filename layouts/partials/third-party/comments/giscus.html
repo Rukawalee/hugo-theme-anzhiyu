@@ -1,0 +1,67 @@
+{{- /* Giscus — full upstream-equivalent loader */ -}}
+{{- $g := .Site.Params.giscus | default dict -}}
+{{- if not ($g.repo | default "") }}{{/* credentials required */}}{{ else }}
+{{- $c := .Site.Params.comments | default dict -}}
+{{- $themes := $g.theme | default dict -}}
+{{- $light := $themes.light | default "light" -}}
+{{- $dark := $themes.dark | default "dark" -}}
+{{- $option := $g.option | default dict -}}
+{{- $lazyload := $c.lazyload | default false -}}
+{{- $use := $c.use | default slice -}}
+{{- if reflect.IsSlice $use | not }}{{ if $use }}{{ $use = slice $use }}{{ else }}{{ $use = slice }}{{ end }}{{ end -}}
+{{- $norm := slice -}}
+{{- range $use }}{{ $norm = $norm | append (. | title) }}{{ end -}}
+{{- $first := "" }}{{ if gt (len $norm) 0 }}{{ $first = index $norm 0 }}{{ end -}}
+{{- $giscusUrl := $g.js | default "https://giscus.app/client.js" -}}
+<script>
+(() => {
+  const giscusOrigin = new URL({{ $giscusUrl | jsonify | safeJS }}).origin;
+  const getGiscusTheme = (theme) => theme === 'dark' ? {{ $dark | jsonify | safeJS }} : {{ $light | jsonify | safeJS }};
+
+  const loadGiscus = () => {
+    const wrap = document.getElementById('giscus-wrap');
+    if (!wrap || wrap.querySelector('script, iframe')) return;
+    const config = Object.assign({
+      src: {{ $giscusUrl | jsonify | safeJS }},
+      'data-repo': {{ $g.repo | default "" | jsonify | safeJS }},
+      'data-repo-id': {{ $g.repo_id | default "" | jsonify | safeJS }},
+      'data-category-id': {{ $g.category_id | default "" | jsonify | safeJS }},
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true
+    }, {{ $option | jsonify | safeJS }});
+    const ele = document.createElement('script');
+    for (const key in config) {
+      if (config[key] != null && config[key] !== '') ele.setAttribute(key, config[key]);
+    }
+    wrap.appendChild(ele);
+  };
+
+  const changeGiscusTheme = (theme) => {
+    const iframe = document.querySelector('iframe.giscus-frame');
+    if (!iframe) return;
+    iframe.contentWindow.postMessage({
+      giscus: { setConfig: { theme: getGiscusTheme(theme) } }
+    }, giscusOrigin);
+  };
+
+  if (window.anzhiyu && typeof anzhiyu.addGlobalFn === 'function') {
+    anzhiyu.addGlobalFn('themeChange', changeGiscusTheme, 'giscus');
+  }
+
+  const isPrimary = {{ $first | jsonify | safeJS }} === 'Giscus';
+  const lazy = {{ $lazyload | jsonify | safeJS }};
+  // Upstream: primary (or lazyload mode) loads now; secondary waits on loadOtherComment
+  if (isPrimary || lazy) {
+    if (!lazy && window.anzhiyu && typeof anzhiyu.loadComment === 'function') {
+      anzhiyu.loadComment(document.getElementById('giscus-wrap'), loadGiscus);
+    } else {
+      loadGiscus();
+    }
+  } else {
+    window.loadOtherComment = loadGiscus;
+  }
+})();
+</script>
+{{- end }}

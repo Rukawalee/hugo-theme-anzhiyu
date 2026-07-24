@@ -1,0 +1,57 @@
+{{- /*
+  {{< intCard link img tip cardTitle logo title subTitle >}}
+*/ -}}
+{{- $link := "" -}}
+{{- $img := "" -}}
+{{- $tip := "最爱" -}}
+{{- $cardTitle := "最爱" -}}
+{{- $logo := "" -}}
+{{- $title := "" -}}
+{{- $subTitle := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $link = .Get "link" | default (.Get "url") | default "" -}}
+  {{- $img = .Get "img" | default "" -}}
+  {{- $tip = .Get "tip" | default "最爱" -}}
+  {{- $cardTitle = .Get "cardTitle" | default "最爱" -}}
+  {{- $logo = .Get "logo" | default "" -}}
+  {{- $title = .Get "title" | default "" -}}
+  {{- $subTitle = .Get "subTitle" | default "" -}}
+{{- else -}}
+  {{- $link = .Get 0 | default "" -}}
+  {{- $img = .Get 1 | default "" -}}
+  {{- $tip = .Get 2 | default "最爱" -}}
+  {{- $cardTitle = .Get 3 | default "最爱" -}}
+  {{- $logo = .Get 4 | default "" -}}
+  {{- $title = .Get 5 | default "" -}}
+  {{- $subTitle = .Get 6 | default "" -}}
+{{- end -}}
+{{- $hasBottom := or $logo $title $subTitle -}}
+{{- $radius := "" -}}
+{{- $height := "" -}}
+{{- if not $hasBottom -}}
+  {{- $radius = "height: 100%;border-radius:15px;" -}}
+  {{- $height = "height: 416px;" -}}
+{{- end -}}
+<div class="introduction-card"{{ with $height }} style="{{ . | safeCSS }}"{{ end }}>
+  <div class="introduction-card-top"{{ with $radius }} style="{{ . | safeCSS }}"{{ end }}>
+    <div class="int-card-info">
+      <div class="int-tip">{{ $tip }}</div>
+      <div class="int-cardTitle">{{ $cardTitle }}</div>
+    </div>
+    <img src="{{ $img | safeURL }}" class="no-lightbox" alt="introduction"/>
+  </div>
+  {{- if $hasBottom }}
+  <div class="introduction-card-bottom">
+    <div class="left">
+      <img src="{{ $logo | safeURL }}" class="no-lightbox" alt="introduction"/>
+      <div class="info">
+        <div class="title">{{ $title }}</div>
+        <div class="subTitle">{{ $subTitle }}</div>
+      </div>
+    </div>
+    <div class="right">
+      <a href="{{ $link | safeURL }}" tabindex="-1" class="no-text-decoration">前往</a>
+    </div>
+  </div>
+  {{- end }}
+</div>

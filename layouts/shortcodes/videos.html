@@ -1,0 +1,20 @@
+{{- /*
+  {{% videos "class" 2 %}}
+  {{% video "..." %}}
+  {{% /videos %}}
+*/ -}}
+{{- $cls := "" -}}
+{{- $col := 0 -}}
+{{- if .IsNamedParams -}}
+  {{- $cls = .Get "class" | default "" -}}
+  {{- $col = .Get "col" | default 0 | int -}}
+{{- else -}}
+  {{- $cls = .Get 0 | default "" -}}
+  {{- $col = .Get 1 | default 0 | int -}}
+{{- end -}}
+{{- if $cls }}{{ $cls = printf " %s" $cls }}{{ end -}}
+{{- if gt $col 0 -}}
+<div class="videos{{ $cls }}" col="{{ $col }}">{{ .Inner }}</div>
+{{- else -}}
+<div class="videos{{ $cls }}">{{ .Inner }}</div>
+{{- end -}}

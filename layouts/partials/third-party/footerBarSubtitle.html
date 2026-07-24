@@ -1,0 +1,99 @@
+{{- /* Upstream footerBarSubtitle.pug — Typed.js / hitokoto into #footer-type-tips */ -}}
+{{- $bar := (.Site.Params.footer.footerBar | default dict) -}}
+{{- $sub := $bar.subTitle | default dict -}}
+{{- if $sub.enable | default false -}}
+{{- $effect := $sub.effect | default true -}}
+{{- $loop := $sub.loop | default true -}}
+{{- $source := int ($sub.source | default 1) -}}
+{{- $startDelay := $sub.startDelay | default 300 -}}
+{{- $typeSpeed := $sub.typeSpeed | default 150 -}}
+{{- $backSpeed := $sub.backSpeed | default 50 -}}
+{{- $strings := $sub.sub | default (slice) -}}
+{{- $typedJS := $sub.typed_js | default (.Site.Params.asset.typed | default "https://cdn.jsdelivr.net/npm/typed.js@2.0.12") -}}
+<script>
+(function () {
+  var effect = {{ if $effect }}true{{ else }}false{{ end }};
+  var loop = {{ if $loop }}true{{ else }}false{{ end }};
+  var startDelay = {{ $startDelay }};
+  var typeSpeed = {{ $typeSpeed }};
+  var backSpeed = {{ $backSpeed }};
+  var subContent = {{ $strings | jsonify | safeJS }};
+  var source = {{ $source }};
+  var typedURL = {{ $typedJS | jsonify | safeJS }};
+  var siteSubtitle = {{ (.Site.Params.site_subtitle | default "") | jsonify | safeJS }};
+
+  function runTyped(strings) {
+    var el = document.getElementById('footer-type-tips');
+    if (!el) return;
+    if (!effect) {
+      el.innerHTML = (strings && strings[0]) || '';
+      return;
+    }
+    function start() {
+      if (window.typedFooter && window.typedFooter.destroy) window.typedFooter.destroy();
+      window.typedFooter = new Typed('#footer-type-tips', {
+        strings: strings,
+        startDelay: startDelay,
+        typeSpeed: typeSpeed,
+        loop: loop,
+        backSpeed: backSpeed
+      });
+    }
+    if (typeof Typed === 'function') start();
+    else {
+      var s = document.createElement('script');
+      s.src = typedURL;
+      s.onload = start;
+      s.onerror = function () {
+        el.innerHTML = (strings && strings[0]) || siteSubtitle || '';
+      };
+      document.head.appendChild(s);
+    }
+  }
+
+  function subtitleType() {
+    var fallback = (Array.isArray(subContent) && subContent.length)
+      ? subContent.slice()
+      : (siteSubtitle ? [siteSubtitle] : ['生活明朗，万物可爱']);
+    if (source === 1) {
+      fetch('https://v1.hitokoto.cn').then(function (r) { return r.json(); }).then(function (data) {
+        if (!effect) {
+          document.getElementById('footer-type-tips').innerHTML = data.hitokoto;
+        } else {
+          var sub = fallback.slice();
+          sub.unshift(data.hitokoto, '出自 ' + data.from);
+          runTyped(sub);
+        }
+      }).catch(function () { runTyped(fallback); });
+    } else if (source === 3) {
+      function loadJinri() {
+        if (window.jinrishici && typeof window.jinrishici.load === 'function') {
+          window.jinrishici.load(function (result) {
+            if (!effect) {
+              document.getElementById('footer-type-tips').innerHTML = result.data.content;
+            } else {
+              var sub = fallback.slice();
+              sub.unshift(result.data.content);
+              runTyped(sub);
+            }
+          });
+          return;
+        }
+        var s = document.createElement('script');
+        s.src = 'https://sdk.jinrishici.com/v2/browser/jinrishici.js';
+        s.onload = loadJinri;
+        s.onerror = function () { runTyped(fallback); };
+        document.head.appendChild(s);
+      }
+      loadJinri();
+    } else {
+      runTyped(fallback);
+    }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', subtitleType);
+  else subtitleType();
+  document.addEventListener('pjax:complete', subtitleType);
+})();
+</script>
+{{- end -}}

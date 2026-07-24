@@ -1,0 +1,28 @@
+{{- /* Keyboard shortcut tips panel */ -}}
+{{- $shortcut := .Site.Params.shortcutKey | default dict -}}
+{{- if $shortcut.enable }}
+<div id="keyboard-tips" class="">
+  <div class="keyboardTitle">{{ i18n "shortcut.title" | default "博客快捷键" }}</div>
+  <div class="keybordList">
+    {{- $items := slice
+      (dict "key" "K" "content" (i18n "shortcut.close_shortcut" | default "关闭快捷键功能"))
+      (dict "key" "A" "content" (i18n "shortcut.toggle_console" | default "打开/关闭中控台"))
+      (dict "key" "M" "content" (i18n "shortcut.play_music" | default "播放/暂停音乐"))
+      (dict "key" "D" "content" (i18n "shortcut.toggle_mode" | default "深色/浅色显示模式"))
+      (dict "key" "S" "content" (i18n "shortcut.search" | default "站内搜索"))
+      (dict "key" "R" "content" (i18n "shortcut.random" | default "随机访问"))
+      (dict "key" "H" "content" (i18n "shortcut.home" | default "返回首页"))
+      (dict "key" "F" "content" (i18n "shortcut.fish_pond" | default "友链鱼塘"))
+      (dict "key" "L" "content" (i18n "shortcut.links" | default "友链页面"))
+      (dict "key" "P" "content" (i18n "shortcut.about" | default "关于本站"))
+      (dict "key" "I" "content" (i18n "shortcut.context_menu" | default "原版/本站右键菜单"))
+    -}}
+    {{- range $items }}
+    <div class="keybordItem">
+      <div class="keyGroup"><div class="key">shift {{ .key }}</div></div>
+      <div class="keyContent"><div class="content">{{ .content }}</div></div>
+    </div>
+    {{- end }}
+  </div>
+</div>
+{{- end }}

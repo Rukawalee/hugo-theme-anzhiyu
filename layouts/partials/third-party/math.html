@@ -1,0 +1,10 @@
+{{- /* Math: KaTeX / MathJax dispatcher */ -}}
+{{- $mj := .Site.Params.mathjax | default dict -}}
+{{- $kt := .Site.Params.katex | default dict -}}
+{{- $isContent := or .IsPage .IsHome -}}
+{{- if and $mj.enable (or $mj.per_page .Params.mathjax .Params.math) }}
+  {{ partial "third-party/math/mathjax.html" . }}
+{{- end }}
+{{- if and $kt.enable (or $kt.per_page .Params.katex .Params.math) }}
+  {{ partial "third-party/math/katex.html" . }}
+{{- end }}

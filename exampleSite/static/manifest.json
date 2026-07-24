@@ -1,0 +1,23 @@
+{
+  "name": "AnZhiYu Hugo",
+  "short_name": "AnZhiYu",
+  "description": "Hugo 主题 AnZhiYu 示例站点",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f9fe",
+  "theme_color": "#425AEF",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "/img/512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/img/default.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}

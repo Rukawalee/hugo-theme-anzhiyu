@@ -1,0 +1,23 @@
+{{- /*
+  Resolve a theme/static asset path with optional CDN base.
+  Usage: partial "helpers/asset_url.html" (dict "path" "js/foo.js" "ctx" .)
+  Params:
+    - asset_base_url: absolute base (e.g. https://cdn.example.com/theme/)
+    - asset.<name>: optional per-file override maps used by callers
+*/ -}}
+{{- $path := .path | default "" -}}
+{{- $ctx := .ctx | default . -}}
+{{- if not $path -}}
+{{- else if or (hasPrefix $path "http://") (hasPrefix $path "https://") (hasPrefix $path "//") -}}
+  {{- $path -}}
+{{- else -}}
+  {{- $base := "" -}}
+  {{- with $ctx.Site.Params.asset_base_url -}}{{- $base = . -}}{{- end -}}
+  {{- if $base -}}
+    {{- $base = strings.TrimSuffix "/" $base -}}
+    {{- $rel := strings.TrimPrefix "/" $path -}}
+    {{- printf "%s/%s" $base $rel -}}
+  {{- else -}}
+    {{- $path | relURL -}}
+  {{- end -}}
+{{- end -}}

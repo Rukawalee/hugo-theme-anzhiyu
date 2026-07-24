@@ -1,0 +1,14 @@
+{{- /* Custom top widgets from site data: data/widget.toml|yaml key "top" */ -}}
+{{- with hugo.Data.widget -}}
+  {{- range .top -}}
+  <div class="card-widget{{ with .class_name }} {{ . }}{{ end }}"{{ with .id_name }} id="{{ . }}"{{ end }}>
+    <div class="item-headline">
+      {{- with .icon -}}<i class="{{ . }}"></i>{{- end -}}
+      <span>{{ .name }}</span>
+    </div>
+    <div class="item-content">
+      {{ .html | safeHTML }}
+    </div>
+  </div>
+  {{- end -}}
+{{- end -}}

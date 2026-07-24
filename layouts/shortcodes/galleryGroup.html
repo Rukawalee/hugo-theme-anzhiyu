@@ -1,0 +1,26 @@
+{{- /*
+  {{< galleryGroup "name" "descr" "url" "img" >}}
+*/ -}}
+{{- $name := "" -}}
+{{- $descr := "" -}}
+{{- $url := "" -}}
+{{- $img := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $name = .Get "name" | default "" -}}
+  {{- $descr = .Get "descr" | default (.Get "description") | default "" -}}
+  {{- $url = .Get "url" | default "" -}}
+  {{- $img = .Get "img" | default "" -}}
+{{- else -}}
+  {{- $name = .Get 0 | default "" -}}
+  {{- $descr = .Get 1 | default "" -}}
+  {{- $url = .Get 2 | default "" -}}
+  {{- $img = .Get 3 | default "" -}}
+{{- end -}}
+<figure class="gallery-group">
+  <img class="gallery-group-img no-lightbox" src="{{ $img | safeURL }}" alt="Group Image Gallery">
+  <figcaption>
+    <div class="gallery-group-name">{{ $name }}</div>
+    <p>{{ $descr }}</p>
+    <a href="{{ $url | safeURL }}"></a>
+  </figcaption>
+</figure>

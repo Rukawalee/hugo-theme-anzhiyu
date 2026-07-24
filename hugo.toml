@@ -1,0 +1,543 @@
+# Theme defaults for hugo-theme-anzhiyu (Phase 1 surface)
+# Consumers override via site hugo.toml / params.
+
+[params]
+  author = ""
+  description = ""
+  keywords = []
+  favicon = "/favicon.ico"
+  display_mode = "light"
+  disable_top_img = false
+  index_img = false
+  default_top_img = false
+  footer_bg = false
+  article_double_row = true
+  post_pagination = 2
+  highlight_copy = true
+  highlight_lang = true
+  highlight_theme = "light"
+  music_page_default = "nav_music"
+  highlight_height_limit = 330
+
+  [params.avatar]
+    img = "/img/default_cover.jpg"
+
+  [params.error_img]
+    flink = "/img/friend_404.gif"
+    post_page = "/img/404.jpg"
+
+  [params.error_404]
+    enable = true
+    subtitle = "请尝试站内搜索寻找文章"
+    background = "/img/404.jpg"
+
+  [params.cover]
+    index_enable = true
+    aside_enable = true
+    archives_enable = true
+    position = "left"
+    default_cover = "/img/default_cover.jpg"
+
+  [params.post_meta]
+    [params.post_meta.page]
+      date_type = "created"
+      date_format = "simple"
+      categories = true
+      tags = true
+    [params.post_meta.post]
+      date_type = "both"
+      date_format = "date"
+      categories = true
+      tags = true
+
+  [params.index_post_content]
+    method = 3
+    length = 150
+
+  [params.toc]
+    post = true
+    page = false
+    number = true
+    expand = false
+    style_simple = false
+
+  [params.post_copyright]
+    enable = true
+    decode = false
+    license = "CC BY-NC-SA 4.0"
+    license_url = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+    location = ""
+
+  [params.related_post]
+    enable = true
+    limit = 6
+
+  [params.nav]
+    enable = false
+    travelling = false
+    clock = false
+
+  [[params.nav.menu]]
+    title = "项目"
+    [[params.nav.menu.item]]
+      name = "Hugo Theme AnZhiYu"
+      link = "https://github.com/Rukawalee/hugo-theme-anzhiyu"
+      icon = "/img/favicon.ico"
+
+  [params.subtitle]
+    enable = false
+
+  [params.aside]
+    enable = true
+    hide = false
+    button = true
+    mobile = true
+    position = "right"
+    [params.aside.display]
+      archive = true
+      tag = true
+      category = true
+    [params.aside.card_author]
+      enable = true
+      description = ""
+      name_link = "/"
+    [params.aside.card_recent_post]
+      enable = true
+      limit = 5
+      sort = "date"
+    [params.aside.card_categories]
+      enable = true
+      limit = 8
+    [params.aside.card_tags]
+      enable = true
+      limit = 40
+      color = false
+    [params.aside.card_archives]
+      enable = true
+      type = "monthly"
+      format = "2006-01"
+      limit = 8
+    [params.aside.card_webinfo]
+      enable = true
+      post_count = true
+      last_push_date = true
+    [params.aside.card_announcement]
+      enable = false
+      content = "欢迎来看我的博客鸭~"
+    [params.aside.card_weixin]
+      enable = false
+      face = ""
+      backFace = ""
+
+  [params.newest_comments]
+    enable = true
+    limit = 6
+    storage = 10
+    avatar = true
+
+  [params.algolia_search]
+    enable = false
+    # appId / apiKey / indexName via site config or Algolia plugin
+    [params.algolia_search.hits]
+      per_page = 6
+
+  [params.docsearch]
+    enable = false
+    appId = ""
+    apiKey = ""
+    indexName = ""
+
+  [params.sharejs]
+    enable = false
+    sites = "facebook,twitter,wechat,weibo,qq"
+
+  [params.addtoany]
+    enable = false
+    item = "facebook,twitter,wechat,sina_weibo,email,copy_link"
+
+  [params.aplayerInject]
+    enable = false
+    per_page = true
+
+  [params.nav_music]
+    enable = false
+    console_widescreen_music = false
+    id = ""
+    server = "netease"
+    volume = 0.7
+
+  [params.mermaid]
+    enable = true
+    [params.mermaid.theme]
+      light = "default"
+      dark = "dark"
+
+  [params.google_adsense]
+    enable = false
+    auto_ads = true
+    js = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+    client = ""
+    enable_page_level_ads = true
+
+  # [[params.site_verification]]
+  #   name = "google-site-verification"
+  #   content = "xxx"
+
+  # [params.ad]
+  #   aside = ""
+
+  [params.chatra]
+    enable = false
+    id = ""
+  [params.tidio]
+    enable = false
+    public_key = ""
+  [params.daovoice]
+    enable = false
+    app_id = ""
+  [params.crisp]
+    enable = false
+    website_id = ""
+
+  [params.darkmode]
+    enable = true
+    button = true
+    autoChangeMode = 1
+
+  [params.local_search]
+    enable = true
+    preload = true
+
+  [params.home_top]
+    enable = true
+    title = "生活明朗"
+    subTitle = "万物可爱"
+    siteText = "AnZhiYu"
+    [params.home_top.banner]
+      tips = "永远相信"
+      title = "美好的事情即将发生"
+      image = "/img/default_cover.jpg"
+      link = "/about/"
+    [[params.home_top.category]]
+      name = "必看精选"
+      path = "/categories/"
+      class = "blue"
+      icon = "anzhiyu-icon-dove"
+      shadow = "var(--anzhiyu-shadow-blue)"
+    [[params.home_top.category]]
+      name = "热门文章"
+      path = "/archives/"
+      class = "red"
+      icon = "anzhiyu-icon-fire"
+      shadow = "var(--anzhiyu-shadow-red)"
+    [[params.home_top.category]]
+      name = "实用教程"
+      path = "/tags/"
+      class = "green"
+      icon = "anzhiyu-icon-book"
+      shadow = "var(--anzhiyu-shadow-green)"
+
+  [params.footer]
+    [params.footer.owner]
+      enable = true
+      since = 2024
+    [params.footer.footerBar]
+      enable = true
+      authorLink = "/"
+      [[params.footer.footerBar.linkList]]
+        link = "https://github.com/Rukawalee/hugo-theme-anzhiyu"
+        text = "主题"
+      [params.footer.footerBar.cc]
+        enable = false
+
+  [params.runtimeshow]
+    enable = false
+    publish_date = "2024-01-01"
+
+  [params.social]
+    # Github = "https://github.com/ | anzhiyu-icon-github"
+
+  # --- Integrations (Phase 4–6; PagesIntegrationsTools) ---
+  [params.comments]
+    enable = false
+    # First system is default; values: Giscus / Twikoo / Waline / Valine / Artalk
+    use = ["Giscus"]
+    lazyload = false
+    count = false
+    text = true
+
+  [params.giscus]
+    repo = ""
+    repo_id = ""
+    category_id = ""
+    # js = "https://giscus.app/client.js"
+    [params.giscus.theme]
+      light = "light"
+      dark = "dark"
+    [params.giscus.option]
+      data-lang = "zh-CN"
+
+  [params.twikoo]
+    envId = ""
+    region = ""
+    # js = "https://cdn.jsdelivr.net/npm/twikoo@1.6.44/dist/twikoo.all.min.js"
+    # [params.twikoo.option]
+
+  [params.waline]
+    serverURL = ""
+    pageview = false
+    meta_css = false
+    imageUploader = true
+    # js = "https://cdn.jsdelivr.net/npm/@waline/client@3.8.0/dist/waline.js"
+    # css = "https://cdn.jsdelivr.net/npm/@waline/client@3.8.0/dist/waline.css"
+    # meta_css_url = "https://cdn.jsdelivr.net/npm/@waline/client@3.8.0/dist/waline-meta.css"
+    # [params.waline.option]
+
+  [params.valine]
+    appId = ""
+    appKey = ""
+    avatar = "mp"
+    serverURLs = ""
+    visitor = false
+    # js = "https://cdn.jsdelivr.net/npm/valine@1.5.1/dist/Valine.min.js"
+    # [params.valine.option]
+
+  [params.artalk]
+    server = ""
+    site = ""
+    # js = "https://cdn.jsdelivr.net/npm/artalk@2.9.1/dist/Artalk.js"
+    # css = "https://cdn.jsdelivr.net/npm/artalk@2.9.1/dist/Artalk.css"
+    # [params.artalk.option]
+
+  [params.pjax]
+    enable = false
+    exclude = []
+
+  [params.katex]
+    enable = false
+    per_page = false
+
+  [params.mathjax]
+    enable = false
+    per_page = false
+
+  [params.pwa]
+    enable = false
+    manifest = "/manifest.json"
+    theme_color = "#425AEF"
+
+  [params.rightmenu]
+    enable = true
+
+  [params.console]
+    enable = true
+
+  [params.friends_vue]
+    enable = false
+    apiurl = ""
+    top_background = "/img/default_cover.jpg"
+    top_tips = ""
+    vue_js = ""
+
+  [params.linkPageTop]
+    enable = true
+    title = "友情链接"
+    addFriendPlaceholder = false
+
+
+  [params.preloader]
+    enable = false
+    source = 1
+    avatar = "/img/default_cover.jpg"
+
+  [params.mourn]
+    enable = false
+    days = ["4-5", "5-12", "7-7", "9-18", "12-13"]
+
+  [params.shortcutKey]
+    enable = false
+    delay = 100
+    shiftDelay = 200
+
+  [params.comment_barrage_config]
+    enable = false
+    maxBarrage = 1
+    barrageTime = 4000
+    accessToken = ""
+    mailMd5 = ""
+
+  [params.translate]
+    enable = false
+    defaultEncoding = 2
+    translateDelay = 0
+
+  [params.diytitle]
+    enable = false
+
+  [params.copy]
+    enable = true
+    [params.copy.copyright]
+      enable = true
+      limit_count = 50
+
+  [params.snackbar]
+    enable = false
+    position = "bottom-left"
+    bg_light = "#49b1f5"
+    bg_dark = "#1f1f1f"
+
+  [params.lazyload]
+    enable = false
+
+
+# --- Completeness blockers / major chrome ---
+  [params.reward]
+    enable = true
+    [[params.reward.QR_code]]
+      img = "/img/default_cover.jpg"
+      text = "微信"
+    [[params.reward.QR_code]]
+      img = "/img/default_cover.jpg"
+      text = "支付宝"
+
+  [params.ptool]
+    enable = true
+    share_mobile = true
+    share_weibo = true
+    share_copyurl = true
+    categories = false
+    mode = ""
+
+  [params.busuanzi]
+    site_uv = false
+    site_pv = false
+    page_pv = false
+
+  [params.post_head_ai_description]
+    enable = false
+    gptName = "AnZhiYu"
+    mode = "local"
+    switchBtn = false
+    basicWordCount = 1000
+
+  [params.peoplecanvas]
+    enable = false
+    img = "https://upload-bbs.miyoushe.com/upload/2024/07/27/125766904/ba62475f396df9de3316a08ed9e65d86_5680958632268053399..png"
+
+  [params.noticeOutdate]
+    enable = false
+    style = "flat"
+    limit_day = 365
+    position = "top"
+    message_prev = "本文最后更新于"
+    message_next = "天前，部分内容可能已过时。"
+
+  [params.readmode]
+    enable = true
+
+  [params.centerConsole]
+    enable = true
+
+  [params.agreementPopup]
+    enable = false
+    url = "/privacy"
+
+  [params.theme_color]
+    enable = true
+    main = "#425AEF"
+    dark_main = "#f2b94b"
+    meta_theme_color_light = "#f7f9fe"
+    meta_theme_color_dark = "#18171d"
+
+  [params.inject]
+    head = []
+    bottom = []
+
+  [params.asset_base_url]
+    # optional CDN prefix for theme assets
+
+  [params.home_top.swiper]
+    enable = false
+    swiper_js = "https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.js"
+    swiper_css = "https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.css"
+
+  [params.footer.socialBar]
+    enable = false
+  [params.footer.list]
+    enable = false
+    randomFriends = 0
+  [params.footer.bdageitem]
+    enable = false
+  [params.footer.footerBar.subTitle]
+    enable = false
+    effect = true
+    source = 1
+
+  [params.fancybox]
+    enable = false
+  [params.medium_zoom]
+    enable = false
+  [params.pangu]
+    enable = false
+
+  [params.asset]
+    flickr_justified_gallery_js = "/js/vendor/fjGallery.min.js"
+    flickr_justified_gallery_css = "/css/vendor/fjGallery.css"
+    countup_js = "https://cdn.cbd.int/countup.js@1.9.3/dist/countUp.min.js"
+
+  [params.LA]
+    enable = false
+    ck = ""
+    LingQueMonitorID = ""
+  [params.umami]
+    enable = false
+    apiHost = ""
+    websiteId = ""
+    token = ""
+
+
+  # --- Effects / completeness surface ---
+  [params.universe]
+    enable = false
+  [params.bubble]
+    enable = false
+  [params.fireworks]
+    enable = false
+  [params.canvas_ribbon]
+    enable = false
+  [params.canvas_fluttering_ribbon]
+    enable = false
+  [params.canvas_nest]
+    enable = false
+  [params.activate_power_mode]
+    enable = false
+  [params.click_heart]
+    enable = false
+  [params.ClickShowText]
+    enable = false
+  [params.instantpage]
+    enable = false
+  [params.mainTone]
+    enable = false
+    mode = ""
+  [params.author_status]
+    enable = false
+  [params.greetingBox]
+    enable = false
+  [params.visitorMail]
+    enable = false
+    mail = ""
+  [params.accesskey]
+    enable = false
+  [params.wordcount]
+    enable = true
+  [params.anchor]
+    enable = false
+  [params.photofigcaption]
+    enable = false
+  [params.footer.runtime]
+    enable = false
+    launch_time = "2024-01-01"
+
+  [params.dynamicEffect]
+    postTopWave = true

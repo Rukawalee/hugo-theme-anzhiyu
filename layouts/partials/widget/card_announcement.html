@@ -1,0 +1,11 @@
+{{- $params := .Site.Params -}}
+{{- $card := $params.aside.card_announcement | default dict -}}
+{{- if $card.enable -}}
+<div class="card-widget card-announcement">
+  <div class="item-headline">
+    <i class="anzhiyufont anzhiyu-icon-bullhorn anzhiyu-shake"></i>
+    <span>{{ i18n "aside.card_announcement" }}</span>
+  </div>
+  <div class="announcement_content">{{ $card.content | safeHTML }}</div>
+</div>
+{{- end -}}

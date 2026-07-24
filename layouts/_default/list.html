@@ -1,0 +1,7 @@
+{{ define "main" }}
+<div id="archive">
+  <div class="article-sort-title">{{ i18n "page.articles" }} - {{ len .Pages }}</div>
+  {{- partial "post/article_sort.html" . -}}
+  {{- partial "pagination.html" . -}}
+</div>
+{{ end }}

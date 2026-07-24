@@ -1,0 +1,9 @@
+{{ define "main" }}
+{{- $posts := where .Site.RegularPages "Type" "in" (slice "posts" "post") -}}
+{{- $paginator := .Paginate $posts -}}
+<div id="recent-posts" class="recent-posts">
+  {{- partial "home/category_bar.html" . -}}
+  {{- partial "home/post_list.html" . -}}
+  {{- partial "pagination.html" . -}}
+</div>
+{{ end }}

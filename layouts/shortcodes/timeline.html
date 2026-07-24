@@ -1,0 +1,41 @@
+{{- /*
+  {{% timeline "Headline" blue %}}
+  <!-- timeline 2020 -->
+  content
+  <!-- endtimeline -->
+  {{% /timeline %}}
+
+  Or nested:
+  {{% timelineItem "2020" %}}content{{% /timelineItem %}}
+*/ -}}
+{{- $color := "" -}}
+{{- $result := "" -}}
+{{- if .IsNamedParams -}}
+  {{- with .Get "title" -}}
+    {{- $md := . | markdownify -}}
+    {{- $result = printf `<div class='timeline-item headline'><div class='timeline-item-title'><div class='item-circle'>%s</div></div></div>` $md -}}
+  {{- end -}}
+  {{- $color = .Get "color" | default "" -}}
+{{- else if ge (len .Params) 1 -}}
+  {{- $md := (.Get 0) | markdownify -}}
+  {{- $result = printf `<div class='timeline-item headline'><div class='timeline-item-title'><div class='item-circle'>%s</div></div></div>` $md -}}
+  {{- if ge (len .Params) 2 }}{{ $color = .Get 1 }}{{ end -}}
+{{- end -}}
+{{- $_ := .Inner -}}
+{{- $items := .Scratch.Get "timelineItems" | default (slice) -}}
+{{- if eq (len $items) 0 -}}
+  {{- $re := `(?s)<!--\s*timeline\s*(.*?)\s*-->\s*(.*?)\s*<!--\s*endtimeline\s*-->` -}}
+  {{- $matches := findRE $re .Inner -}}
+  {{- range $matches -}}
+    {{- $t := replaceRE $re `$1` . -}}
+    {{- $c := replaceRE $re `$2` . -}}
+    {{- $items = $items | append (dict "title" $t "content" $c) -}}
+  {{- end -}}
+{{- end -}}
+{{- range $items -}}
+  {{- $tlTitle := .title | markdownify -}}
+  {{- $tlContent := .content | markdownify -}}
+  {{- $result = printf `%s<div class='timeline-item'><div class='timeline-item-title'><div class='item-circle'>%s</div></div><div class='timeline-item-content'>%s</div></div>` $result $tlTitle $tlContent -}}
+{{- end -}}
+<div class="timeline {{ $color }}">{{ $result | safeHTML }}</div>
+{{- .Scratch.Delete "timelineItems" -}}

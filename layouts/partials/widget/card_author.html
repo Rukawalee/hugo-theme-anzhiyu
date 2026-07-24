@@ -1,0 +1,43 @@
+{{- $params := .Site.Params -}}
+{{- $card := $params.aside.card_author | default dict -}}
+{{- if $card.enable | default true -}}
+<div class="card-widget card-info">
+  <div class="card-content">
+    {{- $status := $params.author_status | default dict -}}
+    {{- if $status.enable | default false -}}
+    <div class="author-info__sayhi" id="author-info__sayhi" onclick="if(window.anzhiyu&&anzhiyu.changeSayHelloText)anzhiyu.changeSayHelloText()"></div>
+    {{- end -}}
+    <div class="author-info-avatar">
+      <img class="avatar-img" src="{{ $params.avatar.img | relURL }}" {{ printf `onerror="this.onerror=null;this.src='%s'"` (($params.error_img.flink | default "/img/friend_404.gif") | relURL) | safeHTMLAttr }} alt="avatar">
+      {{- if and ($status.enable | default false) $status.statusImg -}}
+      <div class="author-status">
+        <img src="{{ $status.statusImg | relURL }}" class="g-status" alt="status">
+      </div>
+      {{- end -}}
+    </div>
+    <div class="author-info__description">
+      {{- with $card.description -}}{{ . | safeHTML }}{{- else -}}{{ with $params.description }}{{ . }}{{ end }}{{- end -}}
+    </div>
+    {{- /* Hexo only renders bottom group when social is configured */ -}}
+    {{- if $params.social -}}
+    <div class="author-info__bottom-group">
+      <a class="author-info__bottom-group-left" href="{{ default "/" $card.name_link | relLangURL }}">
+        <h1 class="author-info__name">{{ with $params.author }}{{ . }}{{ else }}{{ .Site.Title }}{{ end }}</h1>
+        <div class="author-info__desc">{{ with .Site.Params.site_subtitle }}{{ . }}{{ end }}</div>
+      </a>
+      <div class="card-info-social-icons is-center">
+        {{- range $name, $val := $params.social -}}
+          {{- $parts := split $val " | " -}}
+          {{- $url := index $parts 0 -}}
+          {{- $icon := "" -}}
+          {{- if ge (len $parts) 2 -}}{{- $icon = index $parts 1 -}}{{- end -}}
+          <a class="social-icon" href="{{ $url }}" target="_blank" rel="noopener" title="{{ $name }}">
+            {{- if $icon -}}<i class="anzhiyufont {{ $icon }}"></i>{{- else -}}{{ $name }}{{- end -}}
+          </a>
+        {{- end -}}
+      </div>
+    </div>
+    {{- end -}}
+  </div>
+</div>
+{{- end -}}

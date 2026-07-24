@@ -1,0 +1,43 @@
+{{- /* Upstream /anzhiyu/random.js generator via inline script */ -}}
+{{- $posts := slice -}}
+{{- range where .Site.RegularPages "Type" "in" (slice "posts" "post") -}}
+  {{- if ne .Params.random false -}}
+    {{- $posts = $posts | append .RelPermalink -}}
+  {{- end -}}
+{{- end -}}
+{{- $pjax := false -}}
+{{- with .Site.Params.pjax }}{{ $pjax = .enable | default false }}{{ end -}}
+{{- $friends := slice -}}
+{{- with hugo.Data.link -}}
+  {{- range . -}}
+    {{- range .link_list -}}
+      {{- $friends = $friends | append (dict "name" .name "link" .link) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+<script>
+  {{ printf "var posts = %s;" ($posts | jsonify) | safeJS }}
+  function toRandomPost() {
+    if (!posts || !posts.length) return;
+    var url = posts[Math.floor(Math.random() * posts.length)];
+    if ({{ $pjax }} && window.pjax && typeof pjax.loadUrl === 'function') pjax.loadUrl(url);
+    else window.location.href = url;
+  }
+  {{ printf "var friend_link_list = %s;" ($friends | jsonify) | safeJS }}
+  function friendChainRandomTransmission() {
+    if (!friend_link_list || !friend_link_list.length) return;
+    var i = Math.floor(Math.random() * friend_link_list.length);
+    var item = friend_link_list[i];
+    if (window.Snackbar) {
+      Snackbar.show({
+        text: "本次随机到的是本站友链：「" + item.name + "」",
+        duration: 8000,
+        pos: "top-center",
+        actionText: "前往",
+        onActionClick: function () { window.open(item.link, "_blank"); }
+      });
+    } else {
+      window.open(item.link, "_blank");
+    }
+  }
+</script>

@@ -1,0 +1,52 @@
+{{- /* Fullpage preloader (source 1 / default) */ -}}
+{{- $preloader := .Site.Params.preloader | default dict -}}
+{{- if $preloader.enable }}
+{{- $source := int (default 1 $preloader.source) -}}
+{{- if ne $source 2 }}
+{{- $avatar := $preloader.avatar | default (.Site.Params.avatar.img | default "/img/default_cover.jpg") -}}
+<div id="loading-box" onclick="this.classList.add('loaded')">
+  <div class="loading-bg">
+    <img class="loading-img nolazyload" alt="loading" src="{{ $avatar | relURL }}">
+    <div class="loading-image-dot"></div>
+  </div>
+</div>
+<script>
+  window.preloader = {
+    endLoading: function () {
+      var el = document.getElementById('loading-box');
+      if (el) el.classList.add('loaded');
+      // Ensure entrance animations are not left at fill:backwards (translateY(20px))
+      // if the document timeline was throttled during first paint.
+      try {
+        if (document.getAnimations) {
+          document.getAnimations().forEach(function (a) {
+            if (a.playState === 'running' && a.currentTime === 0) {
+              try { a.finish(); } catch (e) {}
+            }
+          });
+        }
+      } catch (e) {}
+    },
+    initLoading: function () {
+      var el = document.getElementById('loading-box');
+      if (el) el.classList.remove('loaded');
+    }
+  };
+  window.addEventListener('load', function () { window.preloader.endLoading(); });
+  // Also end on DOMContentLoaded + short rAF in case 'load' is delayed by third-party assets
+  document.addEventListener('DOMContentLoaded', function () {
+    setTimeout(function () { window.preloader.endLoading(); }, 300);
+  });
+  setTimeout(function () { window.preloader.endLoading(); }, 3000);
+  {{- if (.Site.Params.pjax | default dict).enable }}
+  document.addEventListener('pjax:send', function () { window.preloader.initLoading(); });
+  document.addEventListener('pjax:complete', function () { window.preloader.endLoading(); });
+  {{- end }}
+</script>
+{{- else }}
+  {{- $paceCSS := $preloader.pace_css_url | default "https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css" -}}
+  {{- $paceJS := $preloader.pace_js_url | default "https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" -}}
+  <link rel="stylesheet" href="{{ $paceCSS }}">
+  <script async src="{{ $paceJS }}" data-pace-options='{"restartOnRequestAfter":false,"eventLag":false}'></script>
+{{- end }}
+{{- end }}

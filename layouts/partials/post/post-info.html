@@ -1,0 +1,98 @@
+{{- $params := .Site.Params -}}
+{{- $meta := $params.post_meta.post | default dict -}}
+{{- $wc := $params.wordcount | default dict -}}
+<div id="post-info">
+  <div id="post-firstinfo">
+    <div class="meta-firstline">
+      {{- if and .Params.copyright_author (ne .Params.copyright_author $params.author) -}}
+      <a class="post-meta-original">{{ i18n "post.reprint" | default "转载" }}</a>
+      {{- else -}}
+      <a class="post-meta-original">{{ i18n "post.original" | default "原创" }}</a>
+      {{- end -}}
+      {{- if and (ne $meta.categories false) .Params.categories -}}
+      <span class="post-meta-categories">
+        {{- if $meta.date_type -}}
+        <span class="post-meta-separator"></span>
+        {{- end -}}
+        {{- range $i, $c := .GetTerms "categories" -}}
+          {{- if $i -}}
+          <i class="anzhiyufont anzhiyu-icon-angle-right post-meta-separator"></i>
+          {{- end -}}
+          <i class="anzhiyufont anzhiyu-icon-inbox post-meta-icon"></i>
+          <a class="post-meta-categories" href="{{ $c.RelPermalink }}" itemprop="url">{{ $c.LinkTitle }}</a>
+        {{- end -}}
+      </span>
+      {{- end -}}
+      {{- if and ($params.post_meta.page.tags | default true) .Params.tags -}}
+      <span class="article-meta tags">
+        {{- range .GetTerms "tags" -}}
+        <a class="article-meta__tags" href="{{ .RelPermalink }}" tabindex="-1" itemprop="url">
+          <span><i class="anzhiyufont anzhiyu-icon-hashtag"></i>{{ .LinkTitle }}</span>
+        </a>
+        {{- end -}}
+      </span>
+      {{- end -}}
+    </div>
+  </div>
+  <h1 class="post-title" itemprop="name headline">{{ .Title | default (i18n "no_title" | default "无标题") }}</h1>
+  <div id="post-meta">
+    <div class="meta-firstline">
+      {{- $dateType := $meta.date_type | default "both" -}}
+      {{- if $dateType -}}
+      <span class="post-meta-date">
+        {{- if eq $dateType "both" -}}
+        <i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i>
+        <span class="post-meta-label">{{ i18n "post.created" | default "创建" }}</span>
+        <time class="post-meta-date-created" itemprop="dateCreated datePublished" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "2006-01-02" }}</time>
+        <span class="post-meta-separator"></span>
+        <i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i>
+        <span class="post-meta-label">{{ i18n "post.updated" | default "更新" }}</span>
+        <time class="post-meta-date-updated" itemprop="dateModified" datetime="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Lastmod.Format "2006-01-02" }}</time>
+        {{- else if eq $dateType "updated" -}}
+        <i class="anzhiyufont anzhiyu-icon-history post-meta-icon"></i>
+        <span class="post-meta-label">{{ i18n "post.updated" | default "更新" }}</span>
+        <time itemprop="dateModified" datetime="{{ .Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Lastmod.Format "2006-01-02" }}</time>
+        {{- else -}}
+        <i class="anzhiyufont anzhiyu-icon-calendar-days post-meta-icon"></i>
+        <span class="post-meta-label">{{ i18n "post.created" | default "创建" }}</span>
+        <time itemprop="dateCreated datePublished" datetime="{{ .Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ .Date.Format "2006-01-02" }}</time>
+        {{- end -}}
+      </span>
+      {{- end -}}
+    </div>
+    <div class="meta-secondline">
+      {{- if $wc.enable | default true -}}
+      <span class="post-meta-separator"></span>
+      <span class="post-meta-wordcount">
+        {{- if ne $wc.post_wordcount false -}}
+        <i class="anzhiyufont anzhiyu-icon-file-word post-meta-icon" title="{{ i18n "post.wordcount" | default "字数" }}"></i>
+        <span class="post-meta-label" title="{{ i18n "post.wordcount" | default "字数" }}">{{ i18n "post.wordcount" | default "字数" }}:</span>
+        <span class="word-count" title="{{ i18n "post.wordcount" | default "字数" }}">{{ .WordCount }}</span>
+        {{- end -}}
+        {{- if ne $wc.min2read false -}}
+        <span class="post-meta-separator"></span>
+        <i class="anzhiyufont anzhiyu-icon-clock post-meta-icon" title="{{ i18n "post.min2read" | default "阅读时长" }}"></i>
+        <span class="post-meta-label" title="{{ i18n "post.min2read" | default "阅读时长" }}">{{ i18n "post.min2read" | default "阅读时长" }}:</span>
+        <span>{{ .ReadingTime }}{{ i18n "post.min2read_unit" | default "分钟" }}</span>
+        {{- end -}}
+      </span>
+      {{- end -}}
+      {{- $busuanzi := $params.busuanzi | default dict -}}
+      {{- if $busuanzi.page_pv | default false -}}
+      <span class="post-meta-separator"></span>
+      <span class="post-meta-pv-cv">
+        <i class="anzhiyufont anzhiyu-icon-fw-eye post-meta-icon"></i>
+        <span class="post-meta-label" title="{{ i18n "post.page_pv" | default "阅读量" }}">{{ i18n "post.page_pv" | default "阅读量" }}:</span>
+        <span id="busuanzi_value_page_pv" title="访问量"><i class="anzhiyufont anzhiyu-icon-spinner anzhiyu-spin"></i></span>
+      </span>
+      {{- end -}}
+      {{- $loc := .Params.location | default ($params.post_copyright.location | default "") -}}
+      {{- if and ($params.post_copyright.enable | default true) $loc -}}
+      <span class="post-meta-separator"></span>
+      <span class="post-meta-position" title="作者IP属地为{{ $loc }}">
+        <i class="anzhiyufont anzhiyu-icon-location-dot"></i>{{ $loc }}
+      </span>
+      {{- end -}}
+    </div>
+  </div>
+</div>

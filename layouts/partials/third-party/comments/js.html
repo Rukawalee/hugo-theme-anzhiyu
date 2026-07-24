@@ -1,0 +1,19 @@
+{{- /* Load active comment system scripts (title-case names) */ -}}
+{{- $c := .Site.Params.comments | default dict -}}
+{{- $use := $c.use | default slice -}}
+{{- if reflect.IsSlice $use | not }}{{ if $use }}{{ $use = slice $use }}{{ else }}{{ $use = slice }}{{ end }}{{ end -}}
+{{- $norm := slice -}}
+{{- range $use }}{{ $norm = $norm | append (. | title) }}{{ end -}}
+{{- range $name := $norm }}
+  {{- if eq $name "Giscus" }}
+  {{ partial "third-party/comments/giscus.html" $ }}
+  {{- else if eq $name "Twikoo" }}
+  {{ partial "third-party/comments/twikoo.html" $ }}
+  {{- else if eq $name "Waline" }}
+  {{ partial "third-party/comments/waline.html" $ }}
+  {{- else if eq $name "Valine" }}
+  {{ partial "third-party/comments/valine.html" $ }}
+  {{- else if eq $name "Artalk" }}
+  {{ partial "third-party/comments/artalk.html" $ }}
+  {{- end }}
+{{- end }}

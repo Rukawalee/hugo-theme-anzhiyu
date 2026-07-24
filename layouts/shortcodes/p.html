@@ -1,0 +1,13 @@
+{{- /*
+  {{< p "class" "text" >}}
+*/ -}}
+{{- $cls := "" -}}
+{{- $text := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $cls = .Get "class" | default "" -}}
+  {{- $text = .Get "text" | default "" -}}
+{{- else -}}
+  {{- $cls = trim (.Get 0 | default "") " " -}}
+  {{- $text = trim (.Get 1 | default "") " " -}}
+{{- end -}}
+<p class="p {{ $cls }}">{{ $text }}</p>

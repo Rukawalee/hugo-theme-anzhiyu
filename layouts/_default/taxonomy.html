@@ -1,0 +1,16 @@
+{{ define "main" }}
+<div id="archive">
+  <div class="article-sort-title">
+    {{- if eq .Data.Singular "category" -}}
+      {{ i18n "page.category" }} - {{ .Title }}
+    {{- else if eq .Data.Singular "tag" -}}
+      {{ i18n "page.tag" }} - {{ .Title }}
+    {{- else -}}
+      {{ .Title }}
+    {{- end -}}
+    - {{ len .Pages }}
+  </div>
+  {{- partial "post/article_sort.html" . -}}
+  {{- partial "pagination.html" . -}}
+</div>
+{{ end }}

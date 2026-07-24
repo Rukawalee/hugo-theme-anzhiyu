@@ -1,0 +1,47 @@
+{{- /*
+  note / Bootstrap-style callout
+  {{% note info %}}...{{% /note %}}
+  {{% note class="info modern" %}}...{{% /note %}}
+  {{% note warning icon="fa anzhiyufont anzhiyu-icon-circle-exclamation" style="simple" %}}...{{% /note %}}
+*/ -}}
+{{- $styleDefault := "simple" -}}
+{{- with site.Params.note }}{{ with .style }}{{ $styleDefault = . }}{{ end }}{{ end -}}
+{{- $classes := slice -}}
+{{- $icon := "" -}}
+{{- $hasStyle := false -}}
+{{- if .IsNamedParams -}}
+  {{- with .Get "class" -}}
+    {{- range (split . " ") -}}
+      {{- if . -}}
+        {{- if or (eq . "flat") (eq . "modern") (eq . "simple") (eq . "disabled") -}}
+          {{- $hasStyle = true -}}
+        {{- end -}}
+        {{- $classes = $classes | append . -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+  {{- with .Get "type" }}{{ $classes = $classes | append . }}{{ end -}}
+  {{- with .Get "style" -}}
+    {{- $hasStyle = true -}}
+    {{- $classes = $classes | append . -}}
+  {{- end -}}
+  {{- with .Get "icon" -}}
+    {{- $icon = printf `<i class="note-icon %s"></i>` . | safeHTML -}}
+    {{- $classes = $classes | append "icon-padding" -}}
+  {{- end -}}
+{{- else -}}
+  {{- range $i, $a := .Params -}}
+    {{- $s := printf "%v" $a -}}
+    {{- if or (eq $s "flat") (eq $s "modern") (eq $s "simple") (eq $s "disabled") -}}
+      {{- $hasStyle = true -}}
+      {{- $classes = $classes | append $s -}}
+    {{- else if or (hasPrefix $s "fa") (hasPrefix $s "anzhiyu") -}}
+      {{- $icon = printf `<i class="note-icon %s"></i>` $s | safeHTML -}}
+      {{- $classes = $classes | append "icon-padding" -}}
+    {{- else -}}
+      {{- $classes = $classes | append $s -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if not $hasStyle }}{{ $classes = $classes | append $styleDefault }}{{ end -}}
+<div class="note{{ range $classes }} {{ . }}{{ end }}">{{ $icon }}{{ .Inner | markdownify }}</div>

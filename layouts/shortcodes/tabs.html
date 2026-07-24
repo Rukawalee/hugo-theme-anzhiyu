@@ -1,0 +1,76 @@
+{{- /*
+  Nested tabs shortcode.
+  {{% tabs "unique-name" 1 %}}
+  {{% tab "Tab 1" %}}content{{% /tab %}}
+  {{% tab title="Tab 2" icon="anzhiyufont anzhiyu-icon-xxx" %}}content{{% /tab %}}
+  {{% /tabs %}}
+
+  Legacy comment delimiters:
+  <!-- tab Caption@icon --> ... <!-- endtab -->
+*/ -}}
+{{- $tabName := "" -}}
+{{- $tabActive := 0 -}}
+{{- if .IsNamedParams -}}
+  {{- $tabName = .Get "name" | default "" -}}
+  {{- $tabActive = int (.Get "active" | default 0) -}}
+{{- else -}}
+  {{- $tabName = .Get 0 | default "" -}}
+  {{- $tabActive = int (.Get 1 | default 0) -}}
+{{- end -}}
+{{- if not $tabName -}}
+  {{- $tabName = printf "tabs-%d" .Ordinal -}}
+{{- end -}}
+{{- $idBase := $tabName | lower | replaceRE `\s+` "-" -}}
+{{- /* Evaluate nested shortcodes into parent scratch via .Inner */ -}}
+{{- $_ := .Inner -}}
+{{- $items := .Scratch.Get "tabItems" | default (slice) -}}
+{{- if eq (len $items) 0 -}}
+  {{- $re := `(?s)<!--\s*tab\s*(.*?)\s*-->\s*(.*?)\s*<!--\s*endtab\s*-->` -}}
+  {{- $matches := findRE $re .Inner -}}
+  {{- range $matches -}}
+    {{- $cap := replaceRE $re `$1` . -}}
+    {{- $body := replaceRE $re `$2` . -}}
+    {{- $parts := split $cap "@" -}}
+    {{- $caption := trim (index $parts 0) " " -}}
+    {{- $icon := "" -}}
+    {{- if ge (len $parts) 2 }}{{ $icon = trim (index $parts 1) " " }}{{ end -}}
+    {{- $items = $items | append (dict "caption" $caption "icon" $icon "content" ($body | markdownify)) -}}
+  {{- end -}}
+{{- end -}}
+{{- $tabNav := "" -}}
+{{- $tabContent := "" -}}
+{{- $noDefault := true -}}
+{{- range $i, $item := $items -}}
+  {{- $tabId := add $i 1 -}}
+  {{- $tabHref := printf "%s-%d" $idBase $tabId -}}
+  {{- $caption := index $item "caption" | default "" -}}
+  {{- $iconCls := index $item "icon" | default "" -}}
+  {{- $content := index $item "content" | default "" -}}
+  {{- if and (eq $caption "") (eq $iconCls "") -}}
+    {{- $caption = printf "%s %d" $tabName $tabId -}}
+  {{- end -}}
+  {{- $isOnlyIcon := and (ne $iconCls "") (eq $caption "") -}}
+  {{- $iconHTML := "" -}}
+  {{- if $iconCls -}}
+    {{- if $isOnlyIcon -}}
+      {{- $iconHTML = printf `<i class="%s" style="text-align: center;"></i>` $iconCls -}}
+    {{- else -}}
+      {{- $iconHTML = printf `<i class="%s"></i>` $iconCls -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $isActive := "" -}}
+  {{- if or (and (gt $tabActive 0) (eq $tabActive $tabId)) (and (eq $tabActive 0) (eq $tabId 1)) -}}
+    {{- $isActive = " active" -}}
+    {{- $noDefault = false -}}
+  {{- end -}}
+  {{- $tabNav = printf `%s<button type="button" class="tab%s" data-href="%s">%s%s</button>` $tabNav $isActive $tabHref $iconHTML $caption -}}
+  {{- $tabContent = printf `%s<div class="tab-item-content%s" id="%s">%s</div>` $tabContent $isActive $tabHref $content -}}
+{{- end -}}
+{{- $navClass := "nav-tabs" -}}
+{{- if $noDefault }}{{ $navClass = "nav-tabs no-default" }}{{ end -}}
+<div class="tabs" id="{{ $idBase }}">
+  <ul class="{{ $navClass }}">{{ $tabNav | safeHTML }}</ul>
+  <div class="tab-contents">{{ $tabContent | safeHTML }}</div>
+  <div class="tab-to-top"><button type="button" aria-label="scroll to top"><i class="anzhiyufont anzhiyu-icon-arrow-up"></i></button></div>
+</div>
+{{- .Scratch.Delete "tabItems" -}}

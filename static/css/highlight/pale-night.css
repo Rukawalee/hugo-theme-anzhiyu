@@ -1,0 +1,8 @@
+/* highlight_theme: pale night */
+.highlight, pre, code {
+  background: #292d3e !important;
+  color: #a6accd;
+}
+.highlight .k, .highlight .kd { color: #c792ea; }
+.highlight .s, .highlight .s1, .highlight .s2 { color: #c3e88d; }
+.highlight .c, .highlight .c1 { color: #676e95; }

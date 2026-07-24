@@ -1,0 +1,12 @@
+{{- $params := .Site.Params -}}
+{{- $sharejs := $params.sharejs | default dict -}}
+{{- $addtoany := $params.addtoany | default dict -}}
+{{- if or $sharejs.enable $addtoany.enable -}}
+<div class="post_share">
+  {{- if $sharejs.enable -}}
+    {{- partial "third-party/share/share-js.html" . -}}
+  {{- else if $addtoany.enable -}}
+    {{- partial "third-party/share/addtoany.html" . -}}
+  {{- end -}}
+</div>
+{{- end -}}

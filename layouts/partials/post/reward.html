@@ -1,0 +1,30 @@
+{{- $reward := .Site.Params.reward | default dict -}}
+{{- if and ($reward.enable | default false) $reward.QR_code -}}
+<div class="post-reward" onclick="if(window.anzhiyu)anzhiyu.addRewardMask()">
+  <div class="reward-button button--animated" title="{{ i18n "reward.title" | default "赞赏作者" }}">
+    <i class="anzhiyufont anzhiyu-icon-hand-heart-fill"></i>
+    {{ i18n "reward.button" | default "打赏作者" }}
+  </div>
+  <div class="reward-main">
+    <div class="reward-all">
+      <span class="reward-title">{{ i18n "reward.thanks" | default "感谢你赐予我前进的力量" }}</span>
+      <ul class="reward-group">
+        {{- range $reward.QR_code -}}
+        {{- $clickTo := .link | default .img -}}
+        <li class="reward-item">
+          <a href="{{ $clickTo | relURL }}" target="_blank" rel="noopener">
+            <img class="post-qr-code-img" src="{{ .img | relURL }}" alt="{{ .text }}">
+          </a>
+          <div class="post-qr-code-desc">{{ .text }}</div>
+        </li>
+        {{- end -}}
+      </ul>
+      <a class="reward-main-btn" href="{{ "/about/#about-reward" | relLangURL }}" target="_blank" rel="noopener">
+        <div class="reward-text">{{ i18n "reward.list" | default "赞赏者名单" }}</div>
+        <div class="reward-dec">{{ i18n "reward.list_desc" | default "因为你们的支持让我意识到写文章的价值" }}</div>
+      </a>
+    </div>
+  </div>
+</div>
+<div id="quit-box" onclick="if(window.anzhiyu)anzhiyu.removeRewardMask()" style="display: none"></div>
+{{- end -}}

@@ -1,0 +1,14 @@
+{{- $params := .Site.Params -}}
+{{- $card := $params.aside.card_weixin | default dict -}}
+{{- if $card.enable -}}
+{{- $face := $card.face | default "" -}}
+{{- $back := $card.backFace | default "" -}}
+<div class="card-widget anzhiyu-right-widget" id="card-wechat" onclick="window.open('/')">
+  <div id="flip-wrapper">
+    <div id="flip-content">
+      <div class="face" style="background: url({{ $face }}) center center / 100% no-repeat"></div>
+      <div class="back face" style="background: url({{ $back }}) center center / 100% no-repeat"></div>
+    </div>
+  </div>
+</div>
+{{- end -}}

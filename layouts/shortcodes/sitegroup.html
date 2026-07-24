@@ -1,0 +1,16 @@
+{{- /*
+  {{% sitegroup "Heading" %}}
+  {{% site ... %}}
+  {{% /sitegroup %}}
+*/ -}}
+{{- $heading := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $heading = .Get "title" | default (.Get "heading") | default "" -}}
+{{- else if ge (len .Params) 1 -}}
+  {{- $heading = delimit .Params " " -}}
+{{- end -}}
+{{- if $heading -}}
+<div class="site-card-group"><p class="p h2">{{ $heading }}</p>{{ .Inner }}</div>
+{{- else -}}
+<div class="site-card-group">{{ .Inner }}</div>
+{{- end -}}

@@ -1,0 +1,14 @@
+{{- $params := .Site.Params -}}
+{{- $ads := $params.google_adsense | default dict -}}
+{{- if $ads.enable -}}
+{{- $js := $ads.js | default "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js" -}}
+<script async src="{{ $js }}"></script>
+{{- if $ads.auto_ads -}}
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: {{ $ads.client | default "" | jsonify | safeJS }},
+    enable_page_level_ads: {{ default true $ads.enable_page_level_ads }}
+  });
+</script>
+{{- end -}}
+{{- end -}}

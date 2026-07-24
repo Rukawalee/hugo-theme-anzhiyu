@@ -1,0 +1,20 @@
+<div id="categoryBar">
+  <div id="category-bar" class="category-bar">
+    <div id="catalog-bar">
+      <div id="catalog-list">
+        <div class="catalog-list-item" id="首页">
+          <a href="{{ "/" | relLangURL }}">{{ i18n "page.home" }}</a>
+        </div>
+        {{- range first 12 .Site.Taxonomies.categories.ByCount -}}
+        <div class="catalog-list-item" id="{{ .Page.RelPermalink }}">
+          <a href="{{ .Page.RelPermalink }}">{{ .Page.Title }}</a>
+        </div>
+        {{- end -}}
+      </div>
+      <div class="category-bar-next" id="category-bar-next">
+        <i class="anzhiyufont anzhiyu-icon-angle-double-right"></i>
+      </div>
+      <a class="catalog-more" href="{{ "/categories/" | relLangURL }}">{{ i18n "page.more" }}</a>
+    </div>
+  </div>
+</div>

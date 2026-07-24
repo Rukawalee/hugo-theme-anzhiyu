@@ -1,0 +1,44 @@
+{{- /*
+  Unified hide shortcode:
+  {{% hide type="block" display="Click" %}}...{{% /hide %}}
+  {{% hide type="toggle" display="Title" %}}...{{% /hide %}}
+  {{< hide type="inline" content="..." display="Click" >}}
+*/ -}}
+{{- $type := "block" -}}
+{{- if .IsNamedParams -}}
+  {{- $type = .Get "type" | default "block" -}}
+{{- else if ge (len .Params) 1 -}}
+  {{- $type = .Get 0 -}}
+{{- end -}}
+{{- if eq $type "inline" -}}
+  {{- $content := .Get "content" | default (.Get 1) | default .Inner -}}
+  {{- $display := .Get "display" | default (.Get 2) | default "Click" -}}
+  {{- $bg := .Get "bg" | default (.Get 3) | default "" -}}
+  {{- $color := .Get "color" | default (.Get 4) | default "" -}}
+  {{- $style := "" -}}
+  {{- if $bg }}{{ $style = printf "%sbackground-color: %s;" $style $bg }}{{ end -}}
+  {{- if $color }}{{ $style = printf "%scolor: %s" $style $color }}{{ end -}}
+<span class="hide-inline"><button type="button" class="hide-button"{{ with $style }} style="{{ . | safeCSS }}"{{ end }}>{{ $display }}
+</button><span class="hide-content">{{ $content }}</span></span>
+{{- else if eq $type "toggle" -}}
+  {{- $display := .Get "display" | default (.Get "title") | default (.Get 1) | default "" -}}
+  {{- $bg := .Get "bg" | default (.Get 2) | default "" -}}
+  {{- $color := .Get "color" | default (.Get 3) | default "" -}}
+  {{- $group := "" -}}
+  {{- $border := "" -}}
+  {{- if $bg -}}
+    {{- $border = printf "border: 1px solid %s" $bg -}}
+    {{- $group = printf "%sbackground-color: %s;" $group $bg -}}
+  {{- end -}}
+  {{- if $color }}{{ $group = printf "%scolor: %s" $group $color }}{{ end -}}
+<details class="toggle"{{ with $border }} style="{{ . | safeCSS }}"{{ end }}><summary class="toggle-button"{{ with $group }} style="{{ . | safeCSS }}"{{ end }}>{{ $display }}</summary><div class="toggle-content">{{ .Inner | markdownify }}</div></details>
+{{- else -}}
+  {{- $display := .Get "display" | default (.Get 1) | default "Click" -}}
+  {{- $bg := .Get "bg" | default (.Get 2) | default "" -}}
+  {{- $color := .Get "color" | default (.Get 3) | default "" -}}
+  {{- $style := "" -}}
+  {{- if $bg }}{{ $style = printf "%sbackground-color: %s;" $style $bg }}{{ end -}}
+  {{- if $color }}{{ $style = printf "%scolor: %s" $style $color }}{{ end -}}
+<div class="hide-block"><button type="button" class="hide-button"{{ with $style }} style="{{ . | safeCSS }}"{{ end }}>{{ $display }}
+</button><div class="hide-content">{{ .Inner | markdownify }}</div></div>
+{{- end -}}

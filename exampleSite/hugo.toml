@@ -1,0 +1,542 @@
+baseURL = "https://example.org/"
+languageCode = "zh-CN"
+defaultContentLanguage = "zh-CN"
+title = "AnZhiYu Hugo"
+themesDir = "../.."
+theme = "hugo-theme-anzhiyu"
+
+[languages]
+  [languages.zh-CN]
+    languageCode = "zh-CN"
+    languageName = "简体中文"
+    weight = 1
+    title = "AnZhiYu Hugo"
+  [languages.en]
+    languageCode = "en"
+    languageName = "English"
+    weight = 2
+    title = "AnZhiYu Hugo"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.highlight]
+    style = "github"
+    lineNos = false
+    codeFences = true
+    guessSyntax = true
+    noClasses = false
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 3
+    ordered = false
+
+[menu]
+  [[menu.main]]
+    name = "首页"
+    url = "/"
+    weight = 1
+    [menu.main.params]
+      icon = "anzhiyu-icon-house-chimney"
+  [[menu.main]]
+    name = "文章"
+    url = "javascript:void(0);"
+    weight = 2
+    [menu.main.params]
+      icon = "anzhiyu-icon-box-archive"
+  [[menu.main]]
+    name = "全部文章"
+    url = "/archives/"
+    parent = "文章"
+    weight = 1
+    [menu.main.params]
+      icon = "anzhiyu-icon-box-archive"
+  [[menu.main]]
+    name = "分类"
+    url = "/categories/"
+    parent = "文章"
+    weight = 2
+    [menu.main.params]
+      icon = "anzhiyu-icon-shapes"
+  [[menu.main]]
+    name = "标签"
+    url = "/tags/"
+    parent = "文章"
+    weight = 3
+    [menu.main.params]
+      icon = "anzhiyu-icon-tags"
+  [[menu.main]]
+    name = "即刻"
+    url = "/essay/"
+    weight = 5
+    [menu.main.params]
+      icon = "anzhiyu-icon-jike"
+  [[menu.main]]
+    name = "友链"
+    url = "/link/"
+    weight = 6
+    [menu.main.params]
+      icon = "anzhiyu-icon-link"
+  [[menu.main]]
+    name = "关于"
+    url = "javascript:void(0);"
+    weight = 7
+    [menu.main.params]
+      icon = "anzhiyu-icon-paper-plane"
+  [[menu.main]]
+    name = "关于本站"
+    url = "/about/"
+    parent = "关于"
+    weight = 1
+  [[menu.main]]
+    name = "音乐馆"
+    url = "/music/"
+    parent = "关于"
+    weight = 2
+
+
+[params]
+  author = "安知鱼"
+  description = "Hugo 主题 AnZhiYu 示例站点 — 生活明朗，万物可爱"
+  keywords = ["Hugo", "AnZhiYu", "博客"]
+  favicon = "/favicon.ico"
+  display_mode = "light"
+  site_subtitle = "生活明朗，万物可爱"
+  disable_top_img = false
+  index_img = false
+  default_top_img = false
+  article_double_row = true
+  post_pagination = 2
+  highlight_copy = true
+  highlight_lang = true
+  highlight_height_limit = 330
+  highlight_theme = "light"
+  music_page_default = "nav_music"
+
+  [params.avatar]
+    img = "/img/default_cover.jpg"
+
+  [params.error_img]
+    flink = "/img/friend_404.gif"
+    post_page = "/img/404.jpg"
+
+  [params.error_404]
+    enable = true
+    subtitle = "请尝试站内搜索寻找文章"
+    background = "/img/404.jpg"
+
+  [params.cover]
+    index_enable = true
+    aside_enable = true
+    archives_enable = true
+    position = "left"
+    default_cover = "/img/default_cover.jpg"
+    default_covers = ["/img/default_cover.jpg", "/img/default.png"]
+
+  [params.post_meta]
+    [params.post_meta.page]
+      date_type = "created"
+      date_format = "simple"
+      categories = true
+      tags = true
+    [params.post_meta.post]
+      date_type = "both"
+      date_format = "date"
+      categories = true
+      tags = true
+
+  [params.index_post_content]
+    method = 3
+    length = 150
+
+  [params.toc]
+    post = true
+    page = false
+    number = true
+    expand = false
+    style_simple = false
+
+  [params.post_copyright]
+    enable = true
+    license = "CC BY-NC-SA 4.0"
+    license_url = "https://creativecommons.org/licenses/by-nc-sa/4.0/"
+    location = "长沙"
+
+  [params.related_post]
+    enable = true
+    limit = 6
+
+  [params.nav]
+    enable = false
+
+  [[params.nav.menu]]
+    title = "项目"
+    [[params.nav.menu.item]]
+      name = "Hugo Theme AnZhiYu"
+      link = "https://github.com/Rukawalee/hugo-theme-anzhiyu"
+      icon = "/img/favicon.ico"
+
+  [params.subtitle]
+    enable = false
+
+  [params.social]
+    Github = "https://github.com/Rukawalee/hugo-theme-anzhiyu | anzhiyu-icon-github"
+    Mail = "mailto:demo@example.org | anzhiyu-icon-envelope"
+
+  [params.aside]
+    enable = true
+    hide = false
+    button = true
+    mobile = true
+    position = "right"
+    [params.aside.display]
+      archive = true
+      tag = true
+      category = true
+    [params.aside.card_author]
+      enable = true
+      description = "这是 Hugo 主题 AnZhiYu 的示例站点。"
+      name_link = "/"
+    [params.aside.card_recent_post]
+      enable = false
+      limit = 5
+      sort = "date"
+    [params.aside.card_categories]
+      enable = false
+      limit = 8
+    [params.aside.card_tags]
+      enable = true
+      limit = 40
+    [params.aside.card_archives]
+      enable = true
+      format = "2006-01"
+      limit = 8
+    [params.aside.card_webinfo]
+      enable = true
+      post_count = true
+      last_push_date = false
+    [params.aside.card_announcement]
+      enable = true
+      content = "这是 Hugo 主题 AnZhiYu 本地示例站，用于和 Hexo 参考站比对。"
+    [params.aside.card_weixin]
+      enable = true
+      face = "/img/default_cover.jpg"
+      backFace = "/img/default.png"
+
+  [params.ad]
+    # aside ad disabled for Hexo-demo density parity
+
+  [params.sharejs]
+    enable = true
+    sites = "facebook,twitter,wechat,weibo,qq"
+
+  [params.darkmode]
+    enable = true
+    button = true
+    autoChangeMode = 1
+
+  [params.local_search]
+    enable = true
+    preload = true
+
+  [params.home_top]
+    enable = true
+    title = "生活明朗"
+    subTitle = "万物可爱"
+    siteText = "AnZhiYu"
+    [params.home_top.banner]
+      tips = "永远相信"
+      title = "美好的事情即将发生"
+      image = "/img/default_cover.jpg"
+      link = "/about/"
+    [[params.home_top.category]]
+      name = "必看精选"
+      path = "/categories/"
+      class = "blue"
+      icon = "anzhiyu-icon-dove"
+      shadow = "var(--anzhiyu-shadow-blue)"
+    [[params.home_top.category]]
+      name = "热门文章"
+      path = "/posts/"
+      class = "red"
+      icon = "anzhiyu-icon-fire"
+      shadow = "var(--anzhiyu-shadow-red)"
+    [[params.home_top.category]]
+      name = "实用教程"
+      path = "/tags/"
+      class = "green"
+      icon = "anzhiyu-icon-book"
+      shadow = "var(--anzhiyu-shadow-green)"
+    [params.home_top.swiper]
+      enable = false
+
+  [params.footer]
+    [params.footer.owner]
+      enable = true
+      since = 2024
+    [params.footer.socialBar]
+      enable = false
+      centerImg = "/img/default_cover.jpg"
+      [[params.footer.socialBar.left]]
+        title = "Github"
+        link = "https://github.com/Rukawalee/hugo-theme-anzhiyu"
+        icon = "anzhiyu-icon-github"
+      [[params.footer.socialBar.right]]
+        title = "Mail"
+        link = "mailto:demo@example.org"
+        icon = "anzhiyu-icon-envelope"
+    [params.footer.footerBar]
+      enable = true
+      authorLink = "/"
+      [[params.footer.footerBar.linkList]]
+        link = "https://github.com/Rukawalee/hugo-theme-anzhiyu"
+        text = "主题"
+      [params.footer.footerBar.cc]
+        enable = false
+      [params.footer.footerBar.subTitle]
+        enable = false
+        effect = true
+        source = 1
+        startDelay = 300
+        typeSpeed = 150
+        backSpeed = 50
+        loop = true
+
+  [params.runtimeshow]
+    enable = false
+    publish_date = "2024-01-01"
+
+  [params.comments]
+    enable = false
+    use = ["Giscus"]
+    lazyload = false
+    count = false
+    text = true
+
+  [params.giscus]
+    repo = ""
+    repo_id = ""
+    category_id = ""
+    [params.giscus.theme]
+      light = "light"
+      dark = "dark"
+
+  [params.twikoo]
+    envId = ""
+    region = ""
+
+  [params.waline]
+    serverURL = ""
+    pageview = false
+    meta_css = false
+    imageUploader = true
+
+  [params.valine]
+    appId = ""
+    appKey = ""
+    avatar = "mp"
+    serverURLs = ""
+    visitor = false
+
+  [params.artalk]
+    server = ""
+    site = ""
+
+  [params.pjax]
+    enable = true
+
+  [params.katex]
+    enable = true
+    per_page = true
+
+  [params.mathjax]
+    enable = false
+
+  [params.mermaid]
+    enable = true
+    [params.mermaid.theme]
+      light = "default"
+      dark = "dark"
+
+  [params.pwa]
+    enable = true
+    manifest = "/manifest.json"
+    theme_color = "#425AEF"
+    apple_touch_icon = "/img/512.png"
+    favicon_32_32 = "/img/default.png"
+    favicon_16_16 = "/img/default.png"
+
+  [params.rightmenu]
+    enable = true
+
+  [params.console]
+    enable = true
+
+  [params.centerConsole]
+    enable = true
+
+  [params.friends_vue]
+    enable = true
+    apiurl = ""
+    top_background = "/img/default_cover.jpg"
+    top_tips = "示例友链朋友圈（未配置 apiurl 时仅壳）"
+
+  [params.linkPageTop]
+    enable = true
+    title = "友情链接"
+
+  [params.nav_music]
+    enable = true
+    console_widescreen_music = false
+    id = "8152976493"
+    server = "netease"
+    volume = 0.7
+    all_playlist = "https://y.qq.com/n/ryqq/playlist/8802438608"
+
+
+  [params.preloader]
+    enable = true
+    source = 1
+    avatar = "/img/default_cover.jpg"
+
+  [params.shortcutKey]
+    enable = true
+    delay = 100
+    shiftDelay = 200
+
+
+
+  [params.pangu]
+    enable = false
+
+  [params.reward]
+    enable = true
+    [[params.reward.QR_code]]
+      img = "/img/default_cover.jpg"
+      text = "微信"
+    [[params.reward.QR_code]]
+      img = "/img/default.png"
+      text = "支付宝"
+
+  [params.ptool]
+    enable = true
+    share_mobile = true
+    share_weibo = true
+    share_copyurl = true
+
+  [params.translate]
+    enable = true
+
+  [params.post_head_ai_description]
+    enable = true
+    mode = "local"
+    gptName = "AnZhiYu"
+    switchBtn = true
+    basicWordCount = 1000
+
+  [params.noticeOutdate]
+    enable = true
+    style = "flat"
+    limit_day = 30
+    position = "top"
+    message_prev = "本文最后更新于"
+    message_next = "天前，部分内容可能已过时。"
+
+  [params.readmode]
+    enable = true
+
+  [params.diytitle]
+    enable = true
+    leaveTitle = "w(ﾟДﾟ)w 不要走！再看看嘛！"
+    backTitle = "♪(^∇^*)欢迎肥来！"
+
+  [params.author_status]
+    enable = true
+    statusImg = "/img/default.png"
+    skills = ["生活明朗，万物可爱", "今天也要加油鸭", "保持热爱，奔赴山海", "你好呀，欢迎来到本站"]
+
+  [params.peoplecanvas]
+    enable = true
+    img = "https://upload-bbs.miyoushe.com/upload/2024/07/27/125766904/ba62475f396df9de3316a08ed9e65d86_5680958632268053399..png"
+
+  
+  [params.theme_color]
+    enable = true
+    main = "#425AEF"
+    dark_main = "#f2b94b"
+    meta_theme_color_light = "#f7f9fe"
+    meta_theme_color_dark = "#18171d"
+
+  [params.copy]
+    enable = true
+    [params.copy.copyright]
+      enable = true
+      limit_count = 50
+
+  [params.asset]
+    flickr_justified_gallery_js = "/js/vendor/fjGallery.min.js"
+    flickr_justified_gallery_css = "/css/vendor/fjGallery.css"
+
+  [params.footer.runtime]
+    enable = false
+    launch_time = "2024-01-01"
+    offduty_img = "/img/default.png"
+    offduty_description = "下班啦"
+
+  [params.wordcount]
+    enable = true
+
+  [params.dynamicEffect]
+    postTopWave = true
+    postTopRollZoomInfo = false
+    pageCommentsRollZoom = false
+
+  [params.fancybox]
+    enable = true
+    css = "https://cdn.cbd.int/@fancyapps/ui@6.1.6/dist/fancybox/fancybox.css"
+    js = "https://cdn.cbd.int/@fancyapps/ui@6.1.6/dist/fancybox/fancybox.umd.js"
+
+  [params.medium_zoom]
+    enable = false
+
+  [params.snackbar]
+    enable = true
+    position = "bottom-left"
+    bg_light = "#49b1f5"
+    bg_dark = "#1f1f1f"
+    css = "https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css"
+    js = "https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js"
+
+  [params.lazyload]
+    enable = true
+    placeholder = "/img/loading.gif"
+    js = "https://cdn.cbd.int/vanilla-lazyload@19.1.3/dist/lazyload.iife.min.js"
+
+  [params.instantpage]
+    enable = true
+    js = "https://cdn.cbd.int/instant.page@5.2.0/instantpage.js"
+
+  [params.pace]
+    enable = true
+    css = "https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css"
+    js = "https://cdn.cbd.int/pace-js@1.2.4/pace.min.js"
+
+  [params.accesskey]
+    enable = true
+    js = "https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js"
+
+  [params.universe]
+    enable = true
+    js = "https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/dark/dark.js"
+
+  [params.bubble]
+    enable = false
+

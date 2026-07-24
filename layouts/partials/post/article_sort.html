@@ -1,0 +1,43 @@
+{{- $params := .Site.Params -}}
+{{- $pages := .Paginator.Pages -}}
+{{- if not $pages -}}
+  {{- $pages = .Pages -}}
+{{- end -}}
+<div class="article-sort">
+  {{- $year := "" -}}
+  {{- range $i, $page := $pages -}}
+    {{- $y := $page.Date.Format "2006" -}}
+    {{- if ne $y $year -}}
+      {{- $year = $y -}}
+      <div class="article-sort-item year"><span>{{ $year }}</span></div>
+    {{- end -}}
+    {{- $cover := $page.Params.cover | default $params.cover.default_cover -}}
+    {{- $noCover := or (eq $page.Params.cover false) (not $params.cover.archives_enable) -}}
+    <div class="article-sort-item{{ if $noCover }} no-article-cover{{ end }}">
+      {{- if and $cover (not $noCover) -}}
+      <a class="article-sort-item-img" href="{{ $page.RelPermalink }}" title="{{ $page.Title }}">
+        {{- partial "helpers/lazy_img.html" (dict "src" $cover "alt" $page.Title "error" ($params.error_img.post_page | default "/img/404.jpg") "ctx" $page) -}}
+      </a>
+      {{- end -}}
+      <div class="article-sort-item-info">
+        <a class="article-sort-item-title" href="{{ $page.RelPermalink }}" title="{{ $page.Title }}">{{ $page.Title | default (i18n "no_title") }}</a>
+        <span class="article-sort-item-index">{{ add $i 1 }}</span>
+        <div class="article-meta-wrap">
+          {{- if and $params.post_meta.page.tags $page.Params.tags -}}
+          <span class="article-sort-item-tags">
+            {{- range $page.GetTerms "tags" -}}
+            <a class="article-meta__tags" href="{{ .RelPermalink }}">
+              <span><i class="anzhiyufont anzhiyu-icon-hashtag"></i>{{ .LinkTitle }}</span>
+            </a>
+            {{- end -}}
+          </span>
+          {{- end -}}
+          <div class="article-sort-item-time">
+            <i class="anzhiyufont anzhiyu-icon-calendar-alt"></i>
+            <time datetime="{{ $page.Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ $page.Date.Format "2006-01-02" }}</time>
+          </div>
+        </div>
+      </div>
+    </div>
+  {{- end -}}
+</div>

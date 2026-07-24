@@ -1,0 +1,16 @@
+{{- $params := .Site.Params -}}
+{{- if and $params.aside.card_tags.enable .Site.Taxonomies.tags -}}
+{{- $limit := default 40 $params.aside.card_tags.limit -}}
+<div class="card-tags">
+  <div class="item-headline">
+    <i class="anzhiyufont anzhiyu-icon-tags"></i>
+    <span>{{ i18n "aside.card_tags" }}</span>
+  </div>
+  <div class="card-tag-cloud">
+    {{- range first $limit .Site.Taxonomies.tags.ByCount -}}
+    <a href="{{ .Page.RelPermalink }}" style="font-size:1.05rem">{{ .Page.Title }}<sup>{{ .Count }}</sup></a>
+    {{- end -}}
+  </div>
+</div>
+<hr>
+{{- end -}}

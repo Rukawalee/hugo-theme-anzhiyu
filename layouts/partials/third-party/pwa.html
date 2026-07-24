@@ -1,0 +1,33 @@
+{{- /* Optional PWA manifest + icons + service worker */ -}}
+{{- $pwa := .Site.Params.pwa | default dict -}}
+{{- if $pwa.enable | default false }}
+<link rel="manifest" href="{{ $pwa.manifest | default "/manifest.json" | relURL }}">
+{{- with $pwa.theme_color }}
+<meta name="msapplication-TileColor" content="{{ . }}">
+{{- /* Do not emit a second theme-color meta — it fights dark/light mode.
+       Brand color stays on msapplication-TileColor / manifest. */ -}}
+{{- end }}
+{{- with $pwa.mask_icon }}
+<link rel="mask-icon" href="{{ . | relURL }}" color="#5bbad5">
+{{- end }}
+{{- with $pwa.apple_touch_icon }}
+<link rel="apple-touch-icon" sizes="180x180" href="{{ . | relURL }}">
+{{- end }}
+{{- with $pwa.favicon_32_32 }}
+<link rel="icon" type="image/png" sizes="32x32" href="{{ . | relURL }}">
+{{- end }}
+{{- with $pwa.favicon_16_16 }}
+<link rel="icon" type="image/png" sizes="16x16" href="{{ . | relURL }}">
+{{- end }}
+{{- with $pwa.bookmark_icon }}
+<link rel="bookmark" href="{{ . | relURL }}">
+{{- end }}
+{{- $sw := $pwa.sw | default "/sw.js" -}}
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register({{ $sw | relURL | jsonify | safeJS }}).catch(function () {});
+    });
+  }
+</script>
+{{- end }}

@@ -1,0 +1,55 @@
+{{- $params := .Site.Params -}}
+{{- $isPost := and .IsPage (or (eq .Type "posts") (eq .Section "posts") (eq .Type "post")) -}}
+{{- $showToc := and $isPost (ne .Params.toc false) (default true $params.toc.post) -}}
+{{- $translate := $params.translate | default dict -}}
+{{- $readmode := $params.readmode | default dict -}}
+{{- $readEnable := true -}}
+{{- if reflect.IsMap $readmode }}{{ $readEnable = $readmode.enable | default true }}{{ else if eq $readmode false }}{{ $readEnable = false }}{{ end -}}
+{{- $barrage := $params.comment_barrage_config | default dict -}}
+<div id="rightside">
+  <div id="rightside-config-hide">
+    {{- if and $isPost $readEnable -}}
+    <button id="readmode" type="button" title="{{ i18n "rightside.readmode_title" | default "阅读模式" }}">
+      <i class="anzhiyufont anzhiyu-icon-book-open"></i>
+    </button>
+    {{- end -}}
+    {{- if $translate.enable | default false -}}
+    <button id="translateLink" type="button" title="{{ i18n "rightside.translate_title" | default "简繁转换" }}">
+      {{ $translate.default | default "繁" }}
+    </button>
+    {{- end -}}
+    {{- if and $params.darkmode.enable $params.darkmode.button -}}
+    <button id="darkmode" type="button" title="{{ i18n "rightside.night_mode_title" }}">
+      <i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i>
+    </button>
+    {{- end -}}
+    {{- if and $params.aside.enable $params.aside.button (ne .Params.aside false) -}}
+    <button id="hide-aside-btn" type="button" title="{{ i18n "rightside.aside" }}">
+      <i class="anzhiyufont anzhiyu-icon-arrows-left-right"></i>
+    </button>
+    {{- end -}}
+  </div>
+  <div id="rightside-config-show">
+    <button id="rightside-config" type="button" title="{{ i18n "rightside.setting" }}">
+      <i class="anzhiyufont anzhiyu-icon-gear"></i>
+    </button>
+    {{- if and $isPost (ne .Params.comments false) ($params.comments.enable | default false) -}}
+    <button class="close" id="to_comment" type="button" title="{{ i18n "rightside.scroll_to_comment" | default "直达评论" }}">
+      <i class="anzhiyufont anzhiyu-icon-comments"></i>
+    </button>
+    {{- end -}}
+    {{- if and $isPost ($barrage.enable | default false) -}}
+    <button class="close" id="switch-commentBarrage" type="button" title="{{ i18n "console.toggle_barrage" | default "热评开关" }}">
+      <i class="anzhiyufont anzhiyu-icon-danmu"></i>
+    </button>
+    {{- end -}}
+    {{- if $showToc -}}
+    <button id="mobile-toc-button" class="close" type="button" title="{{ i18n "rightside.toc" }}">
+      <i class="anzhiyufont anzhiyu-icon-list-ul"></i>
+    </button>
+    {{- end -}}
+    <button id="go-up" type="button" title="{{ i18n "rightside.back_to_top" }}">
+      <i class="anzhiyufont anzhiyu-icon-arrow-up"></i>
+    </button>
+  </div>
+</div>

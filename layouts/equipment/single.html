@@ -1,0 +1,9 @@
+{{- define "main" -}}
+<div id="page">
+  <h1 class="page-title">{{ .Title }}</h1>
+  {{ partial "page/equipment.html" . }}
+  {{- if and (ne .Params.comments false) (.Site.Params.comments.use) }}
+  {{ partial "third-party/comments.html" . }}
+  {{- end }}
+</div>
+{{- end -}}

@@ -1,0 +1,56 @@
+{{- /*
+  {{< link "title" "sitename" "url" "imgUrl?" >}}
+  {{< link title="..." sitename="..." url="..." img="..." >}}
+*/ -}}
+{{- $title := "" -}}
+{{- $sitename := "" -}}
+{{- $link := "" -}}
+{{- $imgUrl := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $title = .Get "title" | default "" -}}
+  {{- $sitename = .Get "sitename" | default (.Get "site") | default "" -}}
+  {{- $link = .Get "url" | default (.Get "href") | default (.Get "link") | default "" -}}
+  {{- $imgUrl = .Get "img" | default (.Get "icon") | default "" -}}
+{{- else -}}
+  {{- $title = .Get 0 | default "" -}}
+  {{- $sitename = .Get 1 | default "" -}}
+  {{- $link = .Get 2 | default "" -}}
+  {{- $imgUrl = .Get 3 | default "" -}}
+{{- end -}}
+{{- $title = trim $title " " -}}
+{{- $sitename = trim $sitename " " -}}
+{{- $link = trim $link " " -}}
+{{- $imgUrl = trim $imgUrl " " -}}
+{{- $isRelative := and (hasPrefix $link "/") (not (hasPrefix $link "//")) -}}
+{{- $isExplicitInside := eq $imgUrl "true" -}}
+{{- $inside := or $isRelative $isExplicitInside -}}
+{{- $favicon := site.Params.favicon | default "/favicon.ico" -}}
+{{- $iconUrl := "" -}}
+{{- if and $imgUrl (ne $imgUrl "true") -}}
+  {{- $iconUrl = $imgUrl -}}
+{{- else if $inside -}}
+  {{- $iconUrl = $favicon -}}
+{{- else if $link -}}
+  {{- if or (hasPrefix $link "http://") (hasPrefix $link "https://") -}}
+    {{- $u := urls.Parse $link -}}
+    {{- $iconUrl = printf "%s://%s/favicon.ico" $u.Scheme $u.Host -}}
+  {{- end -}}
+{{- end -}}
+{{- $hasIcon := ne $iconUrl "" -}}
+{{- $tip := cond $inside "站内地址" "引用站外地址" -}}
+{{- $faviconStyle := cond $hasIcon "" "display:none" -}}
+{{- $fallbackStyle := cond $hasIcon "display:none" "display:flex" -}}
+<div class="anzhiyu-tag-link"><a class="tag-Link"{{ if not $inside }} target="_blank" rel="noopener external nofollow noreferrer"{{ end }} href="{{ $link | safeURL }}">
+  <div class="tag-link-tips">{{ $tip }}</div>
+  <div class="tag-link-bottom">
+    <div class="tag-link-left"{{ with $iconUrl }} data-icon="{{ . }}"{{ end }}>
+      <img class="tag-link-favicon" src="{{ $iconUrl }}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" style="{{ $faviconStyle | safeCSS }}" alt="favicon"/>
+      <i class="anzhiyufont anzhiyu-icon-link" style="{{ $fallbackStyle | safeCSS }}"></i>
+    </div>
+    <div class="tag-link-right">
+      <div class="tag-link-title">{{ $title }}</div>
+      <div class="tag-link-sitename">{{ $sitename }}</div>
+    </div>
+    <i class="anzhiyufont anzhiyu-icon-angle-right"></i>
+  </div>
+</a></div>

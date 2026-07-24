@@ -1,0 +1,85 @@
+{{- /* Waline — full upstream-equivalent loader */ -}}
+{{- $w := .Site.Params.waline | default dict -}}
+{{- if not ($w.serverURL | default "") }}{{/* credentials required */}}{{ else }}
+{{- $c := .Site.Params.comments | default dict -}}
+{{- $lazyload := $c.lazyload | default false -}}
+{{- $count := $c.count | default false -}}
+{{- $option := $w.option | default dict -}}
+{{- $pageview := $w.pageview | default false -}}
+{{- $metaCSS := $w.meta_css | default false -}}
+{{- $imageUploader := $w.imageUploader | default true -}}
+{{- $use := $c.use | default slice -}}
+{{- if reflect.IsSlice $use | not }}{{ if $use }}{{ $use = slice $use }}{{ else }}{{ $use = slice }}{{ end }}{{ end -}}
+{{- $norm := slice -}}
+{{- range $use }}{{ $norm = $norm | append (. | title) }}{{ end -}}
+{{- $first := "" }}{{ if gt (len $norm) 0 }}{{ $first = index $norm 0 }}{{ end -}}
+{{- $js := $w.js | default "https://cdn.jsdelivr.net/npm/@waline/client@3.8.0/dist/waline.js" -}}
+{{- $css := $w.css | default "https://cdn.jsdelivr.net/npm/@waline/client@3.8.0/dist/waline.css" -}}
+{{- $metaCssUrl := $w.meta_css_url | default "https://cdn.jsdelivr.net/npm/@waline/client@3.8.0/dist/waline-meta.css" -}}
+<script>
+(() => {
+  let initFn = window.walineFn || null;
+  const jsUrl = {{ $js | jsonify | safeJS }};
+  const cssUrl = {{ $css | jsonify | safeJS }};
+  const metaCssUrl = {{ $metaCssUrl | jsonify | safeJS }};
+  const metaCss = {{ $metaCSS | jsonify | safeJS }};
+  const lazy = {{ $lazyload | jsonify | safeJS }};
+  const pageview = {{ $pageview | jsonify | safeJS }};
+  const count = {{ $count | jsonify | safeJS }};
+
+  const getCSS = (url) => {
+    if (typeof window.getCSS === 'function') return window.getCSS(url);
+    return new Promise((resolve, reject) => {
+      if (document.querySelector(`link[href="${url}"]`)) return resolve();
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = url;
+      link.onload = () => resolve();
+      link.onerror = reject;
+      document.head.appendChild(link);
+    });
+  };
+
+  const initWaline = (Fn) => {
+    const waline = Fn(Object.assign({
+      el: '#waline-wrap',
+      serverURL: {{ $w.serverURL | jsonify | safeJS }},
+      pageview: lazy ? false : pageview,
+      dark: 'html[data-theme="dark"]',
+      path: window.location.pathname,
+      comment: lazy ? false : count,
+      imageUploader: {{ $imageUploader | jsonify | safeJS }},
+    }, {{ $option | jsonify | safeJS }}));
+
+    if (window.anzhiyu && typeof anzhiyu.addGlobalFn === 'function' && waline && typeof waline.destroy === 'function') {
+      anzhiyu.addGlobalFn('pjax', () => { try { waline.destroy(); } catch (_) {} }, 'destroyWaline');
+    }
+  };
+
+  const loadWaline = async () => {
+    if (initFn) {
+      initWaline(initFn);
+      return;
+    }
+    await getCSS(cssUrl);
+    if (metaCss) await getCSS(metaCssUrl);
+    const mod = await import(jsUrl);
+    initFn = mod.init || (window.Waline && Waline.init);
+    if (!initFn) return;
+    window.walineFn = initFn;
+    initWaline(initFn);
+  };
+
+  const isPrimary = {{ $first | jsonify | safeJS }} === 'Waline';
+  if (isPrimary || lazy) {
+    if (!lazy && window.anzhiyu && typeof anzhiyu.loadComment === 'function') {
+      anzhiyu.loadComment(document.getElementById('waline-wrap'), loadWaline);
+    } else {
+      setTimeout(loadWaline, 0);
+    }
+  } else {
+    window.loadOtherComment = loadWaline;
+  }
+})();
+</script>
+{{- end }}

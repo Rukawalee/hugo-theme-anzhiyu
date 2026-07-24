@@ -1,0 +1,60 @@
+{{- /*
+  {{< bilibili "BVxxxxxx" >}}
+  {{< bilibili id="BVxxxxxx" time="10:00" hidden_desc="true" >}}
+*/ -}}
+{{- $id := "" -}}
+{{- $time := "" -}}
+{{- $hiddenDesc := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $id = .Get "id" | default "" -}}
+  {{- $time = .Get "time" | default "" -}}
+  {{- $hiddenDesc = .Get "hidden_desc" | default "" -}}
+{{- else -}}
+  {{- $id = .Get 0 | default "" -}}
+  {{- $time = .Get 1 | default "" -}}
+  {{- $hiddenDesc = .Get 2 | default "" -}}
+{{- end -}}
+{{- $id = replaceRE `.*video/([^/]+)/?.*` `$1` $id -}}
+{{- $api := site.Params.bilibiliApi | default "https://api.320.ink/api/b" -}}
+{{- $apiURL := printf "%s?id=%s" $api $id -}}
+{{- $timeHtml := "" -}}
+{{- if $time }}{{ $timeHtml = printf "<span>%s</span>" $time }}{{ end -}}
+<a href="https://www.bilibili.com/video/{{ $id }}/" class="bilibili_box" id="{{ $id }}"></a>
+<script>
+(function () {
+  var dom = document.getElementById({{ printf "%q" $id | safeJS }});
+  if (!dom) return;
+  var showDesc = {{ if eq $hiddenDesc "true" }}false{{ else }}true{{ end }};
+  var timeHtml = {{ printf "%q" $timeHtml | safeJS }};
+  fetch({{ printf "%q" $apiURL | safeJS }}).then(function (res) { return res.json(); }).then(function (data) {
+    function fmt(n) { return n >= 10000 ? (n / 10000).toFixed(1) + "w" : n; }
+    var playIcon = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="icon"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.125 7.29102C8.125 6.76224 8.6875 6.42839 9.14062 6.7041L13.0156 9.16309C13.4531 9.43066 13.4531 10.0693 13.0156 10.3369L9.14062 12.7959C8.6875 13.0716 8.125 12.7378 8.125 12.209V7.29102Z" fill="currentColor"></path></svg>';
+    var likeIcon = '<svg width="20" height="20" viewBox="0 0 36 36" xmlns="http://www.w3.org/2000/svg" class="icon"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.77234 30.8573V11.7471H7.54573C5.50932 11.7471 3.85742 13.3931 3.85742 15.425V27.1794C3.85742 29.2112 5.50932 30.8573 7.54573 30.8573H9.77234ZM11.9902 30.8573V11.7054C14.9897 10.627 16.6942 7.8853 17.1055 3.33591C17.2666 1.55463 18.9633 0.814421 20.5803 1.59505C22.1847 2.36964 23.243 4.32583 23.243 6.93947C23.243 8.50265 23.0478 10.1054 22.6582 11.7471H29.7324C31.7739 11.7471 33.4289 13.402 33.4289 15.4435C33.4289 15.7416 33.3928 16.0386 33.3215 16.328L30.9883 25.7957C30.2558 28.7683 27.5894 30.8573 24.528 30.8573H11.9911H11.9902Z"></path></svg>';
+    var coinIcon = '<svg width="20" height="20" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" class="icon"><circle cx="14" cy="14" r="11" fill="currentColor"></circle></svg>';
+    var desc = showDesc ? ('<div class="desc">' + (data.desc || "") + "</div>") : "";
+    dom.innerHTML =
+      '<div class="bilibili_cover"><img src="https://s1.hdslb.com/bfs/static/player/img/play.svg" class="play_icon no-lazyload"><img src="' +
+      data.pic +
+      '&h=300" class="no-lazyload">' +
+      timeHtml +
+      '</div><div class="bilibili_info"><div class="title">' +
+      data.title +
+      "</div>" +
+      desc +
+      '<div class="stat"><span>' +
+      playIcon +
+      fmt(data.view) +
+      "</span><span>" +
+      likeIcon +
+      fmt(data.like) +
+      "</span><span>" +
+      coinIcon +
+      fmt(data.coin) +
+      '</span></div><div class="owner"><span class="tip">视频</span><img src="' +
+      data.face +
+      '&h=100" class="no-lazyload"><span>' +
+      data.owner +
+      "</span></div></div>";
+  });
+})();
+</script>

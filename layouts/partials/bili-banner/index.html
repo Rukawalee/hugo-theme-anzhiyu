@@ -1,0 +1,4 @@
+{{- /* Upstream bili-banner — only when page.bilibili_bg is set */ -}}
+{{- with .Params.bilibili_bg -}}
+<div class="bili-banner" style="background-image:url({{ . | relURL }})"></div>
+{{- end -}}

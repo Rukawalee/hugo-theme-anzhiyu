@@ -1,0 +1,16 @@
+{{- /* catalog_list(type) — type: categories | tags */ -}}
+{{- $type := .type | default "categories" -}}
+{{- $ctx := .ctx -}}
+{{- if eq $type "categories" -}}
+  {{- range $ctx.Site.Taxonomies.categories -}}
+  <div class="catalog-list-item" id="{{ .Page.RelPermalink }}">
+    <a href="{{ .Page.RelPermalink }}">{{ .Page.Title }}</a>
+  </div>
+  {{- end -}}
+{{- else if eq $type "tags" -}}
+  {{- range $ctx.Site.Taxonomies.tags -}}
+  <div class="catalog-list-item" id="{{ .Page.RelPermalink }}">
+    <a href="{{ .Page.RelPermalink }}">{{ .Page.Title }}</a>
+  </div>
+  {{- end -}}
+{{- end -}}

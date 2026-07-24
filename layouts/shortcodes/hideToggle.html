@@ -1,0 +1,23 @@
+{{- /*
+  {{% hideToggle "Title" "#bg" "#color" %}}...{{% /hideToggle %}}
+*/ -}}
+{{- $display := "" -}}
+{{- $bg := "" -}}
+{{- $color := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $display = .Get "display" | default (.Get "title") | default "" -}}
+  {{- $bg = .Get "bg" | default "" -}}
+  {{- $color = .Get "color" | default "" -}}
+{{- else -}}
+  {{- $display = .Get 0 | default "" -}}
+  {{- $bg = .Get 1 | default "" -}}
+  {{- $color = .Get 2 | default "" -}}
+{{- end -}}
+{{- $group := "" -}}
+{{- $border := "" -}}
+{{- if $bg -}}
+  {{- $border = printf "border: 1px solid %s" $bg -}}
+  {{- $group = printf "%sbackground-color: %s;" $group $bg -}}
+{{- end -}}
+{{- if $color }}{{ $group = printf "%scolor: %s" $group $color }}{{ end -}}
+<details class="toggle"{{ with $border }} style="{{ . | safeCSS }}"{{ end }}><summary class="toggle-button"{{ with $group }} style="{{ . | safeCSS }}"{{ end }}>{{ $display }}</summary><div class="toggle-content">{{ .Inner | markdownify }}</div></details>

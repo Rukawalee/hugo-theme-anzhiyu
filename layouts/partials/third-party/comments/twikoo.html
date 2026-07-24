@@ -1,0 +1,90 @@
+{{- /* Twikoo — full upstream-equivalent loader */ -}}
+{{- $t := .Site.Params.twikoo | default dict -}}
+{{- if not ($t.envId | default "") }}{{/* credentials required */}}{{ else }}
+{{- $c := .Site.Params.comments | default dict -}}
+{{- $lazyload := $c.lazyload | default false -}}
+{{- $count := $c.count | default false -}}
+{{- $option := $t.option | default dict -}}
+{{- $use := $c.use | default slice -}}
+{{- if reflect.IsSlice $use | not }}{{ if $use }}{{ $use = slice $use }}{{ else }}{{ $use = slice }}{{ end }}{{ end -}}
+{{- $norm := slice -}}
+{{- range $use }}{{ $norm = $norm | append (. | title) }}{{ end -}}
+{{- $first := "" }}{{ if gt (len $norm) 0 }}{{ $first = index $norm 0 }}{{ end -}}
+{{- $js := $t.js | default "https://cdn.jsdelivr.net/npm/twikoo@1.6.44/dist/twikoo.all.min.js" -}}
+<script>
+(() => {
+  const envId = {{ $t.envId | jsonify | safeJS }};
+  const region = {{ $t.region | default "" | jsonify | safeJS }};
+  const jsUrl = {{ $js | jsonify | safeJS }};
+
+  const getScript = (url) => {
+    if (typeof window.getScript === 'function') return window.getScript(url);
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector(`script[src="${url}"]`);
+      if (existing) {
+        if (typeof twikoo === 'object') return resolve();
+        existing.addEventListener('load', () => resolve());
+        existing.addEventListener('error', reject);
+        return;
+      }
+      const s = document.createElement('script');
+      s.src = url;
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  };
+
+  const init = () => {
+    twikoo.init(Object.assign({
+      el: '#twikoo-wrap',
+      envId: envId,
+      region: region,
+      onCommentLoaded: () => {
+        if (window.anzhiyu && typeof anzhiyu.loadLightbox === 'function') {
+          anzhiyu.loadLightbox(document.querySelectorAll('#twikoo .tk-content img:not(.tk-owo-emotion)'));
+        }
+      }
+    }, {{ $option | jsonify | safeJS }}));
+  };
+
+  const getCount = () => {
+    const countElement = document.getElementById('twikoo-count');
+    if (!countElement || typeof twikoo.getCommentsCount !== 'function') return;
+    twikoo.getCommentsCount({
+      envId: envId,
+      region: region,
+      urls: [window.location.pathname],
+      includeReply: false
+    }).then(res => {
+      countElement.textContent = res[0].count;
+    }).catch(err => console.error(err));
+  };
+
+  const runFn = () => {
+    init();
+    {{- if $count }}
+    if (window.GLOBAL_CONFIG_SITE && GLOBAL_CONFIG_SITE.isPost) getCount();
+    {{- end }}
+  };
+
+  const loadTwikoo = () => {
+    if (typeof twikoo === 'object') setTimeout(runFn, 0);
+    else getScript(jsUrl).then(runFn);
+  };
+
+  const isPrimary = {{ $first | jsonify | safeJS }} === 'Twikoo';
+  const lazy = {{ $lazyload | jsonify | safeJS }};
+  if (isPrimary || lazy) {
+    if (!lazy && window.anzhiyu && typeof anzhiyu.loadComment === 'function') {
+      anzhiyu.loadComment(document.getElementById('twikoo-wrap'), loadTwikoo);
+    } else {
+      loadTwikoo();
+    }
+  } else {
+    window.loadOtherComment = loadTwikoo;
+  }
+})();
+</script>
+{{- end }}

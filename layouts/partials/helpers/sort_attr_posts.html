@@ -1,0 +1,43 @@
+{{- /*
+  Upstream sort_attr_post(type)
+  Returns slice of pages for top_group_list / swiper_list
+*/ -}}
+{{- $ctx := .ctx -}}
+{{- $type := .type | default "top_group_list" -}}
+{{- $swiperEn := false -}}
+{{- with $ctx.Site.Params.home_top }}{{ with .swiper }}{{ $swiperEn = .enable | default false }}{{ end }}{{ end -}}
+{{- $target := cond $swiperEn 4 6 -}}
+{{- $posts := where $ctx.Site.RegularPages "Type" "in" (slice "posts" "post") -}}
+{{- $picked := slice -}}
+{{- $withIdx := slice -}}
+{{- range $posts -}}
+  {{- $p := . -}}
+  {{- if eq $type "swiper_list" -}}
+    {{- with $p.Params.swiper_index -}}
+      {{- $withIdx = $withIdx | append (dict "page" $p "idx" (int .)) -}}
+    {{- end -}}
+  {{- else -}}
+    {{- with $p.Params.top_group_index -}}
+      {{- $withIdx = $withIdx | append (dict "page" $p "idx" (int .)) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- range sort $withIdx "idx" "desc" -}}
+  {{- $picked = $picked | append .page -}}
+{{- end -}}
+{{- if lt (len $picked) $target -}}
+  {{- range $posts -}}
+    {{- if lt (len $picked) $target -}}
+      {{- $p := . -}}
+      {{- $exists := false -}}
+      {{- range $picked -}}
+        {{- if eq .RelPermalink $p.RelPermalink -}}{{- $exists = true -}}{{- end -}}
+      {{- end -}}
+      {{- if not $exists -}}{{- $picked = $picked | append $p -}}{{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- if gt (len $picked) $target -}}
+  {{- $picked = first $target $picked -}}
+{{- end -}}
+{{- return $picked -}}

@@ -1,0 +1,10 @@
+{{- /*
+  {{< video "https://.../v.mp4" >}}
+*/ -}}
+{{- $src := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $src = .Get "src" | default (.Get "url") | default "" -}}
+{{- else -}}
+  {{- $src = trim (.Get 0 | default "") " " -}}
+{{- end -}}
+<div class="video"><video controls preload><source src="{{ $src | safeURL }}" type="video/mp4">Your browser does not support the video tag.</video></div>

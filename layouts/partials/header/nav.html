@@ -1,0 +1,82 @@
+{{- $params := .Site.Params -}}
+<nav id="nav">
+  <div id="nav-group">
+    <span id="blog_name">
+      {{- $nav := $params.nav | default dict -}}
+      {{- if or ($nav.enable | default false) $nav.menu -}}
+      <div class="back-home-button" tabindex="-1">
+        <i class="anzhiyufont anzhiyu-icon-grip-vertical"></i>
+        {{- with $nav.menu -}}
+        <div class="back-menu-list-groups">
+          {{- range . -}}
+          <div class="back-menu-list-group">
+            <div class="back-menu-list-title">{{ .title }}</div>
+            <div class="back-menu-list">
+              {{- range .item -}}
+              {{- $item := . -}}
+              <a class="back-menu-item" href="{{ $item.link }}" title="{{ $item.name }}"{{ if strings.HasPrefix $item.link "http" }} target="_blank" rel="noopener"{{ end }}>
+                {{- with $item.icon -}}<img class="back-menu-item-icon" src="{{ . | relURL }}" alt="{{ $item.name }}">{{- end -}}
+                <span class="back-menu-item-text">{{ $item.name }}</span>
+              </a>
+              {{- end -}}
+            </div>
+          </div>
+          {{- end -}}
+        </div>
+        {{- end -}}
+      </div>
+      {{- end -}}
+      <a id="site-name" href="{{ "/" | relLangURL }}" accesskey="h">
+        <div class="title">{{ .Site.Title }}</div>
+        <i class="anzhiyufont anzhiyu-icon-house-chimney"></i>
+      </a>
+    </span>
+
+    <div class="mask-name-container">
+      <div id="name-container">
+        <a id="page-name" href="javascript:void(0);" onclick="if(window.anzhiyu&&anzhiyu.scrollToDest)anzhiyu.scrollToDest(0,500);else window.scrollTo({top:0,behavior:'smooth'});">PAGE_NAME</a>
+      </div>
+    </div>
+
+    <div id="menus">
+      {{- partial "header/menu.html" . -}}
+    </div>
+
+    <div id="nav-right">
+      <div class="nav-button" id="randomPost_button">
+        <a class="site-page" href="javascript:void(0);" onclick="typeof toRandomPost==='function'&&toRandomPost()" title="{{ i18n "nav.random_post" | default "随机文章" }}">
+          <i class="anzhiyufont anzhiyu-icon-dice"></i>
+        </a>
+      </div>
+      {{- $algolia := $params.algolia_search | default dict -}}
+      {{- $docsearch := $params.docsearch | default dict -}}
+      {{- if or ($params.local_search.enable | default false) ($algolia.enable | default false) ($docsearch.enable | default false) -}}
+      <div class="nav-button" id="search-button">
+        <a class="site-page social-icon search" href="javascript:void(0);" title="{{ i18n "nav.search" | default "搜索" }}" accesskey="s">
+          <i class="anzhiyufont anzhiyu-icon-magnifying-glass"></i>
+          <span> {{ i18n "search.title" | default "搜索" }}</span>
+        </a>
+      </div>
+      {{- end -}}
+      {{- /* center console toggle — matches upstream nav */ -}}
+      {{- $console := $params.console | default dict -}}
+      {{- if ne $console.enable false -}}
+      <input id="center-console" type="checkbox" hidden />
+      <label class="widget" for="center-console" title="中控台" onclick="if(window.anzhiyu&&anzhiyu.switchConsole)anzhiyu.switchConsole();">
+        <i class="left"></i><i class="widget center"></i><i class="widget right"></i>
+      </label>
+      {{- end -}}
+      <div class="nav-button" id="nav-totop">
+        <a class="totopbtn" href="javascript:void(0);" onclick="if(window.anzhiyu&&anzhiyu.scrollToDest)anzhiyu.scrollToDest(0,500);else window.scrollTo({top:0,behavior:'smooth'});">
+          <i class="anzhiyufont anzhiyu-icon-arrow-up"></i>
+          <span id="percent" onclick="if(window.anzhiyu&&anzhiyu.scrollToDest)anzhiyu.scrollToDest(0,500);else window.scrollTo({top:0,behavior:'smooth'});">0</span>
+        </a>
+      </div>
+      <div id="toggle-menu">
+        <a class="site-page" href="javascript:void(0);" title="{{ i18n "nav.toggle_menu" | default "菜单" }}">
+          <i class="anzhiyufont anzhiyu-icon-bars"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,33 @@
+{{ define "main" }}
+<div class="tag-cloud-list is-center">
+  <div id="tag">
+    <div id="tag-page-tags">
+      {{- if eq .Data.Plural "categories" -}}
+        <div class="category-lists" id="tag-page-tags">
+          {{- range .Data.Terms.ByCount -}}
+          <a href="{{ .Page.RelPermalink }}" id="{{ .Page.RelPermalink }}">
+            <span class="tags-punctuation">{{ .Page.Title }}</span>
+            <span class="tagsPageCount">{{ .Count }}</span>
+          </a>
+          {{- end -}}
+        </div>
+      {{- else -}}
+        {{- /* tags_page_list: sort by name length (upstream) then render with counts */ -}}
+        {{- $terms := .Data.Terms.ByCount -}}
+        {{- $sorted := slice -}}
+        {{- range $terms -}}
+          {{- $sorted = $sorted | append (dict "len" (len .Page.Title) "term" .) -}}
+        {{- end -}}
+        {{- $sorted = sort $sorted "len" "desc" -}}
+        {{- range $sorted -}}
+        {{- $t := .term -}}
+        <a href="{{ $t.Page.RelPermalink }}" id="{{ $t.Page.RelPermalink }}">
+          <span class="tags-punctuation">#</span>{{ $t.Page.Title }}
+          <span class="tagsPageCount">{{ $t.Count }}</span>
+        </a>
+        {{- end -}}
+      {{- end -}}
+    </div>
+  </div>
+</div>
+{{ end }}

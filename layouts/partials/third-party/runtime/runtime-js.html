@@ -1,0 +1,49 @@
+{{- /* Upstream runtime-js.pug */ -}}
+{{- $rt := .Site.Params.footer.runtime | default dict -}}
+{{- if not $rt.enable -}}
+  {{- $rt = .Site.Params.runtimeshow | default dict -}}
+{{- end -}}
+{{- if $rt.enable | default false -}}
+{{- $launch := $rt.launch_time | default $rt.publish_date | default "2024-01-01" -}}
+{{- $offImg := $rt.offduty_img | default "/img/default.png" -}}
+{{- $offDesc := $rt.offduty_description | default "下班啦" -}}
+<script async>
+(function () {
+  var grt = new Date({{ $launch | jsonify | safeJS }});
+  var offduty_img = {{ $offImg | jsonify | safeJS }};
+  var offduty_description = {{ $offDesc | jsonify | safeJS }};
+  var dnum, hnum, mnum, snum, nowHour;
+  function updateTime() {
+    var now = new Date();
+    nowHour = now.getHours();
+    var days = (now - grt) / 1000 / 60 / 60 / 24;
+    dnum = Math.floor(days);
+    var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+    hnum = Math.floor(hours);
+    if (String(hnum).length === 1) hnum = "0" + hnum;
+    var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+    mnum = Math.floor(minutes);
+    if (String(mnum).length === 1) mnum = "0" + mnum;
+    var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+    snum = Math.round(seconds);
+    if (String(snum).length === 1) snum = "0" + snum;
+  }
+  function updateHtml() {
+    if (!document.getElementById("footer")) return;
+    if (nowHour >= 18 || nowHour < 9) {
+      var img = document.querySelector("#workboard .workSituationImg");
+      if (img) {
+        img.src = offduty_img;
+        img.title = offduty_description;
+        img.alt = offduty_description;
+      }
+    }
+    var html = "本站居然运行了 " + dnum + " 天<span id='runtime'> " + hnum + " 小时 " + mnum + " 分 " + snum + " 秒 </span><i class='anzhiyufont anzhiyu-icon-heartbeat' style='color:red'></i>";
+    var tip = document.getElementById("runtimeTextTip");
+    if (tip) tip.innerHTML = html;
+  }
+  setInterval(function () { updateTime(); updateHtml(); }, 1000);
+  updateTime(); updateHtml();
+})();
+</script>
+{{- end -}}

@@ -1,0 +1,15 @@
+{{- define "main" -}}
+<div id="page">
+  <h1 class="page-title">{{ .Title }}</h1>
+  {{- /* album vs album_detail by front matter type or layout */ -}}
+  {{- $t := .Params.type | default "" -}}
+  {{- if or (eq $t "album_detail") (eq .Layout "album_detail") }}
+  {{ partial "page/album_detail.html" . }}
+  {{- else }}
+  {{ partial "page/album.html" . }}
+  {{- end }}
+  {{- if and (ne .Params.comments false) (.Site.Params.comments.use) }}
+  {{ partial "third-party/comments.html" . }}
+  {{- end }}
+</div>
+{{- end -}}

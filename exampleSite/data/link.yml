@@ -1,0 +1,61 @@
+- class_name: 推荐好友
+  class_desc: 核心推荐分组（anzhiyu 样式）
+  flink_style: anzhiyu
+  link_list:
+    - name: AnZhiYu
+      link: https://blog.anheyu.com/
+      avatar: /img/default_cover.jpg
+      descr: 生活明朗，万物可爱
+      recommend: true
+      tag: 官方
+      color: vip
+    - name: Hugo
+      link: https://gohugo.io/
+      avatar: /img/default.png
+      descr: The world’s fastest framework for building websites
+      recommend: true
+    - name: GitHub
+      link: https://github.com/
+      avatar: /img/default.png
+      descr: Where the world builds software
+    - name: MDN
+      link: https://developer.mozilla.org/
+      avatar: /img/default.png
+      descr: Web docs
+    - name: Go
+      link: https://go.dev/
+      avatar: /img/default.png
+      descr: Build simple, secure, scalable systems
+    - name: 示例博客
+      link: https://example.org/
+      avatar: /img/default_cover.jpg
+      descr: 本地离线演示友链
+- class_name: 伸缩卡片
+  class_desc: telescopic 样式演示
+  flink_style: telescopic
+  link_list:
+    - name: Theme Repo
+      link: https://github.com/Rukawalee/hugo-theme-anzhiyu
+      avatar: /img/default.png
+      siteshot: /img/default_cover.jpg
+      descr: Hugo 主题仓库
+      recommend: true
+    - name: Upstream Hexo
+      link: https://github.com/anzhiyu-c/hexo-theme-anzhiyu
+      avatar: /img/default_cover.jpg
+      siteshot: /img/default.png
+      descr: 上游 Hexo 主题
+- class_name: 弹性卡片
+  class_desc: flexcard 样式演示
+  flink_style: flexcard
+  link_list:
+    - name: Example A
+      link: https://example.com/
+      avatar: /img/default.png
+      siteshot: /img/default_cover.jpg
+      descr: flexcard A
+    - name: Example B
+      link: https://example.org/
+      avatar: /img/default_cover.jpg
+      siteshot: /img/default.png
+      descr: flexcard B

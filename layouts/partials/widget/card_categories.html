@@ -1,0 +1,20 @@
+{{- $params := .Site.Params -}}
+{{- if and $params.aside.card_categories.enable .Site.Taxonomies.categories -}}
+{{- $limit := default 8 $params.aside.card_categories.limit -}}
+<div class="card-widget card-categories">
+  <div class="item-headline">
+    <i class="anzhiyufont anzhiyu-icon-folder-open"></i>
+    <span>{{ i18n "aside.card_categories" }}</span>
+  </div>
+  <ul class="card-category-list">
+    {{- range first $limit .Site.Taxonomies.categories.ByCount -}}
+    <li class="card-category-list-item">
+      <a class="card-category-list-link" href="{{ .Page.RelPermalink }}">
+        <span class="card-category-list-name">{{ .Page.Title }}</span>
+        <span class="card-category-list-count">{{ .Count }}</span>
+      </a>
+    </li>
+    {{- end -}}
+  </ul>
+</div>
+{{- end -}}

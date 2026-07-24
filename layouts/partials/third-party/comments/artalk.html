@@ -1,0 +1,131 @@
+{{- /* Artalk — full upstream-equivalent loader */ -}}
+{{- $a := .Site.Params.artalk | default dict -}}
+{{- if not ($a.server | default "") }}{{/* credentials required */}}{{ else }}
+{{- $c := .Site.Params.comments | default dict -}}
+{{- $lazyload := $c.lazyload | default false -}}
+{{- $count := $c.count | default false -}}
+{{- $option := $a.option | default dict -}}
+{{- $use := $c.use | default slice -}}
+{{- if reflect.IsSlice $use | not }}{{ if $use }}{{ $use = slice $use }}{{ else }}{{ $use = slice }}{{ end }}{{ end -}}
+{{- $norm := slice -}}
+{{- range $use }}{{ $norm = $norm | append (. | title) }}{{ end -}}
+{{- $first := "" }}{{ if gt (len $norm) 0 }}{{ $first = index $norm 0 }}{{ end -}}
+{{- $js := $a.js | default "https://cdn.jsdelivr.net/npm/artalk@2.9.1/dist/Artalk.js" -}}
+{{- $css := $a.css | default "https://cdn.jsdelivr.net/npm/artalk@2.9.1/dist/Artalk.css" -}}
+{{- $siteName := $a.site | default .Site.Title -}}
+<script>
+(() => {
+  const jsUrl = {{ $js | jsonify | safeJS }};
+  const cssUrl = {{ $css | jsonify | safeJS }};
+  const server = {{ $a.server | jsonify | safeJS }};
+  const siteName = {{ $siteName | jsonify | safeJS }};
+
+  const getScript = (url) => {
+    if (typeof window.getScript === 'function') return window.getScript(url);
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector(`script[src="${url}"]`);
+      if (existing) {
+        if (typeof Artalk === 'function') return resolve();
+        existing.addEventListener('load', () => resolve());
+        existing.addEventListener('error', reject);
+        return;
+      }
+      const s = document.createElement('script');
+      s.src = url;
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  };
+
+  const getCSS = (url) => {
+    if (typeof window.getCSS === 'function') return window.getCSS(url);
+    return new Promise((resolve, reject) => {
+      if (document.querySelector(`link[href="${url}"]`)) return resolve();
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = url;
+      link.onload = () => resolve();
+      link.onerror = reject;
+      document.head.appendChild(link);
+    });
+  };
+
+  const getArtalkDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+
+  const init = () => {
+    if (!document.getElementById('artalk-wrap') || typeof Artalk !== 'function') return;
+    window.artalkItem = Artalk.init(Object.assign({
+      el: '#artalk-wrap',
+      pageKey: window.location.pathname,
+      pageTitle: document.title,
+      server: server,
+      site: siteName,
+      darkMode: getArtalkDark(),
+    }, {{ $option | jsonify | safeJS }}));
+
+    if (window.artalkItem && typeof window.artalkItem.on === 'function') {
+      window.artalkItem.on('list-loaded', () => {
+        if (window.anzhiyu && typeof anzhiyu.loadLightbox === 'function') {
+          anzhiyu.loadLightbox(document.querySelectorAll('#artalk-wrap .atk-content img:not(.atk-emoticon)'));
+        }
+      });
+    }
+  };
+
+  const loadArtalk = () => {
+    if (typeof Artalk === 'function') setTimeout(init, 0);
+    else {
+      getCSS(cssUrl);
+      getScript(jsUrl).then(init);
+    }
+  };
+
+  const changeArtalkTheme = (theme) => {
+    if (window.artalkItem && typeof window.artalkItem.setDarkMode === 'function') {
+      window.artalkItem.setDarkMode(theme === 'dark');
+    }
+  };
+
+  if (window.anzhiyu && typeof anzhiyu.addGlobalFn === 'function') {
+    anzhiyu.addGlobalFn('themeChange', changeArtalkTheme, 'artalk');
+  }
+
+  const getCommentCount = async () => {
+    const countElement = document.querySelector('.post-meta-commentcount .artalk-count');
+    if (!countElement) return;
+    try {
+      const pageKey = countElement.getAttribute('data-page-key') || window.location.pathname;
+      const searchParams = new URLSearchParams({
+        site_name: siteName,
+        page_keys: pageKey
+      });
+      const res = await fetch(`${server}/api/v2/stats/page_comment?${searchParams}`);
+      const result = await res.json();
+      if (result && result.data) {
+        countElement.textContent = result.data[pageKey] || 0;
+      }
+    } catch (err) {
+      console.error('Artalk comment count fetch error:', err);
+    }
+  };
+
+  const isPrimary = {{ $first | jsonify | safeJS }} === 'Artalk';
+  const lazy = {{ $lazyload | jsonify | safeJS }};
+  if (isPrimary || lazy) {
+    if (!lazy && window.anzhiyu && typeof anzhiyu.loadComment === 'function') {
+      anzhiyu.loadComment(document.getElementById('artalk-wrap'), loadArtalk);
+    } else {
+      setTimeout(loadArtalk, 0);
+    }
+  } else {
+    window.loadOtherComment = loadArtalk;
+  }
+
+  {{- if $count }}
+  if (window.GLOBAL_CONFIG_SITE && GLOBAL_CONFIG_SITE.isPost) getCommentCount();
+  {{- end }}
+})();
+</script>
+{{- end }}

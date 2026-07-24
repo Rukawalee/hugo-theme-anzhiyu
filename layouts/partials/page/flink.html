@@ -1,0 +1,179 @@
+{{- /* Friends / flink page — DOM classes match upstream flink.pug */ -}}
+{{- $p := .Site.Params -}}
+{{- $errorImg := $p.error_img.flink | default ($p.error_img | default "/img/friend_404.gif") -}}
+{{- $linkPageTop := $p.linkPageTop | default dict -}}
+{{- $friendsVue := $p.friends_vue | default dict -}}
+{{- $lazyload := $p.lazyload.enable | default false -}}
+<div id="article-container">
+  {{- if $linkPageTop.enable | default true }}
+  <div id="flink-banners">
+    <div class="banner-top-box">
+      <div class="flink-banners-title">
+        <div class="banners-title-small">{{ i18n "flink.title" | default "友情链接" }}</div>
+        <div class="banners-title-big">{{ $linkPageTop.title | default (i18n "flink.title" | default "友情链接") }}</div>
+      </div>
+      <div class="banner-button-group">
+        {{- if $friendsVue.apiurl }}
+        <a class="banner-button secondary no-text-decoration" onclick="friendChainRandomTransmission()" href="javascript:void(0)">
+          <i class="anzhiyufont anzhiyu-icon-paper-plane1"></i>
+          <span class="banner-button-text">{{ i18n "flink.random_visit" | default "随机访问" }}</span>
+        </a>
+        {{- end }}
+        {{- if and $linkPageTop.addFriendPlaceholder (eq ($p.comments.use | default "") "Twikoo") }}
+        <a class="banner-button no-text-decoration" onclick="anzhiyu.addFriendLink()" href="javascript:void(0)">
+          <i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i>
+          <span class="banner-button-text">{{ i18n "flink.apply_link" | default "申请友链" }}</span>
+        </a>
+        {{- end }}
+      </div>
+    </div>
+    {{- with hugo.Data.link }}
+    <div id="skills-tags-group-all">
+      <div class="tags-group-wrapper">
+        {{- range seq 2 }}
+          {{- range $gi, $group := hugo.Data.link | first 15 }}
+            {{- $list := $group.link_list | default slice }}
+            {{- $hundredSuffix := $group.hundredSuffix | default "" }}
+            {{- $even := slice }}{{- $odd := slice }}
+            {{- range $idx, $item := $list }}
+              {{- if eq (mod $idx 2) 0 }}{{ $even = $even | append $item }}{{ else }}{{ $odd = $odd | append $item }}{{ end }}
+            {{- end }}
+            {{- $pairN := len $even }}{{- if lt (len $odd) $pairN }}{{ $pairN = len $odd }}{{ end }}
+            {{- $pairN = math.Min $pairN 8 }}
+            {{- range $i := seq 0 (sub $pairN 1) }}
+              {{- if le $i 15 }}
+                {{- $e := index $even $i }}{{- $o := index $odd $i }}
+                {{- if and $e $o }}
+                <div class="tags-group-icon-pair">
+                  <a class="tags-group-icon no-text-decoration" href="{{ $e.link }}" title="{{ $e.name }}" target="_blank" rel="noopener external nofollow">
+                    <img class="no-lightbox" title="{{ $e.name }}" src="{{ $e.avatar }}{{ $hundredSuffix }}" alt="{{ $e.name }}" onerror="this.onerror=null;this.src='{{ $errorImg }}'">
+                  </a>
+                  <a class="tags-group-icon no-text-decoration" href="{{ $o.link }}" title="{{ $o.name }}" target="_blank" rel="noopener external nofollow">
+                    <img class="no-lightbox" title="{{ $o.name }}" src="{{ $o.avatar }}{{ $hundredSuffix }}" alt="{{ $o.name }}" onerror="this.onerror=null;this.src='{{ $errorImg }}'">
+                  </a>
+                </div>
+                {{- end }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+        {{- end }}
+      </div>
+    </div>
+    {{- end }}
+  </div>
+  {{- end }}
+
+  {{- if and $friendsVue.enable $friendsVue.apiurl }}
+  <div class="title-h2-a">
+    <div class="title-h2-a-left">
+      <h2 style="padding-top:0;margin:.6rem 0 .6rem">{{ i18n "flink.fishing" | default "钓鱼" }}</h2>
+      <a class="random-post-start no-text-decoration" href="javascript:fetchRandomPost();">
+        <i class="anzhiyufont anzhiyu-icon-arrow-rotate-right"></i>
+      </a>
+    </div>
+    <div class="title-h2-a-right">
+      <a class="random-post-all no-text-decoration" href="{{ "link/" | relURL }}">{{ i18n "flink.all_links" | default "全部友链" }}</a>
+    </div>
+  </div>
+  <div id="random-post"></div>
+  {{- with resources.Get "js/anzhiyu/random_friends_post.js" }}
+  <script defer data-pjax src="{{ .RelPermalink }}"></script>
+  {{- else }}
+  <script defer data-pjax src="{{ "js/anzhiyu/random_friends_post.js" | relURL }}"></script>
+  {{- end }}
+  {{- end }}
+
+  <div class="flink">
+    {{- with hugo.Data.link }}
+      {{- range $group := . }}
+        {{- if $group.class_name }}
+        <h2>{{ $group.class_name }}({{ len ($group.link_list | default slice) }})</h2>
+        {{- end }}
+        {{- with $group.class_desc }}<div class="flink-desc">{{ . | safeHTML }}</div>{{ end }}
+        {{- $style := $group.flink_style | default "anzhiyu" }}
+        {{- if eq $style "anzhiyu" }}
+        <div class="{{ if $group.lost_contact }}anzhiyu-flink-list cf-friends-lost-contact{{ else }}anzhiyu-flink-list{{ end }}">
+          {{- range $item := $group.link_list }}
+          {{- $color := $item.color | default "" }}
+          {{- $tag := $item.tag | default "" }}
+          <div class="flink-list-item">
+            {{- if and (eq $color "vip") $tag }}
+            <span class="site-card-tag vip">{{ $tag }}<i class="light"></i></span>
+            {{- else if and (eq $color "speed") $tag }}
+            <span class="site-card-tag speed">{{ $tag }}</span>
+            {{- else if $tag }}
+            <span class="site-card-tag" style="background-color: {{ $color }}">{{ $tag }}</span>
+            {{- else if $item.recommend }}
+            <span class="site-card-tag">{{ i18n "flink.recommend" | default "推荐" }}</span>
+            {{- end }}
+            {{- if $group.lost_contact }}
+            <a class="cf-friends-link" href="{{ $item.link }}" title="{{ $item.name }}" target="_blank" rel="noopener external nofollow">
+              {{- partial "helpers/lazy_img.html" (dict "src" $item.avatar "class" "no-lightbox" "alt" $item.name "error" $errorImg "ctx" $) -}}
+              <div class="flink-item-info">
+                <div class="flink-item-name cf-friends-name-lost-contact">{{ $item.name }}</div>
+              </div>
+            </a>
+            {{- else }}
+            <a class="cf-friends-link" href="{{ $item.link }}" cf-href="{{ $item.link }}" title="{{ $item.name }}" target="_blank" rel="noopener external nofollow">
+              {{- partial "helpers/lazy_img.html" (dict "src" $item.avatar "class" "cf-friends-avatar no-lightbox" "alt" $item.name "error" $errorImg "ctx" $) -}}
+              <div class="flink-item-info">
+                <div class="flink-item-name cf-friends-name">{{ $item.name }}</div>
+                <div class="flink-item-desc" title="{{ $item.descr }}">{{ $item.descr }}</div>
+              </div>
+            </a>
+            {{- end }}
+          </div>
+          {{- end }}
+        </div>
+        {{- else if eq $style "telescopic" }}
+        <div class="telescopic-site-card-group">
+          {{- range $item := $group.link_list }}
+          {{- $color := $item.color | default "" }}
+          {{- $tag := $item.tag | default "" }}
+          {{- $siteshot := $item.siteshot | default (printf "https://image.thum.io/get/width/400/crop/800/allowJPG/wait/20/noanimate/%s" $item.link) }}
+          <div class="site-card">
+            {{- if and (eq $color "vip") $tag }}
+            <span class="site-card-tag vip">{{ $tag }}<i class="light"></i></span>
+            {{- else if and (eq $color "speed") $tag }}
+            <span class="site-card-tag speed">{{ $tag }}</span>
+            {{- else if $tag }}
+            <span class="site-card-tag" style="background-color: {{ $color }}">{{ $tag }}</span>
+            {{- else if $item.recommend }}
+            <span class="site-card-tag">{{ i18n "flink.recommend" | default "推荐" }}</span>
+            {{- end }}
+            <a class="img no-text-decoration" target="_blank" title="{{ $item.name }}" href="{{ $item.link }}" rel="external nofollow">
+              <img class="flink-avatar" src="{{ $siteshot }}" alt="{{ $item.name }}" style="pointer-events: none;" onerror="this.onerror=null;this.src='{{ $errorImg }}'">
+            </a>
+            <a class="info cf-friends-link no-text-decoration" target="_blank" title="{{ $item.name }}" href="{{ $item.link }}" cf-href="{{ $item.link }}" rel="external nofollow">
+              <div class="site-card-avatar">
+                <img class="flink-avatar cf-friends-avatar no-fancybox" src="{{ $item.avatar }}" cf-src="{{ $item.avatar }}" alt="{{ $item.name }}" onerror="this.onerror=null;this.src='{{ $errorImg }}'">
+              </div>
+              <div class="site-card-text">
+                <span class="title cf-friends-name">{{ $item.name }}</span>
+                <span class="desc" title="{{ $item.descr }}">{{ $item.descr }}</span>
+              </div>
+            </a>
+          </div>
+          {{- end }}
+        </div>
+        {{- else if eq $style "flexcard" }}
+        <div class="flexcard-flink-list">
+          {{- range $item := $group.link_list }}
+          {{- $siteshot := $item.siteshot | default (printf "https://image.thum.io/get/width/400/crop/800/allowJPG/wait/20/noanimate/%s" $item.link) }}
+          <a class="flink-list-card cf-friends-link" href="{{ $item.link }}" cf-href="{{ $item.link }}" target="_blank" data-title="{{ $item.descr }}" rel="noopener external nofollow">
+            <div class="wrapper cover">
+              <img class="cover fadeIn" src="{{ $siteshot }}" alt="cover" onerror="this.onerror=null;this.src='{{ $errorImg }}'">
+            </div>
+            <div class="info">
+              <img class="cf-friends-avatar no-lightbox flink-avatar" src="{{ $item.avatar }}" cf-src="{{ $item.avatar }}" alt="cover" onerror="this.onerror=null;this.src='{{ $errorImg }}'">
+              <span class="flink-sitename cf-friends-name">{{ $item.name }}</span>
+            </div>
+          </a>
+          {{- end }}
+        </div>
+        {{- end }}
+      {{- end }}
+    {{- end }}
+    {{ .Content }}
+  </div>
+</div>

@@ -1,0 +1,30 @@
+{{- $ai := .Site.Params.post_head_ai_description | default dict -}}
+{{- if and ($ai.enable | default false) (ne .Params.ai false) -}}
+{{- $gptName := $ai.gptName | default "AnZhiYu" -}}
+{{- $mode := $ai.mode | default "local" -}}
+{{- $desc := .Params.ai | default .Description | default .Summary | plainify -}}
+{{- if $desc -}}
+<div class="post-ai-description" data-ai-description="{{ $desc }}">
+  <div class="ai-title">
+    <i class="anzhiyufont anzhiyu-icon-bilibili"></i>
+    <div class="ai-title-text">AI-摘要</div>
+    {{- if $ai.switchBtn -}}
+    <div id="ai-Toggle">切换</div>
+    {{- end -}}
+    <i class="anzhiyufont anzhiyu-icon-arrow-rotate-right"></i>
+    <i class="anzhiyufont anzhiyu-icon-circle-dot" title="朗读摘要"></i>
+    <div id="ai-tag">
+      {{- if eq $mode "tianli" -}}Tianli GPT{{- else -}}{{ $gptName }} GPT{{- end -}}
+    </div>
+  </div>
+  <div class="ai-explanation">AI初始化中...</div>
+  <div class="ai-btn-box">
+    <div class="ai-btn-item">介绍自己 🙈</div>
+    <div class="ai-btn-item">生成本文简介 👋</div>
+    <div class="ai-btn-item">推荐相关文章 📖</div>
+    <div class="ai-btn-item">前往主页 🏠</div>
+    <div class="ai-btn-item" id="go-tianli-blog">前往爱发电购买</div>
+  </div>
+</div>
+{{- end -}}
+{{- end -}}

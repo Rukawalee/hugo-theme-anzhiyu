@@ -1,0 +1,78 @@
+{{- /* Valine — full upstream-equivalent loader */ -}}
+{{- $v := .Site.Params.valine | default dict -}}
+{{- if not (and ($v.appId | default "") ($v.appKey | default "")) }}{{/* credentials required */}}{{ else }}
+{{- $c := .Site.Params.comments | default dict -}}
+{{- $lazyload := $c.lazyload | default false -}}
+{{- $option := $v.option | default dict -}}
+{{- $use := $c.use | default slice -}}
+{{- if reflect.IsSlice $use | not }}{{ if $use }}{{ $use = slice $use }}{{ else }}{{ $use = slice }}{{ end }}{{ end -}}
+{{- $norm := slice -}}
+{{- range $use }}{{ $norm = $norm | append (. | title) }}{{ end -}}
+{{- $first := "" }}{{ if gt (len $norm) 0 }}{{ $first = index $norm 0 }}{{ end -}}
+{{- $js := $v.js | default "https://cdn.jsdelivr.net/npm/valine@1.5.1/dist/Valine.min.js" -}}
+{{- $avatar := $v.avatar | default "mp" -}}
+{{- $serverURLs := $v.serverURLs | default "" -}}
+{{- $visitor := $v.visitor | default false -}}
+{{- /* Optional site data for emojiMaps: data/valine.* */ -}}
+{{- $emojiMaps := dict -}}
+{{- with site.Data.valine }}{{ $emojiMaps = . }}{{ end -}}
+<script>
+(() => {
+  const jsUrl = {{ $js | jsonify | safeJS }};
+  const emojiMaps = {{ $emojiMaps | jsonify | safeJS }};
+
+  const getScript = (url) => {
+    if (typeof window.getScript === 'function') return window.getScript(url);
+    return new Promise((resolve, reject) => {
+      const existing = document.querySelector(`script[src="${url}"]`);
+      if (existing) {
+        if (typeof Valine === 'function') return resolve();
+        existing.addEventListener('load', () => resolve());
+        existing.addEventListener('error', reject);
+        return;
+      }
+      const s = document.createElement('script');
+      s.src = url;
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  };
+
+  const initValine = () => {
+    if (!document.getElementById('vcomment') || typeof Valine !== 'function') return;
+    new Valine(Object.assign({
+      el: '#vcomment',
+      appId: {{ $v.appId | jsonify | safeJS }},
+      appKey: {{ $v.appKey | jsonify | safeJS }},
+      avatar: {{ $avatar | jsonify | safeJS }},
+      serverURLs: {{ $serverURLs | jsonify | safeJS }},
+      emojiMaps: emojiMaps,
+      path: window.location.pathname,
+      visitor: {{ $visitor | jsonify | safeJS }}
+    }, {{ $option | jsonify | safeJS }}));
+  };
+
+  const loadValine = async () => {
+    if (typeof Valine === 'function') initValine();
+    else {
+      await getScript(jsUrl);
+      initValine();
+    }
+  };
+
+  const isPrimary = {{ $first | jsonify | safeJS }} === 'Valine';
+  const lazy = {{ $lazyload | jsonify | safeJS }};
+  if (isPrimary || lazy) {
+    if (!lazy && window.anzhiyu && typeof anzhiyu.loadComment === 'function') {
+      anzhiyu.loadComment(document.getElementById('vcomment'), loadValine);
+    } else {
+      setTimeout(loadValine, 0);
+    }
+  } else {
+    window.loadOtherComment = loadValine;
+  }
+})();
+</script>
+{{- end }}

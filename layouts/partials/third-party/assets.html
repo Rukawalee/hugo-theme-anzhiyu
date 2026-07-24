@@ -1,0 +1,21 @@
+{{- /* Third-party CSS/JS parity with hexo-theme-anzhiyu CDN defaults */ -}}
+{{- $p := .Site.Params -}}
+{{- with $p.fancybox }}{{ if .enable }}
+<link rel="stylesheet" href="{{ .css | default "https://cdn.cbd.int/@fancyapps/ui@6.1.6/dist/fancybox/fancybox.css" }}" media="print" onload="this.media='all'">
+<script src="{{ .js | default "https://cdn.cbd.int/@fancyapps/ui@6.1.6/dist/fancybox/fancybox.umd.js" }}" defer></script>
+{{ end }}{{ end -}}
+{{- with $p.snackbar }}{{ if .enable }}
+<link rel="stylesheet" href="{{ .css | default "https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.css" }}" media="print" onload="this.media='all'">
+<script src="{{ .js | default "https://cdn.cbd.int/node-snackbar@0.1.16/dist/snackbar.min.js" }}" defer></script>
+{{ end }}{{ end -}}
+{{- /* lazyload script is injected sync before main.js in scripts.html to avoid race */ -}}
+{{- with $p.instantpage }}{{ if .enable }}
+<script src="{{ .js | default "https://cdn.cbd.int/instant.page@5.2.0/instantpage.js" }}" type="module"></script>
+{{ end }}{{ end -}}
+{{- with $p.pace }}{{ if .enable }}
+<link rel="stylesheet" href="{{ .css | default "https://cdn.cbd.int/anzhiyu-theme-static@1.1.10/progress_bar/progress_bar.css" }}">
+<script async src="{{ .js | default "https://cdn.cbd.int/pace-js@1.2.4/pace.min.js" }}" data-pace-options='{"restartOnRequestAfter":false,"eventLag":false}'></script>
+{{ end }}{{ end -}}
+{{- with $p.accesskey }}{{ if .enable }}
+<script charset="UTF-8" src="{{ .js | default "https://cdn.cbd.int/anzhiyu-theme-static@1.1.5/accesskey/accesskey.js" }}"></script>
+{{ end }}{{ end -}}

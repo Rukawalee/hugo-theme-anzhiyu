@@ -1,0 +1,15 @@
+{{- $params := .Site.Params -}}
+{{- $algolia := $params.algolia_search | default dict -}}
+{{- $local := $params.local_search | default dict -}}
+{{- $doc := $params.docsearch | default dict -}}
+{{- if $algolia.enable -}}
+  {{- partial "third-party/search/algolia.html" . -}}
+{{- else if $local.enable -}}
+  {{- if templates.Exists "partials/third-party/search/local-search.html" -}}
+    {{- partial "third-party/search/local-search.html" . -}}
+  {{- else -}}
+    {{- partial "search/local-search.html" . -}}
+  {{- end -}}
+{{- else if $doc.enable -}}
+  {{- partial "third-party/search/docsearch.html" . -}}
+{{- end -}}

@@ -1,0 +1,47 @@
+{{- /* Equipment / 好物 — site.Data.equipment */ -}}
+{{- $errorImg := "/img/friend_404.gif" -}}
+{{- with .Site.Params.error_img }}{{ with .flink }}{{ $errorImg = . }}{{ end }}{{ end -}}
+<div id="equipment">
+  {{- with hugo.Data.equipment }}
+    {{- range $i := . }}
+    <div class="author-content author-content-item fcirclePage single"{{ with $i.top_background }} style="background: url({{ . }}) left 37% / cover no-repeat !important;"{{ end }}>
+      <div class="card-content">
+        <div class="author-content-item-tips">{{ $i.class_name }}</div>
+        <span class="author-content-item-title">{{ $i.description }}</span>
+        <div class="content-bottom"><div class="tips">{{ $i.tip }}</div></div>
+      </div>
+    </div>
+    {{- range $item := $i.good_things }}
+    <div class="goodthings-item">
+      <h2 class="goodthings-title">{{ $item.title }}</h2>
+      <div class="goodthings-item-description">{{ $item.description }}</div>
+      <div class="equipment-item">
+        <div class="equipment-item-content">
+          {{- range $iten := $item.equipment_list }}
+          <div class="equipment-item-content-item">
+            <div class="equipment-item-content-item-cover">
+              {{- partial "helpers/lazy_img.html" (dict "src" $iten.image "class" "equipment-item-content-item-image" "alt" $iten.name "error" $errorImg "ctx" $) -}}
+            </div>
+            <div class="equipment-item-content-item-info">
+              <div class="equipment-item-content-item-name" title="{{ $iten.name }}" onclick="if(window.rm){rm.rightmenuCopyText('{{ $iten.name }}');}if(window.anzhiyu){anzhiyu.snackbarShow('已复制 【{{ $iten.name }}】');}">{{ $iten.name }}</div>
+              <div class="equipment-item-content-item-specification">{{ $iten.specification }}</div>
+              <div class="equipment-item-content-item-description">{{ $iten.description }}</div>
+              <div class="equipment-item-content-item-toolbar">
+                {{- $isExt := or (hasPrefix $iten.link "https://") (hasPrefix $iten.link "http://") }}
+                <a class="equipment-item-content-item-link" href="{{ $iten.link }}" target="_blank" rel="noopener">{{ if $isExt }}详情{{ else }}查看文章{{ end }}</a>
+                <div class="bber-reply" onclick="if(window.rm){rm.rightMenuCommentText('{{ $iten.name }} {{ $iten.specification }} {{ $iten.description }}');}">
+                  <i class="anzhiyufont anzhiyu-icon-message"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          {{- end }}
+        </div>
+      </div>
+    </div>
+    {{- end }}
+    {{- end }}
+  {{- else }}
+  <div id="article-container">{{ .Content }}</div>
+  {{- end }}
+</div>

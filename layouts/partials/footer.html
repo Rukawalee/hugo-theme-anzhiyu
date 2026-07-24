@@ -1,0 +1,99 @@
+{{- $params := .Site.Params -}}
+{{- $footer := $params.footer | default dict -}}
+{{- $owner := $footer.owner | default dict -}}
+{{- $bar := $footer.footerBar | default dict -}}
+{{- $runtime := $footer.runtime | default dict -}}
+{{- if not ($runtime.enable | default false) -}}
+  {{- $runtime = $params.runtimeshow | default dict -}}
+{{- end -}}
+<div id="footer-wrap">
+  {{- with $footer.socialBar }}{{ if .enable }}
+  {{- $center := .centerImg | default $params.avatar.img -}}
+  <div id="footer_deal">
+    {{- range .left | default slice -}}
+    <a class="deal_link" href="{{ .link | relURL }}" title="{{ .title }}"><i class="anzhiyufont {{ .icon }}"></i></a>
+    {{- end -}}
+    {{- with $center -}}
+    <img class="footer_mini_logo" title="{{ i18n "footer.back_to_top" | default "回到顶部" }}" alt="top" onclick="if(window.anzhiyu)anzhiyu.scrollToDest(0,500)" src="{{ . | relURL }}" width="50" height="50">
+    {{- end -}}
+    {{- range .right | default slice -}}
+    <a class="deal_link" href="{{ .link | relURL }}" title="{{ .title }}"><i class="anzhiyufont {{ .icon }}"></i></a>
+    {{- end -}}
+  </div>
+  {{ end }}{{ end -}}
+
+  {{- if and ($owner.enable | default true) (not ($bar.enable | default false)) -}}
+  <div class="copyright">
+    &copy;{{- with $owner.since -}}{{ if ne (int .) (now.Year) }}{{ . }} - {{ end }}{{- end -}}{{ now.Year }} By {{ with $params.author }}{{ . }}{{ else }}{{ .Site.Title }}{{ end }}
+  </div>
+  {{- end -}}
+
+  {{- if $runtime.enable | default false -}}
+  <div id="workboard">
+    {{- with $runtime.work_img -}}
+    <img class="workSituationImg boardsign" src="{{ . | relURL }}" alt="{{ $runtime.work_description | default "" }}" title="{{ $runtime.work_description | default "" }}">
+    {{- end -}}
+    <div id="runtimeTextTip"></div>
+  </div>
+  {{- end -}}
+
+  {{- with $footer.custom_text -}}
+  <div class="footer_custom_text">{{ . | safeHTML }}</div>
+  {{- end -}}
+
+  {{- with $footer.list }}{{ if .enable }}
+  <div id="anzhiyu-footer">
+    {{- range .project | default slice -}}
+    <div class="footer-group">
+      <div class="footer-title">{{ .title }}</div>
+      <div class="footer-links">
+        {{- range .links -}}
+        <a class="footer-item" title="{{ .title }}" href="{{ .link | relURL }}">{{ .title }}</a>
+        {{- end -}}
+      </div>
+    </div>
+    {{- end -}}
+    {{- if gt (int (.randomFriends | default 0)) 0 -}}
+    <div class="footer-group">
+      <div class="footer-title-group">
+        <div class="footer-title">{{ i18n "footer.friend_links" | default "友情链接" }}</div>
+        <a class="random-friends-btn" id="footer-random-friends-btn" href="javascript:if(window.friendChainRandomTransmission)friendChainRandomTransmission();" title="{{ i18n "footer.refresh_friends" | default "换一换" }}">
+          <i class="anzhiyufont anzhiyu-icon-arrow-rotate-right"></i>
+        </a>
+      </div>
+      <div class="footer-links" id="friend-links-in-footer"></div>
+    </div>
+    {{- end -}}
+  </div>
+  {{ end }}{{ end -}}
+</div>
+
+{{- if $bar.enable | default false -}}
+<div id="footer-bar">
+  <div class="footer-bar-links">
+    <div class="footer-bar-left">
+      <div id="footer-bar-tips">
+        {{- if $owner.enable | default true -}}
+        <div class="copyright">
+          &copy;{{- with $owner.since -}}{{ if ne (int .) (now.Year) }}{{ . }} - {{ end }}{{- end -}}{{ now.Year }} By
+          <a class="footer-bar-link" href="{{ default "/" $bar.authorLink | relLangURL }}" title="{{ with $params.author }}{{ . }}{{ else }}{{ .Site.Title }}{{ end }}">
+            {{ with $params.author }}{{ . }}{{ else }}{{ .Site.Title }}{{ end }}
+          </a>
+        </div>
+        {{- end -}}
+      </div>
+      <div id="footer-type-tips"></div>
+      {{- if templates.Exists "partials/third-party/footerBarSubtitle.html" -}}
+        {{- partial "third-party/footerBarSubtitle.html" . -}}
+      {{- end -}}
+    </div>
+    <div class="footer-bar-right">
+      {{- range $bar.linkList | default slice -}}
+      <a class="footer-bar-link" href="{{ .link | relURL }}" title="{{ .text }}">{{ .text }}</a>
+      {{- end -}}
+      <a class="footer-bar-link" href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a>
+      <a class="footer-bar-link" href="https://github.com/Rukawalee/hugo-theme-anzhiyu" target="_blank" rel="noopener">AnZhiYu</a>
+    </div>
+  </div>
+</div>
+{{- end -}}

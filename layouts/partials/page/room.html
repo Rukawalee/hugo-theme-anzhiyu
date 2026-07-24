@@ -1,0 +1,106 @@
+{{- /* Interactive 3D room page stub */ -}}
+<div id="room_page">
+  <div class="house" id="h">
+    <div class="h-lights">
+      <div class="h-light"></div><div class="h-light"></div><div class="h-light"></div>
+      <div class="h-light"></div><div class="h-light"></div><div class="h-light"></div>
+    </div>
+    <div class="h-shadow"></div>
+    <div class="alt">
+      <div class="alt__front face"></div><div class="alt__back face"></div>
+      <div class="alt__right face"></div><div class="alt__left face"></div>
+      <div class="alt__top face">
+        {{- range seq 9 }}<div class="light"></div>{{ end }}
+      </div>
+      <div class="alt__bottom face"></div>
+    </div>
+    {{- range $box := slice "alb" "arb" "blt" "blt2" "blb" "blb2" "cuadro-l" "cuadro-r" "librero" "tv" "repisa-t" "repisa-b" "bocina-l" "bocina-r" "muro" "tablet" }}
+    <div class="{{ $box }}">
+      <div class="{{ $box }}__front face"></div><div class="{{ $box }}__back face"></div>
+      <div class="{{ $box }}__right face"></div><div class="{{ $box }}__left face"></div>
+      <div class="{{ $box }}__top face"></div><div class="{{ $box }}__bottom face"></div>
+    </div>
+    {{- end }}
+    <div class="puerta-c">
+      {{- range $p := slice "puerta" "puerta-l" "puerta-r" "puerta-t" }}
+      <div class="{{ $p }}">
+        <div class="{{ $p }}__front face"></div><div class="{{ $p }}__back face"></div>
+        <div class="{{ $p }}__right face"></div><div class="{{ $p }}__left face"></div>
+        <div class="{{ $p }}__top face"></div><div class="{{ $p }}__bottom face"></div>
+      </div>
+      {{- end }}
+    </div>
+    <div class="libros">
+      {{- range seq 6 }}
+      <div class="libro">
+        <div class="libro__front face"></div><div class="libro__back face"></div>
+        <div class="libro__right face"></div><div class="libro__left face"></div>
+        <div class="libro__top face"></div><div class="libro__bottom face"></div>
+      </div>
+      {{- end }}
+    </div>
+    <div class="fotos">
+      {{- range seq 2 }}
+      <div class="foto">
+        <div class="foto__front face"></div><div class="foto__back face"></div>
+        <div class="foto__right face"></div><div class="foto__left face"></div>
+        <div class="foto__top face"></div><div class="foto__bottom face"></div>
+      </div>
+      {{- end }}
+    </div>
+    <div class="cajas">
+      {{- range seq 3 }}
+      <div class="caja">
+        <div class="caja__front face"></div><div class="caja__back face"></div>
+        <div class="caja__right face"></div><div class="caja__left face"></div>
+        <div class="caja__top face"></div><div class="caja__bottom face"></div>
+      </div>
+      {{- end }}
+    </div>
+    <div class="sillon-c">
+      {{- range $s := slice "sillon-b" "sillon-t" "sillon-l" "sillon-r" }}
+      <div class="{{ $s }}">
+        <div class="{{ $s }}__front face"></div><div class="{{ $s }}__back face"></div>
+        <div class="{{ $s }}__right face"></div><div class="{{ $s }}__left face"></div>
+        <div class="{{ $s }}__top face"></div><div class="{{ $s }}__bottom face"></div>
+      </div>
+      {{- end }}
+    </div>
+    <div class="mesa-c">
+      <div class="mesa">
+        <div class="mesa__front face"></div><div class="mesa__back face"></div>
+        <div class="mesa__right face"></div><div class="mesa__left face"></div>
+        <div class="mesa__top face"></div><div class="mesa__bottom face"></div>
+      </div>
+      {{- range seq 4 }}
+      <div class="mesa-p">
+        <div class="mesa-p__front face"></div><div class="mesa-p__back face"></div>
+        <div class="mesa-p__right face"></div><div class="mesa-p__left face"></div>
+        <div class="mesa-p__top face"></div><div class="mesa-p__bottom face"></div>
+      </div>
+      {{- end }}
+      <div class="mesa-shadow"></div>
+    </div>
+  </div>
+  <div class="description">
+    <span>哇,被你发现了,这里是我的小房间，要一起玩游戏🎮嘛</span>
+    <div class="banner-button-group">
+      <a class="banner-button" href="{{ "about/" | relURL }}">
+        <i class="anzhiyufont anzhiyu-icon-arrow-circle-right" style="font-size: 1.5rem"></i>
+        <span class="banner-button-text">立刻玩</span>
+      </a>
+    </div>
+  </div>
+  <script async>
+    (function () {
+      const h = document.querySelector("#h");
+      if (!h) return;
+      document.body.addEventListener("pointermove", function (e) {
+        var x = e.pageX / window.innerWidth - 0.5;
+        var y = e.pageY / window.innerHeight - 0.5;
+        h.style.transform = "perspective(90vw) rotateX(" + (y * 4 + 75) + "deg) rotateZ(" + (-x * 12 + 45) + "deg) translateZ(-9vw) translateX(-50%)";
+      });
+    })();
+  </script>
+  {{ .Content }}
+</div>

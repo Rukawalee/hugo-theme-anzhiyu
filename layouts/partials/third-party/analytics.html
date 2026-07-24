@@ -1,0 +1,41 @@
+{{- /* Analytics — baidu / google / cnzz / cloudflare / clarity */ -}}
+{{- $p := .Site.Params -}}
+{{- with $p.baidu_analytics }}
+<script>
+var _hmt = _hmt || [];
+(function () {
+  var hm = document.createElement('script');
+  hm.src = 'https://hm.baidu.com/hm.js?{{ . }}';
+  var s = document.getElementsByTagName('script')[0];
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+{{- end }}
+{{- with $p.google_analytics }}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ . }}"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', {{ . | jsonify | safeJS }});
+</script>
+{{- end }}
+{{- with $p.cnzz_analytics }}
+<script async data-pjax src="https://s4.cnzz.com/z_stat.php?id={{ . }}&web_id={{ . }}"></script>
+{{- end }}
+{{- with $p.cloudflare_analytics }}
+<script defer data-pjax src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "{{ . }}"}'></script>
+{{- end }}
+{{- with $p.microsoft_clarity }}
+<script>
+(function (c, l, a, r, i, t, y) {
+  c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
+  t = l.createElement(r); t.async = 1; t.src = 'https://www.clarity.ms/tag/' + i;
+  y = l.getElementsByTagName(r)[0]; y.parentNode.insertBefore(t, y);
+})(window, document, 'clarity', 'script', {{ . | jsonify | safeJS }});
+</script>
+{{- end }}
+{{- /* Adsense + site verification live under head/ and are included from head.html */ -}}
+{{- if templates.Exists "partials/head/google_adsense.html" -}}
+  {{- partial "head/google_adsense.html" . -}}
+{{- end -}}

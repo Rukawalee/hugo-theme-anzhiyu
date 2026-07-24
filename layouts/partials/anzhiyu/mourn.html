@@ -1,0 +1,15 @@
+{{- /* Home grayscale memorial days */ -}}
+{{- $mourn := .Site.Params.mourn | default dict -}}
+{{- if and $mourn.enable .IsHome }}
+{{- $days := $mourn.days | default (slice "4-5" "5-12" "7-7" "9-18" "12-13") -}}
+<script>
+  (function initMourn() {
+    var date = new Date();
+    var today = (date.getMonth() + 1) + '-' + date.getDate();
+    var mourn_days = {{ $days | jsonify | safeJS }};
+    if (mourn_days && mourn_days.indexOf(today) !== -1) {
+      document.documentElement.style.filter = 'grayscale(1)';
+    }
+  })();
+</script>
+{{- end }}

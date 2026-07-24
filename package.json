@@ -1,0 +1,8 @@
+{
+  "name": "hugo-theme-anzhiyu",
+  "private": true,
+  "scripts": {
+    "build:css": "node tools/build-css.js",
+    "sync:css": "bash tools/sync-css-from-hexo.sh"
+  }
+}

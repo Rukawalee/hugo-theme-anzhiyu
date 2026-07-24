@@ -1,0 +1,15 @@
+{{- /* Resolve post cover with random default from params.cover.default_covers or default_cover */ -}}
+{{- $page := .page | default . -}}
+{{- $params := $page.Site.Params -}}
+{{- if eq $page.Params.cover false -}}
+{{- else if $page.Params.cover -}}
+  {{- $page.Params.cover -}}
+{{- else -}}
+  {{- $defaults := $params.cover.default_covers | default slice -}}
+  {{- if $defaults -}}
+    {{- $i := mod (int (printf "%d" $page.Date.Unix)) (len $defaults) -}}
+    {{- index $defaults $i -}}
+  {{- else -}}
+    {{- $params.cover.default_cover | default "/img/default_cover.jpg" -}}
+  {{- end -}}
+{{- end -}}

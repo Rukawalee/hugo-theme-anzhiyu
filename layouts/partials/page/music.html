@@ -1,0 +1,13 @@
+{{- /* Music page shell — empty meting host; filled by anzhiyu.getCustomPlayList */ -}}
+{{- $params := .Site.Params -}}
+{{- $nav := $params.nav_music | default dict -}}
+{{- $id := $nav.id | default "" -}}
+{{- $server := $nav.server | default "netease" -}}
+<div id="anMusic-page"
+  {{- if $id }} data-playlist-id="{{ $id }}" data-playlist-server="{{ $server }}"{{ end -}}
+>
+  <div id="anMusicBtnGetSong" title="随机周董单曲，打开异世界的大梦"><i class="anzhiyufont anzhiyu-icon-shuffle"></i></div>
+  <div id="anMusicRefreshBtn" title="立即刷新最新歌单"><i class="anzhiyufont anzhiyu-icon-arrows-rotate"></i></div>
+  <div id="anMusicSwitching" title="切换歌单"><i class="anzhiyufont anzhiyu-icon-repeat"></i></div>
+  <div id="anMusic-page-meting"></div>
+</div>

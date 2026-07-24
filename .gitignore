@@ -1,0 +1,26 @@
+# Hugo build output / cache
+public/
+resources/
+.hugo_build.lock
+exampleSite/public/
+exampleSite/resources/
+exampleSite/.hugo_build.lock
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+*.log
+
+# Node
+node_modules/
+
+# Local scratch
+.scratch/
+
+# Local agent / migration working notes (not theme deliverables)
+CLAUDE.md
+CONTEXT.md
+docs/

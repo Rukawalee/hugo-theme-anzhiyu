@@ -1,0 +1,14 @@
+{{- /*
+  {{% btns "grid center" %}}
+  {{% cell "Text" "url" "icon or img" %}}
+  {{% /btns %}}
+*/ -}}
+{{- $cls := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $cls = .Get "class" | default "" -}}
+{{- else if ge (len .Params) 1 -}}
+  {{- $cls = delimit .Params " " -}}
+{{- end -}}
+<div class="btns {{ $cls }}">
+{{ .Inner }}
+</div>

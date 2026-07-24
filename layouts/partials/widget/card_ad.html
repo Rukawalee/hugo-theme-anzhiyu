@@ -1,0 +1,7 @@
+{{- $params := .Site.Params -}}
+{{- $ad := $params.ad | default dict -}}
+{{- with $ad.aside -}}
+<div class="card-widget ads-wrap">
+  {{ . | safeHTML }}
+</div>
+{{- end -}}

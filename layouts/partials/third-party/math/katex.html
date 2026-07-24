@@ -1,0 +1,30 @@
+{{- /* KaTeX assets — local-first with CDN fallback */ -}}
+{{- $kt := .Site.Params.katex | default dict -}}
+{{- $css := $kt.css | default "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" -}}
+{{- $js := $kt.js | default "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" -}}
+{{- $auto := $kt.auto_render | default "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" -}}
+{{- $copytex := $kt.copytex | default "https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/copy-tex.min.js" -}}
+<link rel="stylesheet" type="text/css" href="{{ $css }}">
+<script defer src="{{ $js }}"></script>
+<script defer src="{{ $copytex }}"></script>
+<script defer src="{{ $auto }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.renderMathInElement) {
+    renderMathInElement(document.getElementById('article-container') || document.body, {
+      delimiters: [
+        { left: '$$', right: '$$', display: true },
+        { left: '$', right: '$', display: false },
+        { left: '\\(', right: '\\)', display: false },
+        { left: '\\[', right: '\\]', display: true }
+      ],
+      throwOnError: false
+    });
+  }
+  document.querySelectorAll('#article-container span.katex-display').forEach((item) => {
+    if (window.anzhiyu && typeof anzhiyu.wrap === 'function') {
+      anzhiyu.wrap(item, 'div', { class: 'katex-wrap' });
+    }
+  });
+});
+</script>

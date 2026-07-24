@@ -1,0 +1,26 @@
+- class_name: 创造力
+  creativity_list:
+    - name: Hugo
+      color: "#FF4088"
+      icon: /img/default.png
+    - name: Go
+      color: "#00ADD8"
+      icon: /img/default_cover.jpg
+    - name: CSS
+      color: "#264de4"
+      icon: /img/default.png
+    - name: JavaScript
+      color: "#f7df1e"
+      icon: /img/default_cover.jpg
+    - name: Markdown
+      color: "#083fa1"
+      icon: /img/default.png
+    - name: Git
+      color: "#f05032"
+      icon: /img/default_cover.jpg
+    - name: Linux
+      color: "#333333"
+      icon: /img/default.png
+    - name: Docker
+      color: "#2496ED"
+      icon: /img/default_cover.jpg

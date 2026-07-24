@@ -1,0 +1,40 @@
+{{- /*
+  Hexo-compatible lazy image attributes.
+  Usage: partial "helpers/lazy_img.html" (dict
+    "src" $url
+    "class" "post_bg"
+    "alt" $title
+    "error" $errorImg
+    "style" "pointer-events: none"
+    "nolazy" false
+    "ctx" .
+  )
+*/ -}}
+{{- $src := .src | default "" -}}
+{{- $class := .class | default "" -}}
+{{- $alt := .alt | default "" -}}
+{{- $error := .error | default "/img/404.jpg" -}}
+{{- $style := .style | default "" -}}
+{{- $nolazy := .nolazy | default false -}}
+{{- $ctx := .ctx | default . -}}
+{{- $lazy := dict -}}
+{{- with $ctx.Site }}{{ $lazy = .Params.lazyload | default dict }}{{ end -}}
+{{- $enable := $lazy.enable | default false -}}
+{{- $placeholder := $lazy.placeholder | default "" -}}
+{{- if not $placeholder -}}
+  {{- $placeholder = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" -}}
+{{- end -}}
+{{- $errURL := $error -}}
+{{- if and $ctx.Site (not (hasPrefix $error "data:")) -}}
+  {{- $errURL = $error | relURL -}}
+{{- end -}}
+{{- $srcURL := $src -}}
+{{- if and $src (not (or (hasPrefix $src "data:") (hasPrefix $src "http://") (hasPrefix $src "https://") (hasPrefix $src "//"))) -}}
+  {{- $srcURL = $src | relURL -}}
+{{- end -}}
+{{- $onerr := printf "this.onerror=null;this.src='%s'" $errURL -}}
+{{- if or $nolazy (not $enable) (strings.Contains $class "nolazyload") (strings.Contains $class "no-lazyload") -}}
+<img{{ with $class }} class="{{ . }}"{{ end }} src="{{ $srcURL | safeURL }}" alt="{{ $alt }}"{{ with $style }} style="{{ . | safeCSS }}"{{ end }} {{ printf `onerror="%s"` $onerr | safeHTMLAttr }}>
+{{- else -}}
+<img{{ with $class }} class="{{ . }}"{{ end }} src="{{ $placeholder | safeURL }}" data-lazy-src="{{ $srcURL | safeURL }}" alt="{{ $alt }}"{{ with $style }} style="{{ . | safeCSS }}"{{ end }} {{ printf `onerror="%s"` $onerr | safeHTMLAttr }}>
+{{- end -}}

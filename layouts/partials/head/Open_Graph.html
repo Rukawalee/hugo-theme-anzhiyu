@@ -1,0 +1,21 @@
+{{- $params := .Site.Params -}}
+{{- $og := $params.Open_Graph_meta | default true -}}
+{{- if $og -}}
+{{- $title := .Title | default .Site.Title -}}
+{{- $desc := .Description | default .Summary | default $params.description | plainify | truncate 200 -}}
+{{- $img := .Params.cover | default $params.cover.default_cover | default $params.avatar.img -}}
+<meta property="og:type" content="{{ if and .IsPage (or (eq .Type "posts") (eq .Section "posts")) }}article{{ else }}website{{ end }}">
+<meta property="og:title" content="{{ $title }}">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:site_name" content="{{ .Site.Title }}">
+<meta property="og:description" content="{{ $desc }}">
+{{- with $img -}}
+<meta property="og:image" content="{{ . | absURL }}">
+{{- end -}}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ $title }}">
+<meta name="twitter:description" content="{{ $desc }}">
+{{- with $img -}}
+<meta name="twitter:image" content="{{ . | absURL }}">
+{{- end -}}
+{{- end -}}

@@ -1,0 +1,5 @@
+{{- $id := .Anchor | safeURL -}}
+<h{{ .Level }} id="{{ $id }}">
+  {{- .Text | safeHTML -}}
+  <a class="headerlink" href="#{{ $id }}" title="{{ .Text | plainify }}"></a>
+</h{{ .Level }}>

@@ -1,0 +1,13 @@
+{{- /*
+  {{< inlineImg "src" "height" >}}
+*/ -}}
+{{- $img := "" -}}
+{{- $height := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $img = .Get "src" | default (.Get "url") | default "" -}}
+  {{- $height = .Get "height" | default "" -}}
+{{- else -}}
+  {{- $img = .Get 0 | default "" -}}
+  {{- $height = .Get 1 | default "" -}}
+{{- end -}}
+<img class="inline-img" src="{{ $img | safeURL }}"{{ with $height }} style="{{ printf "height:%s" . | safeCSS }}"{{ end }}/>

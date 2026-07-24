@@ -1,0 +1,58 @@
+{{- /* Related posts by shared tags (upstream related_posts helper) */ -}}
+{{- $params := .Site.Params.related_post | default dict -}}
+{{- if $params.enable | default true -}}
+{{- $limit := int ($params.limit | default 6) -}}
+{{- $cur := . -}}
+{{- $weights := dict -}}
+{{- $pages := dict -}}
+{{- range $cur.Params.tags -}}
+  {{- $tag := . -}}
+  {{- range where $cur.Site.RegularPages "Type" "in" (slice "posts" "post") -}}
+    {{- if and (ne .RelPermalink $cur.RelPermalink) (in .Params.tags $tag) -}}
+      {{- $key := .RelPermalink -}}
+      {{- $w := add (index $weights $key | default 0) 1 -}}
+      {{- $weights = merge $weights (dict $key $w) -}}
+      {{- $pages = merge $pages (dict $key .) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $scored := slice -}}
+{{- range $k, $w := $weights -}}
+  {{- $scored = $scored | append (dict "w" $w "page" (index $pages $k)) -}}
+{{- end -}}
+{{- $scored = sort $scored "w" "desc" -}}
+{{- if not $scored -}}
+  {{- /* fallback: recent posts */ -}}
+  {{- range first $limit (where $cur.Site.RegularPages "Type" "in" (slice "posts" "post")) -}}
+    {{- if ne .RelPermalink $cur.RelPermalink -}}
+      {{- $scored = $scored | append (dict "w" 0 "page" .) -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+{{- $scored = first $limit $scored -}}
+{{- if $scored -}}
+<div class="relatedPosts">
+  <div class="headline">
+    <i class="anzhiyufont anzhiyu-icon-thumbs-up"></i>
+    <span>{{ i18n "post.related" | default "相关推荐" }}</span>
+  </div>
+  <div class="relatedPosts-list">
+    {{- range $scored -}}
+    {{- $p := .page -}}
+    {{- $cover := $p.Params.cover | default $cur.Site.Params.cover.default_cover -}}
+    <div>
+      <a href="{{ $p.RelPermalink }}" title="{{ $p.Title }}">
+        {{- if $cover -}}
+        <img class="cover" src="{{ $cover | relURL }}" alt="{{ $p.Title }}">
+        {{- end -}}
+        <div class="content is-center">
+          <div class="date"><i class="anzhiyufont anzhiyu-icon-calendar-days"></i> {{ $p.Date.Format "2006-01-02" }}</div>
+          <div class="title">{{ $p.Title }}</div>
+        </div>
+      </a>
+    </div>
+    {{- end -}}
+  </div>
+</div>
+{{- end -}}
+{{- end -}}

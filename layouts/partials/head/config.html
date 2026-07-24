@@ -1,0 +1,168 @@
+{{- $params := .Site.Params -}}
+{{- $searchPath := "index.json" -}}
+{{- with .Site.Home.OutputFormats.Get "JSON" -}}
+  {{- $searchPath = .RelPermalink -}}
+{{- end -}}
+{{- $localSearch := $params.local_search | default dict -}}
+{{- $algoliaSearch := $params.algolia_search | default dict -}}
+{{- $algoliaCfg := $params.algolia | default dict -}}
+{{- $translate := $params.translate | default dict -}}
+{{- $noticeOutdate := $params.noticeOutdate | default dict -}}
+{{- $snackbar := $params.snackbar | default dict -}}
+{{- $copy := $params.copy | default dict -}}
+{{- $postCopyright := $params.post_copyright | default dict -}}
+{{- $darkmode := $params.darkmode | default dict -}}
+{{- $navMusic := $params.nav_music | default dict -}}
+{{- $preloader := $params.preloader | default dict -}}
+{{- $diytitle := $params.diytitle | default dict -}}
+{{- $peoplecanvas := $params.peoplecanvas | default dict -}}
+{{- $postHeadAi := $params.post_head_ai_description | default dict -}}
+{{- $barrage := $params.comment_barrage_config | default dict -}}
+{{- $friendsVue := $params.friends_vue | default dict -}}
+{{- $mainTone := $params.mainTone | default dict -}}
+{{- $authorStatus := $params.author_status | default dict -}}
+{{- $greetingBox := $params.greetingBox | default dict -}}
+{{- $la := $params.LA | default dict -}}
+{{- $linkPageTop := $params.linkPageTop | default dict -}}
+{{- $shortcut := $params.shortcutKey | default dict -}}
+{{- $lazyload := $params.lazyload | default dict -}}
+{{- $twikoo := $params.twikoo | default dict -}}
+{{- $postMeta := $params.post_meta | default dict -}}
+{{- $postMetaPage := $postMeta.page | default dict -}}
+{{- $postMetaPost := $postMeta.post | default dict -}}
+{{- $runtimeshow := $params.runtimeshow | default dict -}}
+{{- $assetJustifiedJS := partial "helpers/asset_url.html" (dict "path" ($params.asset.flickr_justified_gallery_js | default "") "ctx" .) -}}
+{{- $assetJustifiedCSS := partial "helpers/asset_url.html" (dict "path" ($params.asset.flickr_justified_gallery_css | default "") "ctx" .) -}}
+<script>
+  const GLOBAL_CONFIG = {
+    root: {{ "/" | relURL | jsonify | safeJS }},
+    linkPageTop: {{ if $linkPageTop.enable }}{{ $linkPageTop | jsonify | safeJS }}{{ else }}undefined{{ end }},
+    peoplecanvas: {{ if $peoplecanvas.enable }}{{ $peoplecanvas | jsonify | safeJS }}{{ else }}undefined{{ end }},
+    postHeadAiDescription: {{ if $postHeadAi.enable }}{
+      enable: true,
+      gptName: {{ $postHeadAi.gptName | default "AnZhiYu" | jsonify | safeJS }},
+      mode: {{ $postHeadAi.mode | default "local" | jsonify | safeJS }},
+      switchBtn: {{ default false $postHeadAi.switchBtn }},
+      basicWordCount: {{ default 1000 $postHeadAi.basicWordCount }},
+      randomNum: {{ default 3 $postHeadAi.randomNum }},
+      btnLink: {{ $postHeadAi.btnLink | default "https://github.com/Rukawalee/hugo-theme-anzhiyu" | jsonify | safeJS }},
+      key: {{ $postHeadAi.key | default "" | jsonify | safeJS }},
+      Referer: {{ $postHeadAi.Referer | default ($postHeadAi.referer | default "") | jsonify | safeJS }}
+    }{{ else }}undefined{{ end }},
+    diytitle: {{ if $diytitle.enable }}{{ dict "enable" true "leaveTitle" ($diytitle.leaveTitle | default $diytitle.leavetitle | default "w(ﾟДﾟ)w 不要走！再看看嘛！") "backTitle" ($diytitle.backTitle | default $diytitle.backtitle | default "♪(^∇^*)欢迎肥来！") | jsonify | safeJS }}{{ else }}undefined{{ end }},
+    LA51: {{ if $la.enable }}{{ $la | jsonify | safeJS }}{{ else }}undefined{{ end }},
+    greetingBox: {{ if $greetingBox.enable }}{{ $greetingBox | jsonify | safeJS }}{{ else }}undefined{{ end }},
+    twikooEnvId: {{ $twikoo.envId | default "" | jsonify | safeJS }},
+    commentBarrageConfig: {{ if $barrage.enable }}{{ $barrage | jsonify | safeJS }}{{ else }}undefined{{ end }},
+    music_page_default: {{ with $params.music_page_default }}{{ . | jsonify | safeJS }}{{ else }}undefined{{ end }},
+    preloader: {{ if $preloader.enable }}{{ dict "source" (default 1 $preloader.source) | jsonify | safeJS }}{{ else }}undefined{{ end }},
+    friends_vue_info: {{ if $friendsVue.enable }}{{ dict "apiurl" ($friendsVue.apiurl | default "") | jsonify | safeJS }}{{ else }}undefined{{ end }},
+    navMusic: {{ if $navMusic.enable }}true{{ else }}false{{ end }},
+    nav_music: {{ if $navMusic.enable }}{{ dict "id" ($navMusic.id | default "") "server" ($navMusic.server | default "netease") "volume" ($navMusic.volume | default 0.8) | jsonify | safeJS }}{{ else }}undefined{{ end }},
+    mainTone: {{ if $mainTone.enable }}{{ $mainTone | jsonify | safeJS }}{{ else }}undefined{{ end }},
+    authorStatus: {{ if $authorStatus.enable }}{{ dict "skills" ($authorStatus.skills | default slice) | jsonify | safeJS }}{{ else }}undefined{{ end }},
+    algolia: {{ if $algoliaSearch.enable }}{
+      appId: {{ $algoliaCfg.appId | default $algoliaCfg.applicationID | default "" | jsonify | safeJS }},
+      apiKey: {{ $algoliaCfg.apiKey | default "" | jsonify | safeJS }},
+      indexName: {{ $algoliaCfg.indexName | default "" | jsonify | safeJS }},
+      hits: {{ $algoliaSearch.hits | default dict | jsonify | safeJS }},
+      languages: {
+        input_placeholder: {{ i18n "search.algolia_search.input_placeholder" | jsonify | safeJS }},
+        hits_empty: {{ i18n "search.algolia_search.hits_empty" | jsonify | safeJS }},
+        hits_stats: {{ i18n "search.algolia_search.hits_stats" | jsonify | safeJS }}
+      }
+    }{{ else }}undefined{{ end }},
+    localSearch: {{ if $localSearch.enable }}{
+      path: {{ $searchPath | jsonify | safeJS }},
+      preload: {{ default true $localSearch.preload }},
+      languages: {
+        hits_empty: {{ i18n "search.local_search.hits_empty" | jsonify | safeJS }}
+      }
+    }{{ else }}undefined{{ end }},
+    translate: {{ if $translate.enable }}{
+      defaultEncoding: {{ default 2 $translate.defaultEncoding }},
+      translateDelay: {{ default 0 $translate.translateDelay }},
+      msgToTraditionalChinese: {{ $translate.msgToTraditionalChinese | default "繁" | jsonify | safeJS }},
+      msgToSimplifiedChinese: {{ $translate.msgToSimplifiedChinese | default "簡" | jsonify | safeJS }},
+      rightMenuMsgToTraditionalChinese: {{ $translate.rightMenuMsgToTraditionalChinese | default $translate.rightMenuMsgDefault | default "轉為繁體" | jsonify | safeJS }},
+      rightMenuMsgToSimplifiedChinese: {{ $translate.rightMenuMsgToSimplifiedChinese | default "转为简体" | jsonify | safeJS }}
+    }{{ else }}undefined{{ end }},
+    noticeOutdate: {{ if $noticeOutdate.enable }}{
+      limitDay: {{ default 365 $noticeOutdate.limit_day }},
+      position: {{ $noticeOutdate.position | default "top" | jsonify | safeJS }},
+      messagePrev: {{ $noticeOutdate.message_prev | default "本文最后更新于" | jsonify | safeJS }},
+      messageNext: {{ $noticeOutdate.message_next | default "天前，部分内容可能已过时。" | jsonify | safeJS }}
+    }{{ else }}undefined{{ end }},
+    highlight: {
+      plugin: 'chroma',
+      highlightCopy: {{ default true $params.highlight_copy }},
+      highlightLang: {{ default true $params.highlight_lang }},
+      highlightHeightLimit: {{ default 330 $params.highlight_height_limit }}
+    },
+    copy: {
+      success: {{ i18n "copy.success" | jsonify | safeJS }},
+      error: {{ i18n "copy.error" | jsonify | safeJS }},
+      noSupport: {{ i18n "copy.noSupport" | jsonify | safeJS }}
+    },
+    relativeDate: {
+      homepage: {{ eq $postMetaPage.date_format "relative" }},
+      simplehomepage: {{ eq $postMetaPage.date_format "simple" }},
+      post: {{ eq $postMetaPost.date_format "relative" }}
+    },
+    runtime: {{ if $runtimeshow.enable }}{{ i18n "aside.card_webinfo.runtime.unit" | jsonify | safeJS }}{{ else }}''{{ end }},
+    date_suffix: {
+      just: {{ i18n "date_suffix.just" | jsonify | safeJS }},
+      min: {{ i18n "date_suffix.min" | jsonify | safeJS }},
+      hour: {{ i18n "date_suffix.hour" | jsonify | safeJS }},
+      day: {{ i18n "date_suffix.day" | jsonify | safeJS }},
+      month: {{ i18n "date_suffix.month" | jsonify | safeJS }}
+    },
+    copyright: {{ if or $copy.enable $postCopyright.enable }}{
+      copy: {{ default true $copy.enable }},
+      copyrightEbable: {{ if $copy.copyright }}{{ default true $copy.copyright.enable }}{{ else }}{{ default true $postCopyright.enable }}{{ end }},
+      limitCount: {{ if and $copy.copyright $copy.copyright.limit_count }}{{ $copy.copyright.limit_count }}{{ else }}50{{ end }},
+      languages: {
+        author: {{ printf "%s: %s" (i18n "copy_copyright.author") (default .Site.Title $params.author) | jsonify | safeJS }},
+        link: {{ printf "%s: " (i18n "copy_copyright.link") | jsonify | safeJS }},
+        source: {{ printf "%s: %s" (i18n "copy_copyright.source") .Site.Title | jsonify | safeJS }},
+        info: {{ i18n "copy_copyright.info" | jsonify | safeJS }},
+        copySuccess: {{ i18n "copy_copyright.copySuccess" | jsonify | safeJS }}
+      }
+    }{{ else }}undefined{{ end }},
+    lightbox: {{ with $params.medium_zoom }}{{ if reflect.IsMap . }}{{ if .enable }}"mediumZoom"{{ else }}"null"{{ end }}{{ else if . }}"mediumZoom"{{ else }}"null"{{ end }}{{ else }}{{ with $params.fancybox }}{{ if reflect.IsMap . }}{{ if .enable }}"fancybox"{{ else }}"null"{{ end }}{{ else if . }}"fancybox"{{ else }}"null"{{ end }}{{ else }}"null"{{ end }}{{ end }},
+    Snackbar: {{ if $snackbar.enable }}{
+      chs_to_cht: {{ i18n "Snackbar.chs_to_cht" | jsonify | safeJS }},
+      cht_to_chs: {{ i18n "Snackbar.cht_to_chs" | jsonify | safeJS }},
+      day_to_night: {{ i18n "Snackbar.day_to_night" | jsonify | safeJS }},
+      night_to_day: {{ i18n "Snackbar.night_to_day" | jsonify | safeJS }},
+      bgLight: {{ $snackbar.bg_light | default "#49b1f5" | jsonify | safeJS }},
+      bgDark: {{ $snackbar.bg_dark | default "#1f1f1f" | jsonify | safeJS }},
+      position: {{ $snackbar.position | default "bottom-left" | jsonify | safeJS }}
+    }{{ else }}undefined{{ end }},
+    source: {
+      justifiedGallery: {
+        js: {{ $assetJustifiedJS | jsonify | safeJS }},
+        css: {{ $assetJustifiedCSS | jsonify | safeJS }}
+      }
+    },
+    isPhotoFigcaption: {{ default false $params.photofigcaption }},
+    islazyload: {{ default false $lazyload.enable }},
+    isAnchor: {{ default false $params.anchor }},
+    shortcutKey: {{ if $shortcut.enable }}{{ $shortcut | jsonify | safeJS }}{{ else }}undefined{{ end }},
+    autoDarkmode: {{ and $darkmode.enable (eq (int (default 1 $darkmode.autoChangeMode)) 1) }}
+  };
+</script>
+<script id="config-diff">
+  var GLOBAL_CONFIG_SITE = {
+    configTitle: {{ .Site.Title | jsonify | safeJS }},
+    title: {{ .Title | jsonify | safeJS }},
+    postAI: {{ with .Params.ai }}{{ . | jsonify | safeJS }}{{ else }}''{{ end }},
+    pageFillDescription: {{ with .Description }}{{ . | plainify | jsonify | safeJS }}{{ else }}''{{ end }},
+    isPost: {{ and .IsPage (or (eq .Type "posts") (eq .Section "posts") (eq .Type "post")) }},
+    isHome: {{ .IsHome }},
+    isHighlightShrink: {{ with .Params.highlight_shrink }}{{ . }}{{ else }}{{ if eq $params.highlight_shrink true }}true{{ else if eq $params.highlight_shrink false }}false{{ else }}undefined{{ end }}{{ end }},
+    isToc: {{ and .IsPage (ne .Params.toc false) (or (and (or (eq .Type "posts") (eq .Section "posts") (eq .Type "post")) (default true $params.toc.post)) (and (not (or (eq .Type "posts") (eq .Section "posts") (eq .Type "post"))) (default false $params.toc.page))) }},
+    postUpdate: {{ with .Lastmod }}{{ .Format "2006-01-02 15:04:05" | jsonify | safeJS }}{{ else }}''{{ end }},
+    postMainColor: {{ with .Params.main_color }}{{ . | jsonify | safeJS }}{{ else }}''{{ end }}
+  };
+</script>

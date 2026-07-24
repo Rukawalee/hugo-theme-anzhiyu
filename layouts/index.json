@@ -1,0 +1,25 @@
+{{- $pages := where .Site.RegularPages "Type" "in" (slice "posts" "post" "page") -}}
+[
+{{- range $i, $p := $pages -}}
+{{- if $i -}},{{- end -}}
+{{- $cover := partial "helpers/post_cover.html" (dict "page" $p) -}}
+{{- $coverURL := "" -}}
+{{- if $cover -}}
+  {{- if or (hasPrefix $cover "http://") (hasPrefix $cover "https://") (hasPrefix $cover "//") -}}
+    {{- $coverURL = $cover -}}
+  {{- else -}}
+    {{- $coverURL = $cover | absURL -}}
+  {{- end -}}
+{{- end -}}
+{
+  "title": {{ $p.Title | jsonify }},
+  "date": {{ $p.Date.Format "2006-01-02" | jsonify }},
+  "url": {{ $p.RelPermalink | jsonify }},
+  "permalink": {{ $p.Permalink | jsonify }},
+  "content": {{ $p.Plain | jsonify }},
+  "categories": {{ with $p.Params.categories }}{{ . | jsonify }}{{ else }}[]{{ end }},
+  "tags": {{ with $p.Params.tags }}{{ . | jsonify }}{{ else }}[]{{ end }},
+  "oneImage": {{ $coverURL | jsonify }}
+}
+{{- end -}}
+]

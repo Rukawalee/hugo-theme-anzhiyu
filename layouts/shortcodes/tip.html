@@ -1,0 +1,11 @@
+{{- /*
+  {{% tip info %}}...{{% /tip %}}
+  {{% tip warning %}}...{{% /tip %}}
+*/ -}}
+{{- $cls := "info" -}}
+{{- if .IsNamedParams -}}
+  {{- with .Get "class" }}{{ $cls = . }}{{ end -}}
+{{- else if ge (len .Params) 1 -}}
+  {{- $cls = delimit .Params " " -}}
+{{- end -}}
+<div class="tip {{ $cls }}">{{ .Inner | markdownify }}</div>

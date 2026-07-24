@@ -1,0 +1,124 @@
+{{- /* Upstream inject_head_js: saveToLocal, getScript, getCSS, darkmode, aside, Apple */ -}}
+{{- $params := .Site.Params -}}
+{{- $dm := $params.darkmode | default dict -}}
+{{- $aside := $params.aside | default dict -}}
+{{- $tc := $params.theme_color | default dict -}}
+{{- $light := "#f7f9fe" -}}
+{{- $dark := "#18171d" -}}
+{{- if $tc.enable -}}
+  {{- with $tc.meta_theme_color_light }}{{ $light = . }}{{ end -}}
+  {{- with $tc.meta_theme_color_dark }}{{ $dark = . }}{{ end -}}
+{{- end -}}
+{{- $start := default 6 $dm.start -}}
+{{- $end := default 18 $dm.end -}}
+{{- $auto := default 1 $dm.autoChangeMode -}}
+<script>
+(win => {
+  win.saveToLocal = {
+    set: (key, value, ttl) => {
+      if (ttl === 0) return
+      const now = Date.now()
+      const item = { value, expiry: now + ttl * 86400000 }
+      localStorage.setItem(key, JSON.stringify(item))
+    },
+    get: key => {
+      const itemStr = localStorage.getItem(key)
+      if (!itemStr) return undefined
+      // Legacy plain string (e.g. "dark") from older scripts
+      if (itemStr === 'dark' || itemStr === 'light') return itemStr
+      try {
+        const item = JSON.parse(itemStr)
+        if (item && typeof item === 'object' && 'value' in item) {
+          if (item.expiry && Date.now() > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+        return undefined
+      } catch (e) { return undefined }
+    }
+  }
+  win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+    const script = document.createElement('script')
+    script.src = url
+    script.async = true
+    script.onerror = reject
+    script.onload = script.onreadystatechange = function () {
+      const loadState = this.readyState
+      if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+      script.onload = script.onreadystatechange = null
+      resolve()
+    }
+    Object.keys(attr).forEach(key => script.setAttribute(key, attr[key]))
+    document.head.appendChild(script)
+  })
+  win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = url
+    if (id) link.id = id
+    link.onerror = reject
+    link.onload = link.onreadystatechange = function () {
+      const loadState = this.readyState
+      if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+      link.onload = link.onreadystatechange = null
+      resolve()
+    }
+    document.head.appendChild(link)
+  })
+  {{- if $dm.enable | default true }}
+  win.activateDarkMode = () => {
+    document.documentElement.setAttribute('data-theme', 'dark')
+    document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.setAttribute('content', {{ $dark | jsonify | safeJS }}))
+  }
+  win.activateLightMode = () => {
+    document.documentElement.setAttribute('data-theme', 'light')
+    document.querySelectorAll('meta[name="theme-color"]').forEach(m => m.setAttribute('content', {{ $light | jsonify | safeJS }}))
+  }
+  const t = saveToLocal.get('theme')
+  {{- if eq (int $auto) 1 }}
+  const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      const hour = new Date().getHours()
+      const isNight = hour <= {{ $start }} || hour >= {{ $end }}
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      if (saveToLocal.get('theme') === undefined) e.matches ? activateDarkMode() : activateLightMode()
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+  {{- else if eq (int $auto) 2 }}
+  {
+    const hour = new Date().getHours()
+    const isNight = hour <= {{ $start }} || hour >= {{ $end }}
+    if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+    else if (t === 'light') activateLightMode()
+    else activateDarkMode()
+  }
+  {{- else }}
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+  {{- end }}
+  {{- end }}
+  {{- if and ($aside.enable | default true) ($aside.button | default true) }}
+  {
+    const asideStatus = saveToLocal.get('aside-status')
+    if (asideStatus !== undefined) {
+      if (asideStatus === 'hide') document.documentElement.classList.add('hide-aside')
+      else document.documentElement.classList.remove('hide-aside')
+    }
+  }
+  {{- end }}
+  if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+    document.documentElement.classList.add('apple')
+  }
+})(window)
+</script>

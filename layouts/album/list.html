@@ -1,0 +1,10 @@
+{{- define "main" -}}
+<div id="page">
+  <h1 class="page-title">{{ .Title }}</h1>
+  {{ partial "page/album.html" . }}
+  {{- $c := .Site.Params.comments | default dict -}}
+  {{- if and (ne .Params.comments false) $c.enable $c.use }}
+  {{ partial "third-party/comments.html" . }}
+  {{- end }}
+</div>
+{{- end -}}

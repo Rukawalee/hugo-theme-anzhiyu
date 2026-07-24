@@ -1,0 +1,83 @@
+{{- $params := .Site.Params -}}
+{{- if and ($params.post_copyright.enable | default true) (ne .Params.copyright false) -}}
+{{- $author := .Params.copyright_author | default $params.author | default .Site.Title -}}
+{{- $url := .Params.copyright_url | default .Permalink -}}
+{{- $pc := $params.post_copyright | default dict -}}
+{{- $avatar := $params.avatar.img | default "/img/default_cover.jpg" -}}
+{{- $imgBack := $pc.copyright_author_img_back | default $avatar -}}
+{{- $imgFront := $pc.copyright_author_img_front | default $avatar -}}
+{{- $authorLink := $pc.copyright_author_link | default "/" -}}
+<div class="post-copyright">
+  <div class="copyright-cc-box">
+    <i class="anzhiyufont anzhiyu-icon-copyright"></i>
+  </div>
+  <div class="post-copyright__author_box">
+    <a class="post-copyright__author_img" href="{{ $authorLink | relLangURL }}" title="头像">
+      {{- partial "helpers/lazy_img.html" (dict "src" $imgBack "class" "post-copyright__author_img_back" "alt" "头像" "error" "/img/404.jpg" "nolazy" true "ctx" .) -}}
+      {{- partial "helpers/lazy_img.html" (dict "src" $imgFront "class" "post-copyright__author_img_front" "alt" "头像" "error" "/img/404.jpg" "nolazy" true "ctx" .) -}}
+    </a>
+    <div class="post-copyright__author_name">{{ $author }}</div>
+    <div class="post-copyright__author_desc">{{ with .Site.Params.site_subtitle }}{{ . }}{{ else }}{{ with $params.description }}{{ . }}{{ end }}{{ end }}</div>
+  </div>
+  <div class="post-copyright__post__info">
+    {{- if and .Params.copyright_author (ne .Params.copyright_author $params.author) -}}
+    <a class="post-copyright__reprint" title="该文章为转载文章，注意版权协议" href="{{ $url }}">转载</a>
+    {{- else -}}
+    <a class="post-copyright__original" title="该文章为原创文章，注意版权协议" href="{{ $url }}">原创</a>
+    {{- end -}}
+    <a class="post-copyright-title"><span onclick="if(window.rm&amp;&amp;rm.copyPageUrl){rm.copyPageUrl(location.href)}else if(navigator.clipboard){navigator.clipboard.writeText(location.href)}">{{ .Title }}</span></a>
+  </div>
+  {{- /* Hexo nests ptool inside copyright */ -}}
+  {{- $ptool := $params.ptool | default dict -}}
+  {{- if ne $ptool.enable false -}}
+    {{- partial "post/ptool.html" . -}}
+  {{- end -}}
+  <div class="post-copyright__notice">
+    <span class="post-copyright-info">
+      {{- with .Params.copyright_info -}}
+        {{ . | safeHTML }}
+      {{- else -}}
+        {{ i18n "post.copyright.copyright_content" | default "本文采用" | safeHTML }}
+        {{- with $pc.license -}}
+        <a href="{{ $pc.license_url | default "https://creativecommons.org/licenses/by-nc-sa/4.0/" }}" target="_blank" rel="noopener">{{ . }}</a>
+        {{- end -}}
+        {{- with $.Site.Title }} 协议，版权归 {{ $author }} 所有。{{ end -}}
+      {{- end -}}
+    </span>
+  </div>
+</div>
+<div class="post-tools-right">
+  <div class="tag_share">
+    <div class="post-meta__box">
+      {{- $ptool := $params.ptool | default dict -}}
+      {{- if $ptool.categories -}}
+        {{- if .Params.categories -}}
+        <div class="post-meta__box__category-list">
+          {{- range .GetTerms "categories" -}}
+          <a class="post-meta__box__categoryes" href="{{ .RelPermalink }}">
+            <span class="categoryes-punctuation"><i class="anzhiyufont anzhiyu-icon-inbox"></i></span>
+            {{ .LinkTitle }}
+            <span class="categoryesPageCount">{{ len .Pages }}</span>
+          </a>
+          {{- end -}}
+        </div>
+        {{- end -}}
+      {{- end -}}
+      {{- if and (ne ($params.post_meta.post.tags | default true) false) .Params.tags -}}
+      <div class="post-meta__box__tag-list">
+        {{- range .GetTerms "tags" -}}
+        <a class="post-meta__box__tags" href="{{ .RelPermalink }}">
+          <span class="tags-punctuation"><i class="anzhiyufont anzhiyu-icon-tag"></i></span>
+          {{ .LinkTitle }}
+          <span class="tagsPageCount">{{ len .Pages }}</span>
+        </a>
+        {{- end -}}
+      </div>
+      {{- end -}}
+    </div>
+    {{- if templates.Exists "partials/third-party/share/index.html" -}}
+      {{- partial "third-party/share/index.html" . -}}
+    {{- end -}}
+  </div>
+</div>
+{{- end -}}

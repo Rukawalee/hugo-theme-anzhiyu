@@ -1,0 +1,157 @@
+{{- $params := .Site.Params -}}
+{{- $ht := $params.home_top | default dict -}}
+{{- if $ht.enable -}}
+{{- $errorImg := "/img/404.jpg" -}}
+{{- with $params.error_img }}{{ with .post_page }}{{ $errorImg = . }}{{ end }}{{ end -}}
+{{- $swiper := $ht.swiper | default dict -}}
+{{- $useSwiper := $swiper.enable | default false -}}
+<div id="home_top">
+  <div class="swiper_container_card" style="height: auto;width: 100%">
+    <div id="bannerGroup">
+      <div id="random-banner">
+        {{- $people := $params.peoplecanvas | default dict -}}
+        {{- if $people.enable | default false -}}
+        <canvas id="peoplecanvas"></canvas>
+        {{- else -}}
+        <div class="banners-title">
+          <div class="banners-title-big">{{ $ht.title }}</div>
+          <div class="banners-title-big">{{ $ht.subTitle }}</div>
+          <div class="banners-title-small">{{ $ht.siteText }}</div>
+        </div>
+        {{- partial "home/tags_group_all.html" . -}}
+        {{- end -}}
+        <a id="random-hover" href="javascript:toRandomPost()">
+          <i class="anzhiyufont anzhiyu-icon-paper-plane"></i>
+          <div class="bannerText">{{ i18n "home_top.random_walk" | default "随便逛逛" }}
+            <i class="anzhiyufont anzhiyu-icon-arrow-right"></i>
+          </div>
+        </a>
+      </div>
+      <div class="categoryGroup">
+        {{- range $ht.category -}}
+        <div class="categoryItem" {{ with .shadow }}style="{{ printf "box-shadow:%s" . | safeCSS }}"{{ end }}>
+          <a class="categoryButton {{ .class }}" href="{{ .path | relLangURL }}">
+            <span class="categoryButtonText">{{ .name }}</span>
+            {{- with .icon -}}
+              {{- if or (hasPrefix . "fa") (hasPrefix . "anzhiyu") -}}
+            <i class="anzhiyufont {{ . }}"></i>
+              {{- else -}}
+            <i class="anzhiyufont {{ . }}"></i>
+              {{- end -}}
+            {{- end -}}
+          </a>
+        </div>
+        {{- end -}}
+      </div>
+    </div>
+
+    {{- if $useSwiper -}}
+    {{- /* Swiper mode: blog slider + 4 top cards — shell; needs swiper assets */ -}}
+    <div id="swiper_container_blog">
+      <div id="swiper_container" class="blog-slider swiper-container-fade swiper-container-horizontal">
+          {{- $swiperPosts := partial "helpers/sort_attr_posts.html" (dict "ctx" . "type" "swiper_list") -}}
+          {{- range $swiperPosts -}}
+          {{- $cover := partial "helpers/post_cover.html" (dict "page" .) -}}
+          <div class="blog-slider__item swiper-slide">
+            <a class="blog-slider__img" href="{{ .RelPermalink }}" title="{{ .Title }}">
+              {{- $onerr := printf "this.onerror=null;this.src='%s'" ($errorImg | relURL) -}}
+              <img width="48" height="48" src="{{ $cover | relURL }}" alt="{{ .Title }}" {{ printf `onerror="%s"` $onerr | safeHTMLAttr }}>
+            </a>
+            <div class="blog-slider__content">
+              <span class="blog-slider__code">{{ .Date.Format "2006-01-02" }}</span>
+              <a class="blog-slider__title" href="{{ .RelPermalink }}">{{ .Title }}</a>
+              <div class="blog-slider__text">{{ with .Description }}{{ . }}{{ else }}{{ .Summary | plainify | truncate 80 }}{{ end }}</div>
+              <a class="blog-slider__button" href="{{ .RelPermalink }}">详情</a>
+            </div>
+          </div>
+          {{- end -}}
+        </div>
+        <div class="blog-slider__pagination swiper-pagination-clickable swiper-pagination-bullets"></div>
+      </div>
+      <div id="topPostGroup">
+        {{- $topPosts := partial "helpers/sort_attr_posts.html" (dict "ctx" . "type" "top_group_list") -}}
+        {{- range first 4 $topPosts -}}
+        {{- $cover := partial "helpers/post_cover.html" (dict "page" .) -}}
+        <div class="top-group-list-item">
+          <div class="post_cover left_radius">
+            <a href="{{ .RelPermalink }}" title="{{ .Title }}">
+              <span class="top-group-text">{{ i18n "home_top.recommend" | default "荐" }}</span>
+              {{- $onerr2 := printf "this.onerror=null;this.src='%s'" ($errorImg | relURL) -}}
+              <img class="post_bg" alt="{{ .Title }}" src="{{ $cover | relURL }}" {{ printf `onerror="%s"` $onerr2 | safeHTMLAttr }}>
+            </a>
+          </div>
+          <div class="top-group-info">
+            <a class="article-title" href="{{ .RelPermalink }}" title="{{ .Title }}">{{ .Title }}</a>
+          </div>
+        </div>
+        {{- end -}}
+        <div class="top-group-list-none"></div>
+        <div class="top-group-list-none"></div>
+        <div class="top-group-list-none"></div>
+      </div>
+    </div>
+    {{- with $swiper.swiper_js -}}
+    <script src="{{ . }}"></script>
+    {{- end -}}
+    <script>
+      (function () {
+        function initBlogSlider() {
+          if (typeof Swiper === 'undefined') return;
+          var swiper = new Swiper('.blog-slider', {
+            passiveListeners: true,
+            spaceBetween: 30,
+            effect: 'fade',
+            loop: true,
+            autoplay: { disableOnInteraction: true, delay: 3000 },
+            pagination: { el: '.blog-slider__pagination', clickable: true }
+          });
+          var box = document.getElementById('swiper_container');
+          if (box) {
+            box.onmouseenter = function () { swiper.autoplay.stop(); };
+            box.onmouseleave = function () { swiper.autoplay.start(); };
+          }
+        }
+        setTimeout(initBlogSlider, 100);
+      })();
+    </script>
+    {{- else -}}
+    <div class="topGroup">
+      {{- $reco := partial "helpers/sort_attr_posts.html" (dict "ctx" . "type" "top_group_list") -}}
+      {{- range $reco -}}
+      {{- $cover := partial "helpers/post_cover.html" (dict "page" .) -}}
+      {{- $plink := .RelPermalink -}}
+      {{- $go := printf "if(window.pjax){pjax.loadUrl('%s')}else{location.href='%s'}" $plink $plink -}}
+      <div class="recent-post-item" {{ printf `onclick="%s"` $go | safeHTMLAttr }}>
+        <div class="post_cover left_radius">
+          <a href="{{ .RelPermalink }}" title="{{ .Title }}">
+            <span class="recent-post-top-text">{{ i18n "home_top.recommend" | default "荐" }}</span>
+            {{- if $cover -}}
+            {{- partial "helpers/lazy_img.html" (dict "src" $cover "class" "post_bg" "alt" .Title "error" $errorImg "ctx" .) -}}
+            {{- end -}}
+          </a>
+        </div>
+        <div class="recent-post-info">
+          <a class="article-title" href="{{ .RelPermalink }}" title="{{ .Title }}">{{ .Title }}</a>
+        </div>
+      </div>
+      {{- end -}}
+      {{- with $ht.banner -}}
+      <a id="todayCard" class="todayCard" href="{{ .link | relLangURL }}" style="z-index: 1;">
+        <div class="todayCard-info">
+          <div class="todayCard-tips">{{ .tips }}</div>
+          <div class="todayCard-title">{{ .title }}</div>
+        </div>
+        {{- partial "helpers/lazy_img.html" (dict "src" .image "class" "todayCard-cover" "alt" "cover" "error" $errorImg "ctx" $) -}}
+        <div class="banner-button-group">
+          <div class="banner-button" onclick="event.stopPropagation();event.preventDefault();if(window.anzhiyu&&anzhiyu.hideTodayCard){anzhiyu.hideTodayCard()}else{var c=document.getElementById('todayCard');if(c)c.classList.add('hide')}">
+            <i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i>
+            <span class="banner-button-text">{{ i18n "home_top.more_recommend" | default "更多推荐" }}</span>
+          </div>
+        </div>
+      </a>
+      {{- end -}}
+    </div>
+    {{- end -}}
+  </div>
+</div>
+{{- end -}}

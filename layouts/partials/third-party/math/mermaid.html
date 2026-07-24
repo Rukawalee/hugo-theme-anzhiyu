@@ -1,0 +1,68 @@
+{{- $params := .Site.Params -}}
+{{- $m := $params.mermaid | default dict -}}
+{{- $cdn := $params.CDN | default dict -}}
+{{- $opt := $cdn.option | default dict -}}
+{{- $src := string ($opt.mermaid | default "https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js") -}}
+{{- $light := "default" -}}
+{{- $dark := "dark" -}}
+{{- with $m.theme -}}
+  {{- with .light }}{{ $light = string . }}{{ end -}}
+  {{- with .dark }}{{ $dark = string . }}{{ end -}}
+{{- end -}}
+<script>
+(() => {
+  const nodes = document.querySelectorAll('#article-container .mermaid-wrap');
+  if (!nodes.length) return;
+  const lightTheme = {{ $light | jsonify | safeJS }};
+  const darkTheme = {{ $dark | jsonify | safeJS }};
+  const mermaidSrc = {{ $src | jsonify | safeJS }};
+
+  const runMermaid = async () => {
+    if (!window.mermaid) return;
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? darkTheme : lightTheme;
+    try {
+      if (typeof mermaid.initialize === 'function') {
+        mermaid.initialize({ startOnLoad: false, theme });
+      }
+    } catch (e) {}
+    for (let index = 0; index < nodes.length; index++) {
+      const item = nodes[index];
+      const srcEl = item.querySelector('.mermaid-src') || item.firstElementChild;
+      if (!srcEl) continue;
+      const prev = item.querySelector('svg');
+      if (prev) prev.remove();
+      const def = srcEl.textContent || '';
+      const id = 'mermaid-' + index + '-' + Date.now();
+      try {
+        if (typeof mermaid.render === 'function') {
+          const out = mermaid.render(id, def);
+          if (out && typeof out.then === 'function') {
+            const { svg } = await out;
+            srcEl.insertAdjacentHTML('afterend', svg);
+          } else if (typeof out === 'string') {
+            srcEl.insertAdjacentHTML('afterend', out);
+          }
+        } else if (typeof mermaid.run === 'function') {
+          srcEl.classList.add('mermaid');
+          srcEl.removeAttribute('hidden');
+          await mermaid.run({ nodes: [srcEl] });
+        }
+      } catch (err) {
+        console.warn('mermaid render failed', err);
+      }
+    }
+  };
+
+  const loadMermaid = () => {
+    if (window.mermaid) return runMermaid();
+    const s = document.createElement('script');
+    s.src = mermaidSrc;
+    s.onload = () => runMermaid();
+    document.head.appendChild(s);
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadMermaid);
+  else loadMermaid();
+  document.addEventListener('pjax:complete', loadMermaid);
+})();
+</script>

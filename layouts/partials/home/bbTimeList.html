@@ -1,0 +1,78 @@
+{{- /* Home “即刻短文” scrolling bar */ -}}
+{{- $essays := hugo.Data.essay -}}
+{{- if $essays }}
+{{- $show := false -}}
+{{- $list := slice -}}
+{{- range $essays }}
+  {{- if or .home_essay (not (isset . "home_essay")) }}
+    {{- $show = true -}}
+    {{- with .essay_list }}{{ $list = . }}{{ end -}}
+  {{- end }}
+{{- end }}
+{{- if and $show $list }}
+{{- $pjax := (.Site.Params.pjax | default dict).enable | default false -}}
+{{- $essayURL := "essay/" | relLangURL -}}
+{{- /* Single-quoted URL avoids HTML-attr quote escaping breaking pjax.loadUrl */ -}}
+{{- $goJS := printf "if(window.pjax){pjax.loadUrl('%s');return false;}" $essayURL -}}
+<div id="bbTimeList" class="bbTimeList container">
+  <i class="anzhiyufont anzhiyu-icon-jike bber-logo fontbold" title="即刻短文"{{ if $pjax }} {{ printf `onclick="%s"` $goJS | safeHTMLAttr }}{{ end }} aria-hidden="true"></i>
+  <div id="bbtalk" class="swiper-container swiper-no-swiping essay_bar_swiper_container" tabindex="-1">
+    <div id="bber-talk" class="swiper-wrapper"{{ if $pjax }} {{ printf `onclick="%s"` $goJS | safeHTMLAttr }}{{ end }}>
+      {{- range first 10 $list }}
+      {{- $text := .content -}}
+      {{- if .image }}{{ $text = printf "%s [图片]" $text }}{{ end }}
+      {{- if .video }}{{ $text = printf "%s [视频]" $text }}{{ end }}
+      <a class="li-style swiper-slide" href="{{ $essayURL }}"{{ if $pjax }} {{ printf `onclick="%s"` $goJS | safeHTMLAttr }}{{ end }}>{{ $text }}</a>
+      {{- end }}
+    </div>
+  </div>
+  <a class="bber-gotobb anzhiyufont anzhiyu-icon-circle-arrow-right" href="{{ $essayURL }}"{{ if $pjax }} {{ printf `onclick="%s"` $goJS | safeHTMLAttr }}{{ end }} title="查看全文"></a>
+</div>
+{{- $swiperJS := (.Site.Params.home_top.swiper.swiper_js | default "https://npm.elemecdn.com/anzhiyu-theme-static@1.0.0/swiper/swiper.min.js") -}}
+<script src="{{ $swiperJS }}"></script>
+{{- /* swiper init for essay ticker */ -}}
+<script>
+(function () {
+  function initBb() {
+    if (typeof Swiper === "undefined") return;
+    var el = document.querySelector(".essay_bar_swiper_container");
+    if (!el) return;
+    // destroy previous instance after pjax
+    if (el.swiper && typeof el.swiper.destroy === "function") {
+      try { el.swiper.destroy(true, true); } catch (e) {}
+    }
+    // ensure measurable height before Swiper measures slides
+    el.style.height = "30px";
+    el.style.overflow = "hidden";
+    var slides = el.querySelectorAll(".swiper-slide");
+    slides.forEach(function (s) {
+      s.style.height = "30px";
+      s.style.lineHeight = "30px";
+    });
+    try {
+      var essay_bar_swiper = new Swiper(el, {
+        direction: "vertical",
+        loop: true,
+        autoplay: { delay: 3000, disableOnInteraction: true },
+        mousewheel: false,
+        allowTouchMove: false,
+        observer: true,
+        observeParents: true
+      });
+      el.onmouseenter = function () {
+        if (essay_bar_swiper && essay_bar_swiper.autoplay) essay_bar_swiper.autoplay.stop();
+      };
+      el.onmouseleave = function () {
+        if (essay_bar_swiper && essay_bar_swiper.autoplay) essay_bar_swiper.autoplay.start();
+      };
+    } catch (e) {}
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initBb);
+  else initBb();
+  document.addEventListener("pjax:complete", function () {
+    setTimeout(initBb, 50);
+  });
+})();
+</script>
+{{- end }}
+{{- end }}

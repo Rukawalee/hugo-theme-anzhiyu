@@ -1,0 +1,26 @@
+{{- /*
+  {{< dogeplayer userId vcode >}}
+  {{< dogeplayer userId="..." vcode="..." >}}
+*/ -}}
+{{- $userId := "" -}}
+{{- $vcode := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $userId = .Get "userId" | default (.Get "user") | default "" -}}
+  {{- $vcode = .Get "vcode" | default "" -}}
+{{- else -}}
+  {{- $userId = .Get 0 | default "" -}}
+  {{- $vcode = .Get 1 | default "" -}}
+{{- end -}}
+{{- $divId := printf "player_%s" $vcode -}}
+<div id="{{ $divId }}"></div>
+<script type="text/javascript" data-pjax src="https://player.dogecloud.com/js/loader"></script>
+<script type="text/javascript" data-pjax defer>
+  setTimeout(function () {
+    var dogePlayer = new DogePlayer({
+      container: document.getElementById({{ printf "%q" $divId | safeJS }}),
+      userId: {{ $userId }},
+      vcode: {{ printf "%q" $vcode | safeJS }},
+      autoPlay: false
+    });
+  }, 300);
+</script>

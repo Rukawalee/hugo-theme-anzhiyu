@@ -1,0 +1,8 @@
+/* highlight_theme: darker */
+.highlight, pre, code {
+  background: #21252b !important;
+  color: #abb2bf;
+}
+.highlight .k, .highlight .kd, .highlight .kn { color: #c678dd; }
+.highlight .s, .highlight .s1, .highlight .s2 { color: #98c379; }
+.highlight .c, .highlight .c1, .highlight .cm { color: #5c6370; }

@@ -1,0 +1,24 @@
+{{- /*
+  {{< btn url="..." text="..." icon="..." option="..." >}}
+  {{< btn "/path" "Text" "anzhiyufont anzhiyu-icon-xxx" "blue center" >}}
+*/ -}}
+{{- $url := "" -}}
+{{- $text := "" -}}
+{{- $icon := "" -}}
+{{- $option := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $url = .Get "url" | default (.Get "href") | default "" -}}
+  {{- $text = .Get "text" | default "" -}}
+  {{- $icon = .Get "icon" | default "" -}}
+  {{- $option = .Get "option" | default (.Get "class") | default "" -}}
+{{- else -}}
+  {{- $url = .Get 0 | default "" -}}
+  {{- $text = .Get 1 | default "" -}}
+  {{- $icon = .Get 2 | default "" -}}
+  {{- $option = .Get 3 | default "" -}}
+{{- end -}}
+{{- $url = trim $url " " -}}
+{{- $text = trim $text " " -}}
+{{- $icon = trim $icon " " -}}
+{{- $option = trim $option " " -}}
+<a class="btn-anzhiyu {{ $option }}" href="{{ $url | safeURL }}" title="{{ $text }}">{{ if $icon }}<i class="{{ $icon }}"></i>{{ end }}{{ if $text }}<span>{{ $text }}</span>{{ end }}</a>

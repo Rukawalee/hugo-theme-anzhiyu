@@ -1,0 +1,65 @@
+{{- $params := .Site.Params -}}
+{{- $sidebar := $params.sidebar | default dict -}}
+<div id="sidebar">
+  <div id="menu-mask"></div>
+  <div id="sidebar-menus">
+    {{- /* site data counters */ -}}
+    <div class="sidebar-site-data site-data is-center">
+      <a href="{{ "/posts/" | relLangURL }}" title="archive">
+        <div class="headline">{{ i18n "aside.articles" | default "文章" }}</div>
+        <div class="length-num">{{ len (where .Site.RegularPages "Type" "in" (slice "posts" "post")) }}</div>
+      </a>
+      <a href="{{ "/tags/" | relLangURL }}" title="tag">
+        <div class="headline">{{ i18n "aside.tags" | default "标签" }}</div>
+        <div class="length-num">{{ len .Site.Taxonomies.tags }}</div>
+      </a>
+      <a href="{{ "/categories/" | relLangURL }}" title="category">
+        <div class="headline">{{ i18n "aside.categories" | default "分类" }}</div>
+        <div class="length-num">{{ len .Site.Taxonomies.categories }}</div>
+      </a>
+    </div>
+
+    <span class="sidebar-menu-item-title">{{ i18n "aside.function" | default "功能" }}</span>
+    <div class="sidebar-menu-item">
+      <a class="darkmode_switchbutton menu-child" href="javascript:void(0);" title="{{ i18n "aside.display_mode" | default "显示模式" }}">
+        <i class="anzhiyufont anzhiyu-icon-circle-half-stroke"></i>
+        <span>{{ i18n "aside.display_mode" | default "显示模式" }}</span>
+      </a>
+    </div>
+
+    {{- $nav := $params.nav | default dict -}}
+    {{- with $nav.menu -}}
+    <div class="back-menu-list-groups">
+      {{- range . -}}
+      <div class="back-menu-list-group">
+        <div class="back-menu-list-title">{{ .title }}</div>
+        <div class="back-menu-list">
+          {{- range .item -}}
+          {{- $item := . -}}
+          <a class="back-menu-item" href="{{ $item.link }}" title="{{ $item.name }}"{{ if strings.HasPrefix $item.link "http" }} target="_blank" rel="noopener"{{ end }}>
+            {{- with $item.icon -}}<img class="back-menu-item-icon" src="{{ . | relURL }}" alt="{{ $item.name }}">{{- end -}}
+            <span class="back-menu-item-text">{{ $item.name }}</span>
+          </a>
+          {{- end -}}
+        </div>
+      </div>
+      {{- end -}}
+    </div>
+    {{- end -}}
+    <span class="sidebar-menu-item-title">{{ i18n "page.menu" | default "目录" }}</span>
+    {{- partial "header/menu.html" . -}}
+
+    {{- if .Site.Taxonomies.tags -}}
+    <span class="sidebar-menu-item-title">{{ i18n "aside.tags" | default "标签" }}</span>
+    <div class="card-tags">
+      <div class="card-tag-cloud">
+        {{- $limit := 40 -}}
+        {{- with $params.aside.card_tags.limit }}{{ $limit = . }}{{ end -}}
+        {{- range first $limit .Site.Taxonomies.tags.ByCount -}}
+        <a href="{{ .Page.RelPermalink }}" style="font-size:0.875rem">{{ .Page.Title }}<sup>{{ .Count }}</sup></a>
+        {{- end -}}
+      </div>
+    </div>
+    {{- end -}}
+  </div>
+</div>

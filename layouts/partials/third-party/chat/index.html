@@ -1,0 +1,55 @@
+{{- $params := .Site.Params -}}
+{{- $chatra := $params.chatra | default dict -}}
+{{- $tidio := $params.tidio | default dict -}}
+{{- $daovoice := $params.daovoice | default dict -}}
+{{- $crisp := $params.crisp | default dict -}}
+{{- if $chatra.enable -}}
+  {{- with $chatra.id -}}
+<script>
+  (function(d, w, c) {
+    w.ChatraID = {{ . | jsonify | safeJS }};
+    var s = d.createElement('script');
+    w[c] = w[c] || function() { (w[c].q = w[c].q || []).push(arguments); };
+    s.async = true;
+    s.src = 'https://call.chatra.io/chatra.js';
+    if (d.head) d.head.appendChild(s);
+  })(document, window, 'Chatra');
+</script>
+  {{- end -}}
+{{- else if $tidio.enable -}}
+  {{- with $tidio.public_key -}}
+<script src="//code.tidio.co/{{ . }}.js" async></script>
+  {{- end -}}
+{{- else if $daovoice.enable -}}
+  {{- with $daovoice.app_id -}}
+<script>
+  (function(i, s, o, g, r, a, m) {
+    i['DaoVoiceObject'] = r;
+    i[r] = i[r] || function() { (i[r].q = i[r].q || []).push(arguments); };
+    i[r].l = 1 * new Date();
+    a = s.createElement(o);
+    m = s.getElementsByTagName(o)[0];
+    a.async = 1;
+    a.src = g;
+    a.charset = 'utf-8';
+    m.parentNode.insertBefore(a, m);
+  })(window, document, 'script', ('https:' === document.location.protocol ? 'https:' : 'http:') + '//widget.daovoice.io/widget/{{ . }}.js', 'daovoice');
+  daovoice('init', { app_id: {{ . | jsonify | safeJS }} });
+  daovoice('update');
+</script>
+  {{- end -}}
+{{- else if $crisp.enable -}}
+  {{- with $crisp.website_id -}}
+<script>
+  window.$crisp = [];
+  window.CRISP_WEBSITE_ID = {{ . | jsonify | safeJS }};
+  (function() {
+    var d = document;
+    var s = d.createElement('script');
+    s.src = 'https://client.crisp.chat/l.js';
+    s.async = 1;
+    d.getElementsByTagName('head')[0].appendChild(s);
+  })();
+</script>
+  {{- end -}}
+{{- end -}}

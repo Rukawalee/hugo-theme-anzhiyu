@@ -1,0 +1,6 @@
+{{- /* Bangumi page — list content from page body / data */ -}}
+<div id="article-container" class="bangumi-page">
+  {{- with .Content }}{{ . }}{{ else }}
+  <p class="bangumi-stub">配置 bilibili 追番插件数据或在本页正文写入 bangumi 列表。</p>
+  {{- end }}
+</div>

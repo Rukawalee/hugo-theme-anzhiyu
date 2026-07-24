@@ -1,0 +1,95 @@
+{{- $params := .Site.Params -}}
+{{- $pages := .Paginator.Pages -}}
+{{- $meta := $params.post_meta.page | default dict -}}
+{{- $latest := false -}}
+{{- with (index (where .Site.RegularPages "Type" "in" (slice "posts" "post")) 0) -}}
+  {{- $latest = . -}}
+{{- end -}}
+{{- $errorImg := "/img/404.jpg" -}}
+{{- with $params.error_img }}{{ with .post_page }}{{ $errorImg = . }}{{ end }}{{ end -}}
+{{- range $index, $page := $pages -}}
+{{- $cover := partial "helpers/post_cover.html" (dict "page" $page) -}}
+{{- $noCover := or (eq $page.Params.cover false) (not $params.cover.index_enable) -}}
+{{- $position := $params.cover.position | default "left" -}}
+{{- $side := "left" -}}
+{{- if eq $position "right" -}}{{- $side = "right" -}}{{- end -}}
+{{- if eq $position "both" -}}{{- $side = cond (modBool $index 2) "left" "right" -}}{{- end -}}
+{{- $isLatest := and $latest (eq $page.RelPermalink $latest.RelPermalink) -}}
+{{- $itemClass := "recent-post-item" -}}
+{{- if $isLatest -}}{{- $itemClass = "recent-post-item lastestpost-item" -}}{{- end -}}
+{{- $link := $page.RelPermalink -}}
+{{- $go := printf "if(window.pjax){pjax.loadUrl('%s')}else{location.href='%s'}" $link $link -}}
+<div class="{{ $itemClass }}" {{ printf `onclick="%s"` $go | safeHTMLAttr }}>
+  {{- if and $cover (not $noCover) $params.cover.index_enable -}}
+  <div class="post_cover {{ $side }}">
+    <a href="{{ $link }}" title="{{ $page.Title }}" style="display: flex;height: 100%;">
+      {{- partial "helpers/lazy_img.html" (dict "src" $cover "class" "post_bg" "alt" $page.Title "error" $errorImg "style" "pointer-events: none" "ctx" $page) -}}
+    </a>
+  </div>
+  {{- end -}}
+  <div class="recent-post-info{{ if $noCover }} no-cover{{ end }}">
+    <div class="recent-post-info-top">
+      <div class="recent-post-info-top-tips">
+        {{- if or $page.Params.weight $page.Params.sticky -}}
+        <span class="article-meta sticky-warp">
+          <i class="anzhiyufont anzhiyu-icon-thumbtack sticky"></i>
+          <span class="sticky">{{ i18n "sticky" | default "置顶" }}</span>
+        </span>
+        {{- end -}}
+        {{- if and (ne $meta.categories false) $page.Params.categories -}}
+          {{- range ($page.GetTerms "categories") -}}
+          <div class="article-categories-original">{{ .LinkTitle }}</div>
+          {{- end -}}
+        {{- end -}}
+        {{- if $isLatest -}}
+        <span class="newPost">{{ i18n "post.new" | default "最新" }}</span>
+        {{- end -}}
+        <a class="unvisited-post" href="{{ $link }}" title="{{ $page.Title }}">{{ i18n "post.unread" | default "未读" }}</a>
+      </div>
+      <a class="article-title" href="{{ $link }}" title="{{ $page.Title }}">{{ $page.Title | default (i18n "no_title" | default "无标题") }}</a>
+    </div>
+    <div class="article-meta-wrap">
+      {{- $dateType := $meta.date_type | default "created" -}}
+      {{- if $dateType -}}
+      <span class="post-meta-date">
+        {{- $simple := eq ($meta.date_format | default "") "simple" -}}
+        <i class="anzhiyufont anzhiyu-icon-calendar-days" style="font-size: 15px;{{ if $simple }}display:none{{ end }}"></i>
+        <span class="article-meta-label">{{ i18n "post.created" | default "创建" }}</span>
+        <time class="post-meta-date-created" datetime="{{ $page.Date.Format "2006-01-02T15:04:05Z07:00" }}">{{ $page.Date.Format "2006-01-02" }}</time>
+        <time class="time_hidden" datetime="{{ $page.Lastmod.Format "2006-01-02T15:04:05Z07:00" }}" title="更新于 {{ $page.Lastmod.Format "2006-01-02 15:04:05" }}">{{ $page.Lastmod.Format "2006-01-02" }}</time>
+        {{- if eq $dateType "both" -}}
+        <span class="article-meta-separator"></span>
+        <i class="anzhiyufont anzhiyu-icon-history" style="font-size: 15px;{{ if $simple }}display:none{{ end }}"></i>
+        <span class="article-meta-label">{{ i18n "post.updated" | default "更新" }}</span>
+        <time class="post-meta-date-updated" datetime="{{ $page.Lastmod.Format "2006-01-02T15:04:05Z07:00" }}">{{ $page.Lastmod.Format "2006-01-02" }}</time>
+        {{- end -}}
+      </span>
+      {{- end -}}
+      {{- if and (ne $meta.tags false) $page.Params.tags -}}
+      <span class="article-meta tags">
+        {{- range $page.GetTerms "tags" -}}
+        <a href="{{ .RelPermalink }}" class="article-meta__tags" onclick="event.stopPropagation()">
+          <span><i class="anzhiyufont anzhiyu-icon-hashtag"></i>{{ .LinkTitle }}</span>
+        </a>
+        {{- end -}}
+      </span>
+      {{- end -}}
+    </div>
+    {{- $method := default 3 $params.index_post_content.method -}}
+    {{- $len := default 150 $params.index_post_content.length -}}
+    {{- if ne $method false -}}
+      {{- if and (eq $method 1) $page.Description -}}
+      <div class="content">{{ $page.Description | plainify }}</div>
+      {{- else if eq $method 2 -}}
+        {{- if $page.Description -}}
+        <div class="content">{{ $page.Description | plainify }}</div>
+        {{- else -}}
+        <div class="content">{{ $page.Summary | plainify | truncate $len }}</div>
+        {{- end -}}
+      {{- else -}}
+      <div class="content">{{ $page.Summary | plainify | truncate $len }}</div>
+      {{- end -}}
+    {{- end -}}
+  </div>
+</div>
+{{- end -}}

@@ -1,0 +1,14 @@
+{{- /*
+  {{< icon "icon-name" 1.2 >}}
+*/ -}}
+{{- $name := "" -}}
+{{- $size := "1" -}}
+{{- if .IsNamedParams -}}
+  {{- $name = .Get "name" | default (.Get "id") | default "" -}}
+  {{- $size = .Get "size" | default "1" -}}
+{{- else -}}
+  {{- $name = .Get 0 | default "" -}}
+  {{- $size = .Get 1 | default "1" -}}
+{{- end -}}
+{{- $css := printf "width:%sem; height:%sem" $size $size -}}
+<svg class="icon" style="{{ $css | safeCSS }}" aria-hidden="true"><use xlink:href="#{{ $name }}"></use></svg>

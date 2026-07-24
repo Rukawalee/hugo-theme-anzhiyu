@@ -1,0 +1,8 @@
+{{- $params := .Site.Params -}}
+{{- with $params.site_verification -}}
+  {{- range . -}}
+    {{- if and .name .content -}}
+<meta name="{{ .name }}" content="{{ .content }}">
+    {{- end -}}
+  {{- end -}}
+{{- end -}}

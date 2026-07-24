@@ -1,0 +1,87 @@
+{{- /*
+  gallery — prefers {{< gallery >}} so image markdown stays raw for parsing.
+  Also accepts {{% gallery %}} after markdown renders <img>/<p><img>.
+
+  {{< gallery true 220 10 >}}
+  ![alt](url "title")
+  {{< /gallery >}}
+
+  {{< gallery "url" "https://.../data.json" true 220 10 >}}
+*/ -}}
+{{- $lazyload := "false" -}}
+{{- $rowHeight := "220" -}}
+{{- $limit := "10" -}}
+{{- $lazyloadBtn := false -}}
+{{- $type := "data" -}}
+{{- $dataStr := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $type = .Get "type" | default "data" -}}
+  {{- $dataStr = .Get "data" | default (.Get "url") | default "" -}}
+  {{- $lazyload = printf "%v" (.Get "lazyload" | default "false") -}}
+  {{- $rowHeight = printf "%v" (.Get "rowHeight" | default 220) -}}
+  {{- $limit = printf "%v" (.Get "limit" | default 10) -}}
+  {{- $btn := .Get "lazyloadBtn" | default "false" -}}
+  {{- $lazyloadBtn = or (eq $btn "true") (eq $btn true) -}}
+  {{- if ne $type "url" }}{{ $type = "data" }}{{ end -}}
+{{- else if ge (len .Params) 1 -}}
+  {{- if eq (.Get 0) "url" -}}
+    {{- $type = "url" -}}
+    {{- $dataStr = .Get 1 | default "" -}}
+    {{- $lazyload = .Get 2 | default "false" -}}
+    {{- $rowHeight = .Get 3 | default "220" -}}
+    {{- $limit = .Get 4 | default "10" -}}
+    {{- $btn := .Get 5 | default "false" -}}
+    {{- $lazyloadBtn = or (eq $btn "true") (eq $btn true) -}}
+  {{- else -}}
+    {{- $lazyload = .Get 0 | default "false" -}}
+    {{- $rowHeight = .Get 1 | default "220" -}}
+    {{- $limit = .Get 2 | default "10" -}}
+    {{- $btn := .Get 3 | default "false" -}}
+    {{- $lazyloadBtn = or (eq $btn "true") (eq $btn true) -}}
+  {{- end -}}
+{{- end -}}
+{{- if eq $type "data" -}}
+  {{- $arr := slice -}}
+  {{- $src := .Inner -}}
+  {{- /* markdown image syntax */ -}}
+  {{- $reMd := `!\[(.*?)\]\(([^\s)]+)\s*(?:"([^"]*)"|'([^']*)')?\)` -}}
+  {{- range findRE $reMd $src -}}
+    {{- $alt := replaceRE $reMd `$1` . -}}
+    {{- $url := replaceRE $reMd `$2` . -}}
+    {{- $title := replaceRE $reMd `$3` . -}}
+    {{- if eq $title "" }}{{ $title = replaceRE $reMd `$4` . }}{{ end -}}
+    {{- $arr = $arr | append (dict "url" $url "alt" $alt "title" $title) -}}
+  {{- end -}}
+  {{- /* already-rendered <img> (when {{% %}} markdownified inner) */ -}}
+  {{- if eq (len $arr) 0 -}}
+    {{- $reImg := `<img[^>]*\ssrc=["']([^"']+)["'][^>]*>` -}}
+    {{- range findRE $reImg $src -}}
+      {{- $url := replaceRE $reImg `$1` . -}}
+      {{- $alt := "" -}}
+      {{- $title := "" -}}
+      {{- if findRE `alt=["']([^"']*)["']` . -}}
+        {{- $alt = replaceRE `(?s).*\balt=["']([^"']*)["'].*` `$1` . -}}
+      {{- end -}}
+      {{- if findRE `title=["']([^"']*)["']` . -}}
+        {{- $title = replaceRE `(?s).*\btitle=["']([^"']*)["'].*` `$1` . -}}
+      {{- end -}}
+      {{- $arr = $arr | append (dict "url" $url "alt" $alt "title" $title) -}}
+    {{- end -}}
+  {{- end -}}
+  {{- $dataStr = $arr | jsonify -}}
+{{- end -}}
+{{- if eq $rowHeight "" }}{{ $rowHeight = "220" }}{{ end -}}
+{{- if eq $limit "" }}{{ $limit = "10" }}{{ end -}}
+{{- $lazyloadClass := "" -}}
+{{- if eq $lazyload "true" }}{{ $lazyloadClass = "lazyload btn_album_detail_lazyload" }}{{ end -}}
+{{- $pageImgLazyloadClass := cond $lazyloadBtn "" "page_img_lazyload " -}}
+{{- $loadMoreText := i18n "load_more" | default "Load More" -}}
+<div class="gallery">
+  <div class="fj-gallery {{ $pageImgLazyloadClass }}{{ $lazyloadClass }} {{ $type }}" data-rowHeight="{{ $rowHeight }}" data-limit="{{ $limit }}">
+    <span class="gallery-data">{{ $dataStr }}</span>
+  </div>
+  <button class="gallery-load-more"{{ if not $lazyloadBtn }} style="opacity:0"{{ end }}>
+    <span>{{ $loadMoreText }}</span>
+    <i class="anzhiyufont anzhiyu-icon-arrow-down"></i>
+  </button>
+</div>

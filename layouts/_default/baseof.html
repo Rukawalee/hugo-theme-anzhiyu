@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+{{- $params := .Site.Params -}}
+{{- $hideAside := false -}}
+{{- if not $params.aside.enable -}}{{- $hideAside = true -}}{{- end -}}
+{{- /* Hugo `with` skips false; use explicit eq for page.aside: false */ -}}
+{{- if eq .Params.aside false -}}{{- $hideAside = true -}}{{- end -}}
+{{- if or (eq .Layout "music") (eq .Params.type "music") (eq .Type "music") -}}
+  {{- $hideAside = true -}}
+{{- end -}}
+{{- $pageKind := .Kind -}}
+{{- if eq $pageKind "taxonomy" -}}
+  {{- if and (eq .Data.Singular "category") (not $params.aside.display.category) -}}{{- $hideAside = true -}}{{- end -}}
+  {{- if and (eq .Data.Singular "tag") (not $params.aside.display.tag) -}}{{- $hideAside = true -}}{{- end -}}
+{{- end -}}
+{{- if and (eq $pageKind "section") (eq .Section "archives") (not $params.aside.display.archive) -}}{{- $hideAside = true -}}{{- end -}}
+{{- $hideAsideClass := cond $hideAside "hide-aside" "" -}}
+{{- $htmlClass := "" -}}
+{{- if and $params.aside.enable $params.aside.hide -}}{{- $htmlClass = "hide-aside" -}}{{- end -}}
+{{- /* Hexo additional-js: page.type || post || categories || anzhiyu */ -}}
+{{- $pageType := "anzhiyu" -}}
+{{- if .IsHome -}}
+  {{- $pageType = "anzhiyu" -}}
+{{- else if and .IsPage (or (eq .Type "posts") (eq .Section "posts") (eq .Type "post")) -}}
+  {{- $pageType = "post" -}}
+{{- else if eq .Kind "taxonomy" -}}
+  {{- if eq .Data.Singular "category" -}}{{- $pageType = "categories" -}}
+  {{- else if eq .Data.Singular "tag" -}}{{- $pageType = "tags" -}}
+  {{- end -}}
+{{- else if eq .Kind "term" -}}
+  {{- if eq .Data.Singular "category" -}}{{- $pageType = "categories" -}}
+  {{- else if eq .Data.Singular "tag" -}}{{- $pageType = "tags" -}}
+  {{- end -}}
+{{- else if and (eq .Kind "section") (or (eq .Section "posts") (eq .Section "archives")) -}}
+  {{- $pageType = "anzhiyu" -}}
+{{- else if .Params.type -}}
+  {{- $pageType = .Params.type -}}
+{{- else if .Layout -}}
+  {{- $pageType = .Layout -}}
+{{- else if .Type -}}
+  {{- $pageType = .Type -}}
+{{- end -}}
+{{- $bodyType := "page" -}}
+{{- $bodyWrapClass := "page" -}}
+{{- if .IsHome -}}
+  {{- $bodyType = "anzhiyu" -}}
+  {{- $bodyWrapClass = "page" -}}
+{{- else if eq $pageType "post" -}}
+  {{- $bodyType = "post" -}}
+  {{- $bodyWrapClass = "post" -}}
+{{- else if or (eq .Section "archives") (and (eq .Kind "section") (eq .Section "posts")) -}}
+  {{- /* Archives/posts list: Hexo body-wrap is page; JS sets data-type from page-type */ -}}
+  {{- $bodyType = $pageType -}}
+  {{- $bodyWrapClass = "page" -}}
+{{- else if or .Layout (and .IsPage (not (or (eq .Type "posts") (eq .Section "posts") (eq .Type "post")))) -}}
+  {{- /* Special pages: body-wrap class="page"; data-type = layout/type for CSS */ -}}
+  {{- $bodyWrapClass = "page" -}}
+  {{- if .Params.type -}}
+    {{- $bodyType = .Params.type -}}
+  {{- else if .Layout -}}
+    {{- $bodyType = .Layout -}}
+    {{- if eq .Layout "flink" -}}{{- $bodyType = "link" -}}{{- end -}}
+  {{- else if .Type -}}
+    {{- $bodyType = .Type -}}
+  {{- end -}}
+{{- else if .Type -}}
+  {{- $bodyType = .Type -}}
+  {{- if or (eq .Kind "taxonomy") (eq .Kind "term") -}}
+    {{- $bodyWrapClass = $pageType -}}
+  {{- end -}}
+{{- end -}}
+{{- if or (eq $bodyType "flink") (eq $pageType "flink") -}}
+  {{- $bodyType = "link" -}}
+  {{- if eq $pageType "flink" -}}{{- $pageType = "link" -}}{{- end -}}
+{{- end -}}
+<html lang="{{ .Site.Language.Lang }}" data-theme="{{ default "light" $params.display_mode }}" class="{{ $htmlClass }}">
+<head>
+  {{- partial "head/head.html" . -}}
+</head>
+<body data-type="{{ $bodyType }}">
+  {{- if templates.Exists "partials/anzhiyu/loading.html" -}}
+    {{- partial "anzhiyu/loading.html" . -}}
+  {{- end -}}
+  {{- if templates.Exists "partials/anzhiyu/mourn.html" -}}
+    {{- partial "anzhiyu/mourn.html" . -}}
+  {{- end -}}
+  <div id="web_bg"></div>
+  <div id="an_music_bg"></div>
+
+  {{- if ne .Layout "404" -}}
+  <div id="body-wrap"{{ with $bodyWrapClass }} class="{{ . }}"{{ end }}>
+    {{- partial "header/header.html" . -}}
+    <main id="blog-container">
+      {{- if .IsHome -}}
+        {{- if templates.Exists "partials/home/bbTimeList.html" -}}
+          {{- partial "home/bbTimeList.html" . -}}
+        {{- end -}}
+        {{- partial "home/home_top.html" . -}}
+      {{- end -}}
+      <div id="content-inner" class="layout {{ $hideAsideClass }}">
+        {{- block "main" . }}{{ end -}}
+        {{- if and $params.aside.enable (not $hideAside) -}}
+          {{- partial "widget/aside.html" . -}}
+        {{- end -}}
+      </div>
+    </main>
+    <footer id="footer">
+      {{- partial "footer.html" . -}}
+    </footer>
+  </div>
+  {{- else -}}
+    {{- block "main" . }}{{ end -}}
+  {{- end -}}
+
+  {{- partial "header/sidebar-mobile.html" . -}}
+  {{- partial "rightside.html" . -}}
+
+  {{- if templates.Exists "partials/third-party/search/index.html" -}}
+    {{- partial "third-party/search/index.html" . -}}
+  {{- else if $params.local_search.enable -}}
+    {{- if templates.Exists "partials/third-party/search/local-search.html" -}}
+      {{- partial "third-party/search/local-search.html" . -}}
+    {{- else -}}
+      {{- partial "search/local-search.html" . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- if templates.Exists "partials/third-party/nav_music.html" -}}
+    {{- partial "third-party/nav_music.html" . -}}
+  {{- else if templates.Exists "partials/anzhiyu/nav_music.html" -}}
+    {{- partial "anzhiyu/nav_music.html" . -}}
+  {{- end -}}
+
+  {{- if templates.Exists "partials/anzhiyu/shortcut.html" -}}
+    {{- partial "anzhiyu/shortcut.html" . -}}
+  {{- end -}}
+
+  {{- if templates.Exists "partials/third-party/pjax.html" -}}
+    {{- partial "third-party/pjax.html" . -}}
+  {{- end -}}
+  {{- if templates.Exists "partials/anzhiyu/rightmenu.html" -}}
+    {{- partial "anzhiyu/rightmenu.html" . -}}
+  {{- end -}}
+  {{- /* console is included from rightmenu when enabled; also allow direct hook */ -}}
+  {{- if and (not (templates.Exists "partials/anzhiyu/rightmenu.html")) (templates.Exists "partials/anzhiyu/console.html") -}}
+    {{- partial "anzhiyu/console.html" . -}}
+  {{- end -}}
+
+  {{- partial "popup/index.html" . -}}
+  {{- partial "scripts.html" . -}}
+  {{- with $params.inject }}
+    {{- range .bottom }}{{ . | safeHTML }}{{ end }}
+  {{- end }}
+  {{- block "scripts" . }}{{ end -}}
+</body>
+</html>

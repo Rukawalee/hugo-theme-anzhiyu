@@ -1,0 +1,33 @@
+{{- /*
+  {{< image "url" alt="..." width="50%" height="32px" bg="#eee" >}}
+  {{< image "url" "alt=haha" "width=400px" "bg=#eee" >}}
+*/ -}}
+{{- $url := "" -}}
+{{- $alt := "" -}}
+{{- $bg := "" -}}
+{{- $style := "" -}}
+{{- if .IsNamedParams -}}
+  {{- $url = .Get "url" | default (.Get "src") | default "" -}}
+  {{- $alt = .Get "alt" | default "" -}}
+  {{- $bg = .Get "bg" | default "" -}}
+  {{- with .Get "width" }}{{ $style = printf "%swidth:%s;" $style . }}{{ end -}}
+  {{- with .Get "height" }}{{ $style = printf "%sheight:%s;" $style . }}{{ end -}}
+{{- else -}}
+  {{- $url = trim (.Get 0 | default "") " " -}}
+  {{- range $i, $a := .Params -}}
+    {{- if gt $i 0 -}}
+      {{- $tmp := trim (printf "%v" $a) " " -}}
+      {{- if hasPrefix $tmp "alt=" }}{{ $alt = strings.TrimPrefix "alt=" $tmp }}
+      {{- else if hasPrefix $tmp "width=" }}{{ $style = printf "%swidth:%s;" $style (strings.TrimPrefix "width=" $tmp) }}
+      {{- else if hasPrefix $tmp "height=" }}{{ $style = printf "%sheight:%s;" $style (strings.TrimPrefix "height=" $tmp) }}
+      {{- else if hasPrefix $tmp "bg=" }}{{ $bg = strings.TrimPrefix "bg=" $tmp }}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+<div class="img-wrap">
+  <div class="img-bg"{{ with $bg }} style="background:{{ . | safeCSS }}"{{ end }}>
+    <img class="img" src="{{ $url | safeURL }}"{{ with $alt }} alt="{{ . }}"{{ end }}{{ with $style }} style="{{ . | safeCSS }}"{{ end }}/>
+  </div>
+  {{- with $alt }}<span class="image-caption">{{ . }}</span>{{ end }}
+</div>

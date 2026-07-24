@@ -1,0 +1,39 @@
+{{- /* Home always shows pagination chrome + toPage jump (Hexo parity); other lists only when multi-page */ -}}
+{{- $isHome := .IsHome -}}
+{{- if or $isHome (gt .Paginator.TotalPages 1) -}}
+<nav id="pagination">
+  <div class="pagination">
+    {{- if .Paginator.HasPrev -}}
+    <a class="extend prev" rel="prev" href="{{ .Paginator.Prev.URL }}">
+      <i class="anzhiyufont anzhiyu-icon-chevron-left fa-fw" style="font-weight: inherit; font-size: 1rem;"></i>
+      <div class="pagination_tips_prev">{{ i18n "pagination.prev_page" | default "上页" }}</div>
+    </a>
+    {{- end -}}
+    {{- if gt .Paginator.TotalPages 0 -}}
+      {{- range .Paginator.Pagers -}}
+        {{- if eq .PageNumber $.Paginator.PageNumber -}}
+        <span class="page-number current">{{ .PageNumber }}</span>
+        {{- else if or (le (math.Abs (sub .PageNumber $.Paginator.PageNumber)) 1) (eq .PageNumber 1) (eq .PageNumber $.Paginator.TotalPages) -}}
+        <a class="page-number" href="{{ .URL }}">{{ .PageNumber }}</a>
+        {{- else if or (eq .PageNumber (sub $.Paginator.PageNumber 2)) (eq .PageNumber (add $.Paginator.PageNumber 2)) -}}
+        <span class="space">…</span>
+        {{- end -}}
+      {{- end -}}
+    {{- else -}}
+      <span class="page-number current">1</span>
+    {{- end -}}
+    {{- if .Paginator.HasNext -}}
+    <a class="extend next" rel="next" href="{{ .Paginator.Next.URL }}">
+      <div class="pagination_tips_next">{{ i18n "pagination.next_page" | default "下页" }}</div>
+      <i class="anzhiyufont anzhiyu-icon-chevron-right fa-fw" style="font-weight: inherit; font-size: 1rem;"></i>
+    </a>
+    {{- end -}}
+    {{- if $isHome -}}
+    <div class="toPageGroup">
+      <input id="toPageText" oninput="value=value.replace(/[^0-9]/g,'')" maxlength="3" onkeyup="this.value=this.value.replace(/[^u4e00-u9fa5w]/g,'')" aria-label="toPage">
+      <a id="toPageButton" onclick="anzhiyu.toPage()"><i class="anzhiyufont anzhiyu-icon-angles-right" style="font-weight: inherit; font-size: 1rem;"></i></a>
+    </div>
+    {{- end -}}
+  </div>
+</nav>
+{{- end -}}

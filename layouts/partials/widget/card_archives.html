@@ -1,0 +1,42 @@
+{{- $params := .Site.Params -}}
+{{- if $params.aside.card_archives.enable -}}
+{{- $limit := default 8 $params.aside.card_archives.limit -}}
+{{- $posts := where .Site.RegularPages "Type" "in" (slice "posts" "post") -}}
+{{- $format := default "2006-01" $params.aside.card_archives.format -}}
+<div class="card-archives">
+  <div class="item-headline">
+    <i class="anzhiyufont anzhiyu-icon-archive"></i>
+    <span>{{ i18n "aside.card_archives" }}</span>
+  </div>
+  <ul class="card-archive-list">
+    {{- /* Group by month */ -}}
+    {{- $seen := dict -}}
+    {{- $count := 0 -}}
+    {{- range $posts -}}
+      {{- if or (eq $limit 0) (lt $count $limit) -}}
+        {{- $key := .Date.Format $format -}}
+        {{- if not (index $seen $key) -}}
+          {{- $seen = merge $seen (dict $key true) -}}
+          {{- $count = add $count 1 -}}
+          {{- $monthPosts := where $posts "Date.Format" $key -}}
+          {{- /* Approximate: count posts with same year-month */ -}}
+          {{- $n := 0 -}}
+          {{- range $posts -}}
+            {{- if eq (.Date.Format $format) $key -}}{{- $n = add $n 1 -}}{{- end -}}
+          {{- end -}}
+          <li class="card-archive-list-item">
+            <a class="card-archive-list-link" href="{{ "/archives/" | relLangURL }}">
+              <span class="card-archive-list-date">{{ $key }}</span>
+              <div class="card-archive-list-count-group">
+                <span class="card-archive-list-count">{{ $n }}</span>
+                <span class="card-archive-list-count-unit">{{ i18n "aside.articles" }}</span>
+              </div>
+            </a>
+          </li>
+        {{- end -}}
+      {{- end -}}
+    {{- end -}}
+  </ul>
+</div>
+<hr>
+{{- end -}}

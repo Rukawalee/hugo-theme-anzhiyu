@@ -1,0 +1,471 @@
+{{- /* About page — data-driven from site.Data.about */ -}}
+{{- $p := .Site.Params -}}
+{{- $errorImg := "" -}}
+{{- with $p.error_img }}{{ with .flink }}{{ $errorImg = . }}{{ end }}{{ end -}}
+{{- if not $errorImg }}{{ $errorImg = "/img/friend_404.gif" }}{{ end -}}
+{{- $aboutList := hugo.Data.about -}}
+{{- if not $aboutList }}
+<div id="about-page">
+  <p class="p center logo large">{{ i18n "about.title" | default "关于" }}</p>
+  <div class="author-content">
+    <div class="create-site-post author-content-item single">{{ .Content }}</div>
+  </div>
+</div>
+{{- else }}
+{{- range $item := $aboutList }}
+{{- $subtitle := $item.subtitle | default $.Site.Params.site_subtitle }}
+{{- $avatarImg := $item.avatarImg | default "" }}
+{{- with $p.avatar }}{{ if not $avatarImg }}{{ $avatarImg = .img }}{{ end }}{{ end }}
+{{- $aboutName := $item.name | default $p.author | default $.Site.Params.author }}
+{{- $aboutDescription := $item.description | default $.Site.Params.description }}
+<div id="about-page">
+  <div class="author-box">
+    {{- with $item.avatarSkills }}
+    <div class="author-tag-left">{{- range .left }}<span class="author-tag">{{ . }}</span>{{ end }}</div>
+    {{- end }}
+    <div class="author-img">
+      <img class="no-lightbox" src="{{ $avatarImg }}" alt="avatar" onerror="this.onerror=null;this.src='{{ $errorImg }}'">
+    </div>
+    {{- with $item.avatarSkills }}
+    <div class="author-tag-right">{{- range .right }}<span class="author-tag">{{ . }}</span>{{ end }}</div>
+    {{- end }}
+  </div>
+  <p class="p center logo large">{{ i18n "about.title" | default "关于" }}</p>
+  <p class="p center small">{{ $subtitle }}</p>
+  <div class="author-content">
+    <div class="author-content-item myInfoAndSayHello">
+      <div class="title1">{{ i18n "about.hello" | default "你好" }}</div>
+      <div class="title2">{{ i18n "about.im" | default "我是" }} <span class="inline-word">{{ $aboutName }}</span></div>
+      <div class="title1">{{ $aboutDescription }}</div>
+    </div>
+    {{- with $item.aboutsiteTips }}
+    <div class="aboutsiteTips author-content-item">
+      <div class="author-content-item-tips">{{ .tips }}</div>
+      <h2>{{ .title1 }}<br>{{ .title2 }}
+        <div class="mask">
+          {{- $words := .word | default slice }}{{- $n := len $words }}
+          {{- range $i, $w := $words }}{{- if lt $i (sub $n 2) }}
+          <span{{ if eq $i 0 }} class="first-tips"{{ end }}>{{ $w }}</span>
+          {{- end }}{{- end }}
+          {{- if ge $n 2 }}
+          <span data-up>{{ index $words (sub $n 2) }}</span>
+          <span data-show>{{ index $words (sub $n 1) }}</span>
+          {{- end }}
+        </div>
+      </h2>
+    </div>
+    {{- end }}
+  </div>
+  {{- with $item.helloAbout }}
+  <div class="hello-about">
+    <div class="cursor" style="translate:none;rotate:none;scale:none;transform:translate(721px,180px)"></div>
+    <div class="shapes">
+      <div class="shape shape-1" style="translate:none;rotate:none;scale:none;transform:translate(721px,180px)"></div>
+      <div class="shape shape-2" style="translate:none;rotate:none;scale:none;transform:translate(721px,180px)"></div>
+      <div class="shape shape-3" style="translate:none;rotate:none;scale:none;transform:translate(721px,180px)"></div>
+    </div>
+    <div class="content"><h1>{{ . }}</h1></div>
+  </div>
+  {{- end }}
+  <div class="author-content">
+    {{- with $item.skillsTips }}
+    <div class="author-content-item skills">
+      <div class="card-content">
+        <div class="author-content-item-tips">{{ .tips }}</div>
+        <span class="author-content-item-title">{{ .title }}</span>
+        <div class="skills-style-group">
+          {{- partial "home/tags_group_all.html" . -}}
+          {{- with hugo.Data.creativity }}
+          <div class="skills-list">
+            {{- range . }}{{- range .creativity_list }}
+            <div class="skill-info">
+              <div class="skill-icon" style="background: {{ .color }}"><img class="no-lightbox" title="{{ .name }}" src="{{ .icon }}" alt="{{ .name }}"></div>
+              <div class="skill-name"><span>{{ .name }}</span></div>
+            </div>
+            {{- end }}{{- end }}
+            <div class="etc">...</div>
+          </div>
+          {{- end }}
+        </div>
+      </div>
+    </div>
+    {{- end }}
+    {{- with $item.careers }}
+    <div class="author-content-item careers">
+      <div class="card-content">
+        <div class="author-content-item-tips">{{ .tips }}</div>
+        <span class="author-content-item-title">{{ .title }}</span>
+        <div class="careers-group">
+          {{- with .list }}{{- range . }}
+          <div class="career-item">
+            <div class="circle" style="background:{{ .color | default "#357ef5" }}"></div>
+            <div class="name">{{ .desc }}</div>
+          </div>
+          {{- end }}{{- else }}<div class="careers-none"></div>{{- end }}
+        </div>
+        {{- with .img }}<img class="author-content-img no-lightbox" alt="" src="{{ . }}" onerror="this.onerror=null;this.src='{{ $errorImg }}'">{{ end }}
+      </div>
+    </div>
+    {{- end }}
+  </div>
+  {{- /* Visit stats card: show when LA/umami enabled OR demo.statistic_demo */ -}}
+  {{- $la := $.Site.Params.LA | default dict -}}
+  {{- $umami := $.Site.Params.umami | default dict -}}
+  {{- $stat := $item.statistic | default dict -}}
+  {{- $demoStat := $stat.demo | default false -}}
+  {{- $showStat := or ($la.enable | default false) ($umami.enable | default false) $demoStat -}}
+  {{- if $showStat -}}
+  <div class="author-content">
+    <div class="about-statistic author-content-item" style="background: url({{ $stat.cover | default "/img/default_cover.jpg" }}) top / cover no-repeat;">
+      <div class="card-content">
+        <div class="author-content-item-tips">{{ i18n "about.data" | default "数据" }}</div>
+        <span class="author-content-item-title">{{ i18n "about.visit_stats" | default "访问统计" }}</span>
+        <div id="statistic"></div>
+        <div class="post-tips">{{ i18n "about.stats_from" | default "统计信息来自" }}
+          {{- if $la.enable -}}
+          <a href="https://invite.51.la/1NzKqTeb?target=V6" target="_blank" rel="noopener nofollow">51la</a>
+          {{- else if $umami.enable -}}
+          <a href="{{ $umami.apiHost | default "#" }}" target="_blank" rel="noopener nofollow">Umami</a>
+          {{- else -}}
+          <span>Demo</span>
+          {{- end -}}
+        </div>
+        {{- with $stat.link -}}
+        <div class="banner-button-group">
+          <a class="banner-button" href="{{ . | relURL }}">
+            <i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i>
+            <span class="banner-button-text">{{ $stat.text | default "更多" }}</span>
+          </a>
+        </div>
+        {{- end -}}
+      </div>
+    </div>
+  </div>
+  {{- end -}}
+  {{- with $item.map }}
+  <div class="author-content">
+    <div class="author-content-item-group column mapAndInfo">
+      <style>
+        .author-content-item.map { background-image: url({{ .background }}); }
+        [data-theme='dark'] .author-content-item.map { background-image: url({{ .backgroundDark }}); }
+      </style>
+      <div class="author-content-item map single"><span class="map-title">{{ .title }}<b>{{ .StrengthenTitle }}</b></span></div>
+      {{- with $item.selfInfo }}
+      <div class="author-content-item selfInfo single">
+        <div><span class="selfInfo-title">{{ .selfInfoTips1 }}</span> <span class="selfInfo-content" id="selfInfo-content-year" style="color:#43a6c6">{{ .selfInfoContentYear }}</span></div>
+        <div><span class="selfInfo-title">{{ .selfInfoTips2 }}</span> <span class="selfInfo-content" style="color:#c69043">{{ .selfInfoContent2 }}</span></div>
+        <div><span class="selfInfo-title">{{ .selfInfoTips3 }}</span> <span class="selfInfo-content" style="color:#b04fe6">{{ .selfInfoContent3 }}</span></div>
+      </div>
+      {{- end }}
+    </div>
+  </div>
+  {{- end }}
+  {{- with $item.personalities }}
+  <div class="author-content">
+    <div class="author-content-item personalities">
+      <div class="author-content-item-tips">{{ i18n "about.personality" | default "性格" }}</div>
+      <span class="author-content-item-title">{{ .author_name }}</span>
+      <div class="title2" style="color:{{ .personality_type_color | default "#ac899c" }}">{{ .personality_type }}</div>
+      {{- $pname := .author_name -}}
+      <div class="post-tips">{{ i18n "about.learn_more_at" | default "在" }} <a href="https://www.16personalities.com/" target="_blank" rel="noopener nofollow">16personalities</a> {{ i18n "about.learn_more" | default "了解更多" }}
+        {{- with .name_url }} · <a target="_blank" rel="noopener external nofollow" href="{{ . }}">{{ $pname }}</a>{{ end -}}
+      </div>
+      <div class="image"><img class="no-lightbox" src="{{ .personality_img }}" alt="personality"></div>
+    </div>
+    {{- with .photo_url }}
+    <div class="author-content-item myphoto"><img class="author-content-img no-lightbox" alt="photo" src="{{ . }}"></div>
+    {{- end }}
+  </div>
+  {{- end }}
+  {{- with $item.maxim }}
+  <div class="author-content">
+    <div class="author-content-item maxim">
+      <div class="author-content-item-tips">{{ .maxim_tips }}</div>
+      <span class="maxim-title"><span style="opacity:.6;margin-bottom:8px">{{ .maxim_top }}</span> <span>{{ .maxim_bottom }}</span></span>
+    </div>
+    {{- with $item.buff }}
+    <div class="author-content-item buff">
+      <div class="card-content">
+        <div class="author-content-item-tips">{{ .buff_tips }}</div>
+        <span class="buff-title"><span style="opacity:.6;margin-bottom:8px">{{ .buff_top }}</span> <span>{{ .buff_bottom }}</span></span>
+      </div>
+      <div class="card-background-icon"><i class="anzhiyufont anzhiyu-icon-dice-d20"></i></div>
+    </div>
+    {{- end }}
+  </div>
+  {{- end }}
+  {{- with $item.game }}
+  <div class="author-content">
+    <div class="author-content-item game-yuanshen" style="background: url({{ .game_bg }}) top / cover no-repeat;">
+      <div class="card-content">
+        <div class="author-content-item-tips">{{ .game_tips }}</div>
+        <span class="author-content-item-title">{{ .game_title }}</span>
+        <div class="content-bottom">
+          <div class="icon-group"><div class="loading-bar" role="presentation" aria-hidden="true"{{ if ne .game_title "原神" }} style="display:none"{{ end }}></div></div>
+          <div class="tips game-yuanshen-uid">{{ .game_uid }}</div>
+        </div>
+      </div>
+    </div>
+    {{- with $item.comic }}
+    <div class="author-content-item comic-content">
+      <div class="card-content">
+        <div class="author-content-item-tips">{{ .comic_tips }}</div>
+        <div class="author-content-item-title">{{ .comic_title }}</div>
+        <div class="comic-box">
+          {{- range .comic_list }}
+          <a class="comic-item" href="{{ .href }}" target="_blank" title="{{ .name }}" rel="noopener"><div class="comic-item-cover"><img src="{{ .cover }}" alt="{{ .name }}"></div></a>
+          {{- end }}
+        </div>
+      </div>
+    </div>
+    {{- end }}
+  </div>
+  {{- end }}
+  {{- with $item.like }}
+  <div class="author-content">
+    <div class="author-content-item like-technology" style="background: url({{ .like_bg }}) top / cover no-repeat;">
+      <div class="card-content">
+        <div class="author-content-item-tips">{{ .like_tips }}</div>
+        <span class="author-content-item-title">{{ .like_title }}</span>
+        <div class="content-bottom"><div class="tips">{{ .like_bottom }}</div></div>
+      </div>
+    </div>
+    {{- with $item.music }}
+    <div class="author-content-item like-music" style="background: url({{ .music_bg }}) top / cover no-repeat;">
+      <div class="card-content">
+        <div class="author-content-item-tips">{{ .music_tips }}</div>
+        <span class="author-content-item-title">{{ .music_title }}</span>
+        <div class="content-bottom"><div class="tips">{{ $aboutName }}</div></div>
+        <div class="banner-button-group">
+          <a class="banner-button" href="{{ .music_link | default "/music/" | relURL }}">
+            <i class="anzhiyufont anzhiyu-icon-arrow-circle-right"></i>
+            <span class="banner-button-text">{{ i18n "about.more_recommend" | default "更多推荐" }}</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    {{- end }}
+  </div>
+  {{- end }}
+  {{- with $.Content }}
+  <div class="author-content"><div class="create-site-post author-content-item single">{{ . }}</div></div>
+  {{- end }}
+  {{- with $item.reward_list }}
+  {{- $list := . -}}
+  <div class="author-content">
+    <div class="author-content-item single reward" id="about-reward">
+      <div class="author-content-item-tips">{{ i18n "about.thanks" | default "致谢" }}</div>
+      <span class="author-content-item-title">{{ i18n "about.reward_list" | default "赞赏名单" }}</span>
+      <div class="author-content-item-description">{{ i18n "about.reward_thanks" | default "感谢支持" }}
+        <div class="reward-list-all">
+          {{- range sort $list "amount" "desc" }}
+          <div class="reward-list-item">
+            <div class="reward-list-item-name">{{ .name }}</div>
+            <div class="reward-list-bottom-group">
+              {{- $amt := float (.amount | default 0) -}}
+              <div class="reward-list-item-money"{{ if ge $amt 50.0 }} style="background:var(--anzhiyu-yellow)"{{ end }}>¥{{ .amount }}{{ with .suffix }}{{ . }}{{ end }}</div>
+              <div class="datatime reward-list-item-time" datatime="{{ .datatime }}">{{ .datatime }}</div>
+            </div>
+          </div>
+          {{- end }}
+        </div>
+        {{- with index (sort $list "datatime" "desc") 0 }}
+        <div class="reward-list-updateDate">{{ i18n "about.last_update" | default "最近更新：" }}
+          <time class="datatime reward-list-updateDate-time" datatime="{{ .datatime }}">{{ .datatime }}</time>
+        </div>
+        {{- end }}
+      </div>
+      <div class="about-reward">
+        <div id="con"></div>
+        <div id="TA-con" onclick="if(window.anzhiyu&amp;&amp;anzhiyu.rewardShowConsole)anzhiyu.rewardShowConsole()">
+          <div id="text-con">
+            <div id="linght"></div>
+            <div id="TA">{{ i18n "about.charge_for_ta" | default "给TA充电" }}</div>
+          </div>
+        </div>
+        <div id="tube-con">
+          <svg viewBox="0 0 1028 385" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 77H234.226L307.006 24H790" stroke="#e5e9ef" stroke-width="20"></path>
+            <path d="M0 140H233.035L329.72 71H1028" stroke="#e5e9ef" stroke-width="20"></path>
+            <path d="M1 255H234.226L307.006 307H790" stroke="#e5e9ef" stroke-width="20"></path>
+            <path d="M0 305H233.035L329.72 375H1028" stroke="#e5e9ef" stroke-width="20"></path>
+            <rect y="186" width="236" height="24" fill="#e5e9ef"></rect>
+            <ellipse cx="790" cy="25.5" rx="25" ry="25.5" fill="#e5e9ef"></ellipse>
+            <circle r="14" transform="matrix(1 0 0 -1 790 25)" fill="white"></circle>
+            <ellipse cx="790" cy="307.5" rx="25" ry="25.5" fill="#e5e9ef"></ellipse>
+            <circle r="14" transform="matrix(1 0 0 -1 790 308)" fill="white"></circle>
+          </svg>
+          <div id="mask">
+            <svg viewBox="0 0 1028 385" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 77H234.226L307.006 24H790" stroke="#f25d8e" stroke-width="20"></path>
+              <path d="M0 140H233.035L329.72 71H1028" stroke="#f25d8e" stroke-width="20"></path>
+              <path d="M1 255H234.226L307.006 307H790" stroke="#f25d8e" stroke-width="20"></path>
+              <path d="M0 305H233.035L329.72 375H1028" stroke="#f25d8e" stroke-width="20"></path>
+              <rect y="186" width="236" height="24" fill="#f25d8e"></rect>
+              <ellipse cx="790" cy="25.5" rx="25" ry="25.5" fill="#f25d8e"></ellipse>
+              <circle r="14" transform="matrix(1 0 0 -1 790 25)" fill="white"></circle>
+              <ellipse cx="790" cy="307.5" rx="25" ry="25.5" fill="#f25d8e"></ellipse>
+              <circle r="14" transform="matrix(1 0 0 -1 790 308)" fill="white"></circle>
+            </svg>
+          </div>
+          <div id="orange-mask">
+            <svg viewBox="0 0 1028 385" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M1 77H234.226L307.006 24H790" stroke="#ffd52b" stroke-width="20"></path>
+              <path d="M0 140H233.035L329.72 71H1028" stroke="#ffd52b" stroke-width="20"></path>
+              <path d="M1 255H234.226L307.006 307H790" stroke="#ffd52b" stroke-width="20"></path>
+              <path d="M0 305H233.035L329.72 375H1028" stroke="#ffd52b" stroke-width="20"></path>
+              <rect y="186" width="236" height="24" fill="#ffd52b"></rect>
+              <ellipse cx="790" cy="25.5" rx="25" ry="25.5" fill="#ffd52b"></ellipse>
+              <circle r="14" transform="matrix(1 0 0 -1 790 25)" fill="white"></circle>
+              <ellipse cx="790" cy="307.5" rx="25" ry="25.5" fill="#ffd52b"></ellipse>
+              <circle r="14" transform="matrix(1 0 0 -1 790 308)" fill="white"></circle>
+            </svg>
+          </div>
+          <p id="people">{{ i18n "about.total_people" | default "共" }} <b>{{ len $list }}</b> {{ i18n "about.people" | default "人" }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {{- end }}
+
+
+  {{- /* CountUp + visit fetch (51la / Umami / demo) */ -}}
+  {{- $la := $.Site.Params.LA | default dict -}}
+  {{- $umami := $.Site.Params.umami | default dict -}}
+  {{- $stat := $item.statistic | default dict -}}
+  {{- $demoStat := $stat.demo | default false -}}
+  {{- $year := 2000 -}}
+  {{- with $item.selfInfo }}{{ with .selfInfoContentYear }}{{ $year = . }}{{ end }}{{ end -}}
+  {{- $countup := $.Site.Params.asset.countup_js | default "https://cdn.cbd.int/countup.js@1.9.3/dist/countUp.min.js" -}}
+  <script src="{{ $countup }}"></script>
+  <script defer>
+  (function () {
+    var i18nStats = {
+      today_visitors: {{ i18n "about.stats.today_visitors" | default "今日人数" | jsonify | safeJS }},
+      today_views: {{ i18n "about.stats.today_views" | default "今日访问" | jsonify | safeJS }},
+      yesterday_visitors: {{ i18n "about.stats.yesterday_visitors" | default "昨日人数" | jsonify | safeJS }},
+      yesterday_views: {{ i18n "about.stats.yesterday_views" | default "昨日访问" | jsonify | safeJS }},
+      month_views: {{ i18n "about.stats.month_views" | default "本月访问" | jsonify | safeJS }},
+      total_views: {{ i18n "about.stats.total_views" | default "总访问量" | jsonify | safeJS }},
+      fetch_failed: {{ i18n "about.stats.fetch_failed" | default "统计数据获取失败" | jsonify | safeJS }}
+    };
+    var laEnable = {{ if $la.enable }}true{{ else }}false{{ end }};
+    var laCk = {{ $la.ck | default "" | jsonify | safeJS }};
+    var umamiEnable = {{ if $umami.enable }}true{{ else }}false{{ end }};
+    var umamiApiHost = {{ $umami.apiHost | default "" | jsonify | safeJS }};
+    var umamiWebsiteId = {{ $umami.websiteId | default "" | jsonify | safeJS }};
+    var umamiToken = {{ $umami.token | default "" | jsonify | safeJS }};
+    var demoStat = {{ if $demoStat }}true{{ else }}false{{ end }};
+    var yearNum = {{ $year }};
+
+    function initAboutPage() {
+      var statisticEl = document.getElementById("statistic");
+      var counters = [];
+
+      function renderStatistic(titles, nums) {
+        if (!statisticEl || typeof CountUp === "undefined") return;
+        statisticEl.innerHTML = "";
+        counters = [];
+        for (var i = 0; i < nums.length; i++) {
+          statisticEl.innerHTML += "<div><span>" + titles[i] + "</span><span id='stat-" + i + "'>" + nums[i] + "</span></div>";
+          (function (idx, val) {
+            queueMicrotask(function () {
+              counters.push(new CountUp("stat-" + idx, 0, val, 0, 2, {
+                useEasing: true, useGrouping: true, separator: ",", decimal: ".", prefix: "", suffix: ""
+              }));
+            });
+          })(i, nums[i]);
+        }
+      }
+
+      function statisticUP() {
+        var el = document.querySelector(".about-statistic.author-content-item");
+        if (!el) return;
+        var observer = new IntersectionObserver(function (entries, obs) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              counters.forEach(function (c) { try { c.start(); } catch (e) {} });
+              obs.disconnect();
+            }
+          });
+        }, { root: null, rootMargin: "0px", threshold: 0 });
+        observer.observe(el);
+      }
+
+      if (laEnable && laCk) {
+        fetch("https://v6-widget.51.la/v6/" + laCk + "/quote.js")
+          .then(function (res) { return res.text(); })
+          .then(function (data) {
+            var title = [i18nStats.today_visitors, i18nStats.today_views, i18nStats.yesterday_visitors, i18nStats.yesterday_views, i18nStats.month_views, i18nStats.total_views];
+            var num = data.match(/(<\/span><span>).*?(\/span><\/p>)/g) || [];
+            num = num.map(function (el) {
+              return el.replace(/(<\/span><span>)/g, "").replace(/(<\/span><\/p>)/g, "");
+            }).slice(1);
+            renderStatistic(title, num);
+            statisticUP();
+          })
+          .catch(function () {
+            if (statisticEl) statisticEl.innerHTML = "<div>" + i18nStats.fetch_failed + "</div>";
+          });
+      } else if (umamiEnable && umamiApiHost && umamiWebsiteId) {
+        var now = Date.now();
+        var todayStart = new Date().setHours(0, 0, 0, 0);
+        var yesterdayStart = todayStart - 86400000;
+        var monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).getTime();
+        function fetchStats(startAt, endAt) {
+          return fetch(umamiApiHost + "/api/websites/" + umamiWebsiteId + "/stats?startAt=" + startAt + "&endAt=" + endAt, {
+            headers: umamiToken ? { "Authorization": "Bearer " + umamiToken } : {}
+          }).then(function (r) { return r.json(); });
+        }
+        Promise.all([
+          fetchStats(todayStart, now),
+          fetchStats(yesterdayStart, todayStart),
+          fetchStats(monthStart, now),
+          fetchStats(0, now)
+        ]).then(function (arr) {
+          var today = arr[0], yesterday = arr[1], month = arr[2], total = arr[3];
+          var title = [i18nStats.today_visitors, i18nStats.today_views, i18nStats.yesterday_visitors, i18nStats.yesterday_views, i18nStats.month_views, i18nStats.total_views];
+          var num = [
+            (today.visitors && today.visitors.value) || (today.uniques && today.uniques.value) || 0,
+            (today.pageviews && today.pageviews.value) || 0,
+            (yesterday.visitors && yesterday.visitors.value) || (yesterday.uniques && yesterday.uniques.value) || 0,
+            (yesterday.pageviews && yesterday.pageviews.value) || 0,
+            (month.pageviews && month.pageviews.value) || 0,
+            (total.pageviews && total.pageviews.value) || 0
+          ];
+          renderStatistic(title, num);
+          statisticUP();
+        }).catch(function () {
+          if (statisticEl) statisticEl.innerHTML = "<div>" + i18nStats.fetch_failed + "</div>";
+        });
+      } else if (demoStat) {
+        var title = [i18nStats.today_visitors, i18nStats.today_views, i18nStats.yesterday_visitors, i18nStats.yesterday_views, i18nStats.month_views, i18nStats.total_views];
+        var num = [12, 48, 9, 36, 520, 12800];
+        renderStatistic(title, num);
+        statisticUP();
+      }
+
+      if (typeof CountUp !== "undefined" && document.getElementById("selfInfo-content-year")) {
+        var yearCounter = new CountUp("selfInfo-content-year", 0, yearNum, 0, 2, {
+          useEasing: true, useGrouping: false, separator: ",", decimal: ".", prefix: "", suffix: ""
+        });
+        var yearEl = document.querySelector(".author-content-item.selfInfo.single");
+        if (yearEl) {
+          var yObs = new IntersectionObserver(function (entries, obs) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) { yearCounter.start(); obs.disconnect(); }
+            });
+          }, { threshold: 0 });
+          yObs.observe(yearEl);
+        }
+      }
+    }
+
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initAboutPage);
+    else initAboutPage();
+    document.addEventListener("pjax:complete", initAboutPage);
+  })();
+  </script>
+</div>
+{{- end }}
+{{- end }}
